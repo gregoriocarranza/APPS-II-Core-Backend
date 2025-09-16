@@ -1,0 +1,86 @@
+name: CI/CD - core-backend
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch: {}
+
+env:
+  IMAGE_NAME: core-backend
+  CONTAINER_NAME: core-backend
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (no registry)
+        run: |
+          docker build -t $IMAGE_NAME:${{ github.sha }} .
+
+      - name: Save image to tar.gz
+        run: |
+          docker save $IMAGE_NAME:${{ github.sha }} | gzip > image.tar.gz
+          ls -lh image.tar.gz
+
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo -e "Host droplet\n  HostName ${{ secrets.SSH_HOST }}\n  User ${{ secrets.SSH_USER }}\n  Port ${{ secrets.SSH_PORT }}\n  IdentityFile ~/.ssh/id_rsa\n  StrictHostKeyChecking no" > ~/.ssh/config
+
+      - name: Create remote directory
+        run: |
+          ssh droplet "sudo mkdir -p '${{ secrets.REMOTE_DIR }}' && sudo chown -R $USER '$PWD' '${{ secrets.REMOTE_DIR }}' || true"
+
+      - name: Copy image and .env to droplet
+        run: |
+          scp image.tar.gz droplet:${{ secrets.REMOTE_DIR }}/image.tar.gz
+          # .env desde secret multilinea
+          printf "%s" "${{ secrets.APP_ENV_FILE }}" | ssh droplet "cat > '${{ secrets.REMOTE_DIR }}/.env'"
+
+      - name: Ensure Docker on droplet (Ubuntu/Debian)
+        run: |
+          ssh droplet 'if ! command -v docker >/dev/null 2>&1; then
+            echo "Installing Docker..."
+            curl -fsSL https://get.docker.com | sh
+          else
+            echo "Docker already installed."
+          fi'
+
+      - name: Load image and deploy container
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          ssh droplet "
+            set -e
+            cd '${{ secrets.REMOTE_DIR }}'
+            echo 'Loading image...'
+            gunzip -c image.tar.gz | sudo docker load
+
+            echo 'Stopping old container if exists...'
+            sudo docker rm -f ${CONTAINER_NAME} || true
+
+            echo 'Starting new container...'
+            # Mapear puerto y pasar env file
+            sudo docker run -d --name ${CONTAINER_NAME} \
+              --restart unless-stopped \
+              -p ${{ secrets.APP_PORT }}:${{ secrets.APP_PORT }} \
+              --env-file '${{ secrets.REMOTE_DIR }}/.env' \
+              ${IMAGE_NAME}:${SHA}
+
+            echo 'Pruning old images...'
+            sudo docker image prune -f
+          "
+
+      - name: Smoke check (optional)
+        run: |
+          sleep 5
+          curl -fsS "http://${{ secrets.SSH_HOST }}:${{ secrets.APP_PORT }}/api/health" || true
