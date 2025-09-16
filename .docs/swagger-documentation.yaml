@@ -1,23 +1,24 @@
 openapi: 3.1.0
 info:
   title: CampusConnect Core API
-  version: "1.2.0"
+  version: "1.3.0"
   description: |
     The CampusConnect **Core API** exposes academic and institutional resources used by all modules
     (Student/Teacher Portal, Library, Cafeteria, Store, Analytics).
 
-    ### Integration map
-    - Student Portal → subjects, courses, enrollments, subject-prerequisites, notifications
-    - Teacher Portal → courses, teacher-subjects, availabilities
-    - Library / Cafeteria / Store → users, wallets, transactions, notifications
-    - Analytics → subjects, courses, users, transactions
+    **Auth model**: JWT Bearer with short-lived **access token** and rotating **refresh token**.
+    All endpoints **require** authentication except `/auth/*` and `/.well-known/jwks.json`.
 
 servers:
-  - url: http://137.184.231.145:3030/api/v1
+  - url: https://137.184.231.145:3030/api/v1
     description: Production (HTTPS)
+
 security:
   - bearerAuth: []
+
 tags:
+  - name: auth
+    description: Authentication endpoints (login, refresh, logout) and JWKS for public key discovery.
   - name: subjects
     description: Academic subjects offered by the institution. A subject can have prerequisites and multiple courses.
   - name: courses
@@ -36,12 +37,23 @@ tags:
     description: Wallet transactions (topups, payments, refunds, transfers, payouts).
   - name: notifications
     description: User-targeted notifications; supports read/unread operations and listing by user.
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  headers:
+    CacheControlNoStore:
+      description: "Set to `no-store` to prevent caching of auth responses."
+      schema: { type: string, example: "no-store" }
+    PragmaNoCache:
+      description: "Set to `no-cache` for legacy cache prevention."
+      schema: { type: string, example: "no-cache" }
+    WWWAuthenticate:
+      description: "Authentication challenge details for 401 responses."
+      schema: { type: string, example: "Bearer error=\"invalid_token\", error_description=\"The token is expired\"" }
   parameters:
     PageParam:
       name: page
@@ -84,6 +96,44 @@ components:
         page: { type: integer }
         pageSize: { type: integer }
       required: [items, total, page, pageSize]
+
+    # ===== Auth =====
+    AuthLoginRequest:
+      type: object
+      required: [user, password]
+      properties:
+        user: { type: string, description: "Username or email." }
+        password: { type: string, description: "User password." }
+    AuthTokens:
+      type: object
+      required: [tokenType, jwt, refreshToken, expiresAt]
+      properties:
+        tokenType: { type: string, enum: [Bearer], description: "Always 'Bearer'." }
+        jwt: { type: string, description: "Access token (JWT, RS256)." }
+        refreshToken: { type: string, description: "Opaque or JWT refresh token (rotating)." }
+        expiresAt: { type: integer, description: "JWT expiration (Unix seconds)." }
+        refreshExpiresAt: { type: integer, description: "Refresh token expiration (Unix seconds)." }
+    AuthRefreshRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken: { type: string, description: "Refresh token to rotate and obtain a new access token." }
+    AuthLogoutRequest:
+      type: object
+      properties:
+        refreshToken: { type: string, description: "Refresh token to revoke. If omitted with all=true, revokes all sessions for current subject." }
+        all: { type: boolean, default: false, description: "If true, revokes all active refresh tokens for the authenticated user." }
+    JWKS:
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      description: "JSON Web Key Set as per RFC 7517."
+
+    # ===== Domain =====
     Subject:
       type: object
       description: Canonical subject record.
@@ -119,8 +169,8 @@ components:
         uuid: { type: string, format: uuid }
         courseUuid: { type: string, format: uuid }
         userUuid: { type: string, format: uuid }
-        status: { type: string, description: E.g., pending, confirmed, cancelled }
-        role: { type: string, description: E.g., student, head, assistant }
+        status: { type: string, description: "E.g., pending, confirmed, cancelled" }
+        role: { type: string, description: "E.g., student, head, assistant" }
         createdAt: { type: integer, description: Unix seconds }
       required: [uuid, courseUuid, userUuid]
     EnrollmentCreate:
@@ -200,7 +250,11 @@ components:
       required: [read]
   responses:
     BadRequest: { description: Bad Request, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    Unauthorized: { description: Unauthorized, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Unauthorized:
+      description: Unauthorized
+      headers:
+        WWW-Authenticate: { $ref: '#/components/headers/WWWAuthenticate' }
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
     Forbidden: { description: Forbidden, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     NotFound: { description: Not Found, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     Conflict: { description: Conflict, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
@@ -208,7 +262,107 @@ components:
     TooManyRequests: { description: Too Many Requests, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     InternalServerError: { description: Internal Server Error, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     ServiceUnavailable: { description: Service Unavailable, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
 paths:
+  # ===================== AUTH =====================
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login with user credentials
+      description: |
+        Authenticates a user and returns a **JWT access token** plus a **refresh token**.
+        Access tokens are **short-lived** (e.g., 15 minutes). Refresh tokens are **rotated** on every use.
+        Responses include cache-prevention headers.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AuthLoginRequest' }
+            example: { user: "alice@example.com", password: "s3cretPass" }
+      responses:
+        '200':
+          description: Authenticated
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControlNoStore' }
+            Pragma: { $ref: '#/components/headers/PragmaNoCache' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthTokens' }
+              example:
+                tokenType: Bearer
+                jwt: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                refreshToken: "Af63..."
+                expiresAt: 1750001111
+                refreshExpiresAt: 1752593111
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Rotate refresh token and issue a new access token
+      description: |
+        Exchanges a valid **refresh token** for a new pair `{ jwt, refreshToken }`.
+        Implements **rotation** and detection of token reuse. On reuse, server **revokes** the entire session chain.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AuthRefreshRequest' }
+            example: { refreshToken: "Af63..." }
+      responses:
+        '200':
+          description: New tokens issued
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControlNoStore' }
+            Pragma: { $ref: '#/components/headers/PragmaNoCache' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthTokens' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Revoke refresh token(s)
+      description: |
+        Revokes the provided `refreshToken`. If `all=true`, revokes **all** active refresh tokens of the authenticated user.
+        Use this to terminate sessions on logout or security events.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AuthLogoutRequest' }
+            example: { refreshToken: "Af63...", all: false }
+      responses:
+        '204': { description: Revoked }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  /.well-known/jwks.json:
+    get:
+      tags: [auth]
+      summary: JWKS (public keys for JWT verification)
+      description: Returns the JSON Web Key Set (public keys) to validate JWT signatures (RS256).
+      security: []
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/JWKS' } } } }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  # ===================== SUBJECTS =====================
   /subjects:
     get:
       tags: [subjects]
@@ -251,6 +405,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /subjects/{uuid}:
     get:
       tags: [subjects]
@@ -305,6 +460,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== COURSES =====================
   /courses:
     get:
       tags: [courses]
@@ -345,6 +501,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /courses/{uuid}:
     get:
       tags: [courses]
@@ -396,6 +553,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== TEACHER-SUBJECTS =====================
   /teacher-subjects:
     get:
       tags: [teacher-subjects]
@@ -431,6 +589,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /teacher-subjects/{uuid}:
     get:
       tags: [teacher-subjects]
@@ -482,6 +641,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== ENROLLMENTS & PREREQUISITES =====================
   /enrollments:
     get:
       tags: [enrollments]
@@ -516,6 +676,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /enrollments/{uuid}:
     delete:
       tags: [enrollments]
@@ -567,6 +728,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /subject-prerequisites/{uuid}:
     delete:
       tags: [subject-prerequisites]
@@ -584,6 +746,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== USERS & WALLETS =====================
   /users:
     get:
       tags: [users]
@@ -601,6 +764,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /users/{uuid}:
     get:
       tags: [users]
@@ -642,6 +806,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== TRANSACTIONS =====================
   /transactions:
     get:
       tags: [transactions]
@@ -662,6 +827,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /transactions/{uuid}:
     get:
       tags: [transactions]
@@ -677,6 +843,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /wallets/{walletUuid}/transactions:
     get:
       tags: [transactions]
@@ -698,6 +865,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
 
+  # ===================== NOTIFICATIONS =====================
   /notifications/{uuid}:
     get:
       tags: [notifications]
@@ -731,6 +899,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /users/{userUuid}/notifications:
     get:
       tags: [notifications]
@@ -747,6 +916,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /users/{userUuid}/notifications/unread:
     get:
       tags: [notifications]
@@ -763,6 +933,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
   /users/{userUuid}/notifications/unread/count:
     get:
       tags: [notifications]
