@@ -19,6 +19,7 @@ tags:
   - name: Inscripciones
   - name: Correlativas
   - name: Wallets
+  - name: Users
 components:
   parameters:
     PageParam:
@@ -178,6 +179,17 @@ components:
           enum: [active, blocked, closed]
         created_at: { type: string, format: date-time }
       required: [uuid, user_id, currency, status]
+    User:
+      type: object
+      description: Usuario del sistema.
+      properties:
+        uuid: { type: string, format: uuid }
+        name: { type: string }
+        email:
+          type: string
+          format: email
+        created_at: { type: string, format: date-time }
+      required: [uuid, email]
 paths:
   /cursos:
     get:
@@ -949,3 +961,56 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+  /users:
+    get:
+      tags: [Users]
+      summary: Listar usuarios
+      description: Filtra por nombre o email. Coincidencia exacta o parcial según implementación.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: name
+          in: query
+          required: false
+          schema: { type: string }
+          description: Filtro por nombre
+        - name: email
+          in: query
+          required: false
+          schema: { type: string, format: email }
+          description: Filtro por email
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "u_1"
+                    name: "Ada Lovelace"
+                    email: "ada@example.com"
+                total: 1
+                page: 1
+                page_size: 25
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Obtener usuario por UUID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        
