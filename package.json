@@ -9,19 +9,25 @@
     "build": "tsc",
     "start:dev": "nodemon src/server.ts",
     "format": "prettier --write .",
-    "create:controller": "sundaysf --create-controller"
+    "build:asyncapi": "asyncapi validate ./asyncapi.yaml && npx @asyncapi/generator .docs/async-documentation.yaml @asyncapi/html-template -o .docs/.build/async --force-write"
   },
   "dependencies": {
+    "@types/js-yaml": "^4.0.9",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "morgan": "^1.10.1"
+    "js-yaml": "^4.1.0",
+    "morgan": "^1.10.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@asyncapi/generator": "^2.8.3",
+    "@asyncapi/html-template": "^3.3.1",
     "@sundaysf/cli": "^0.2.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^8.33.0",
     "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.27.5",

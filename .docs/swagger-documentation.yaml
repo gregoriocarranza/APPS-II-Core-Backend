@@ -1,0 +1,707 @@
+openapi: 3.1.0
+info:
+  title: Core API
+  version: "0.1.2"
+  description: >
+    Borrador de especificación OpenAPI para el proyecto de desarrollo de apliaciónes II.
+    Recursos: cursos, materias, notas, actas, docente-materias y disponibilidades.
+    Endpoints: GET/POST/GET {id}/PUT/DELETE para cada recurso.
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local
+tags:
+  - name: Cursos
+  - name: Materias
+  - name: Notas
+  - name: Actas
+  - name: Docente-Materias
+  - name: Disponibilidades
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Página (1-based)
+    PageSizeParam:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+      description: Tamaño de página (máx 100)
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+            request_id: { type: string, format: uuid }
+          required: [code, message]
+      required: [error]
+    PagedResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+        total: { type: integer }
+        page: { type: integer }
+        page_size: { type: integer }
+      required: [items, total, page, page_size]
+    Curso:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        id_materia: { type: string, format: uuid, description: "FK Materia.id" }
+        fecha_inicio: { type: string, format: date }
+        fecha_fin: { type: string, format: date }
+        tipo_examen:
+          type: string
+          enum: [parcial, recuperatorio, final]
+        cantidad_maxima: { type: integer, minimum: 1 }
+      required: [id, id_materia, fecha_inicio, fecha_fin, tipo_examen, cantidad_maxima]
+    Materia:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        nombre: { type: string, minLength: 1 }
+      required: [id, nombre]
+    Nota:
+      type: object
+      description: Registro de calificación/evaluación asociada a un curso.
+      properties:
+        id: { type: string, format: uuid }
+        evaluacion: { type: string, description: "Nombre de la evaluación (ej: 1er parcial)" }
+        id_curso: { type: string, format: uuid, description: "FK Curso.id" }
+        tipo:
+          type: string
+          enum: [parcial, recuperatorio, final]
+      required: [id, evaluacion, id_curso, tipo]
+    Acta:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        id_curso: { type: string, format: uuid, description: "FK Curso.id" }
+        id_alumno: { type: string, format: uuid, description: "FK Alumno.id (no definido en este draft)" }
+        estado:
+          type: string
+          description: Estado del acta
+          enum: [abierta, cerrada, publicada, anulada]
+      required: [id, id_curso, id_alumno, estado]
+    DocenteMateria:
+      type: object
+      description: Relación N:N entre docentes y materias.
+      properties:
+        id: { type: string, format: uuid }
+        id_docente: { type: string, format: uuid, description: "FK Docente.id (no definido en este draft)" }
+        id_materia: { type: string, format: uuid, description: "FK Materia.id" }
+      required: [id, id_docente, id_materia]
+    Disponibilidad:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        id_docente: { type: string, format: uuid, description: "FK Docente.id (no definido en este draft)" }
+        turno: { type: string, description: "p. ej. mañana/tarde/noche" }
+        dia: { type: string, description: "p. ej. lunes, martes..." }
+      required: [id, id_docente, turno, dia]
+paths:
+  /cursos:
+    get:
+      tags: [Cursos]
+      summary: Listar cursos
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: id_materia
+          in: query
+          schema: { type: string }
+          description: Filtrar por Materia
+        - name: tipo_examen
+          in: query
+          schema:
+            type: string
+            enum: [parcial, recuperatorio, final]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "c_123"
+                    id_materia: "m_10"
+                    fecha_inicio: "2025-03-01"
+                    fecha_fin: "2025-07-01"
+                    tipo_examen: "parcial"
+                    cantidad_maxima: 30
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Cursos]
+      summary: Crear curso
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Curso'
+            example:
+              id: "c_123"
+              id_materia: "m_10"
+              fecha_inicio: "2025-03-01"
+              fecha_fin: "2025-07-01"
+              tipo_examen: "parcial"
+              cantidad_maxima: 30
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Curso' }
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /cursos/{id}:
+    get:
+      tags: [Cursos]
+      summary: Obtener curso
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Curso' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Cursos]
+      summary: Reemplazar curso
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Curso' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Curso' }
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    delete:
+      tags: [Cursos]
+      summary: Eliminar curso
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /materias:
+    get:
+      tags: [Materias]
+      summary: Listar materias
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: nombre
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "m_10"
+                    nombre: "Ingeniería de Software"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Materias]
+      summary: Crear materia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Materia' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Materia' }
+  /materias/{id}:
+    get:
+      tags: [Materias]
+      summary: Obtener materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Materia' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Materias]
+      summary: Reemplazar materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Materia' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Materia' }
+    delete:
+      tags: [Materias]
+      summary: Eliminar materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
+  /notas:
+    get:
+      tags: [Notas]
+      summary: Listar notas
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: id_curso
+          in: query
+          schema: { type: string }
+        - name: tipo
+          in: query
+          schema:
+            type: string
+            enum: [parcial, recuperatorio, final]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "n_1"
+                    evaluacion: "1er parcial"
+                    id_curso: "c_123"
+                    tipo: "parcial"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Notas]
+      summary: Crear nota
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Nota' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Nota' }
+  /notas/{id}:
+    get:
+      tags: [Notas]
+      summary: Obtener nota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Nota' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Notas]
+      summary: Reemplazar nota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Nota' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Nota' }
+    delete:
+      tags: [Notas]
+      summary: Eliminar nota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
+  /actas:
+    get:
+      tags: [Actas]
+      summary: Listar actas
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: id_curso
+          in: query
+          schema: { type: string }
+        - name: id_alumno
+          in: query
+          schema: { type: string }
+        - name: estado
+          in: query
+          schema:
+            type: string
+            enum: [abierta, cerrada, publicada, anulada]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "a_1"
+                    id_curso: "c_123"
+                    id_alumno: "al_55"
+                    estado: "abierta"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Actas]
+      summary: Crear acta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Acta' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Acta' }
+  /actas/{id}:
+    get:
+      tags: [Actas]
+      summary: Obtener acta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Acta' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Actas]
+      summary: Reemplazar acta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Acta' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Acta' }
+    delete:
+      tags: [Actas]
+      summary: Eliminar acta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
+  /docente-materias:
+    get:
+      tags: [Docente-Materias]
+      summary: Listar asignaciones docente-materia
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: id_docente
+          in: query
+          schema: { type: string }
+        - name: id_materia
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "dm_1"
+                    id_docente: "d_5"
+                    id_materia: "m_10"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Docente-Materias]
+      summary: Crear asignación docente-materia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DocenteMateria' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocenteMateria' }
+  /docente-materias/{id}:
+    get:
+      tags: [Docente-Materias]
+      summary: Obtener asignación docente-materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocenteMateria' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Docente-Materias]
+      summary: Reemplazar asignación docente-materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DocenteMateria' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocenteMateria' }
+    delete:
+      tags: [Docente-Materias]
+      summary: Eliminar asignación docente-materia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
+  /disponibilidades:
+    get:
+      tags: [Disponibilidades]
+      summary: Listar disponibilidades de docentes
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: id_docente
+          in: query
+          schema: { type: string }
+        - name: turno
+          in: query
+          schema: { type: string }
+        - name: dia
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "disp_1"
+                    id_docente: "d_5"
+                    turno: "mañana"
+                    dia: "lunes"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Disponibilidades]
+      summary: Crear disponibilidad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Disponibilidad' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Disponibilidad' }
+  /disponibilidades/{id}:
+    get:
+      tags: [Disponibilidades]
+      summary: Obtener disponibilidad
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Disponibilidad' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Disponibilidades]
+      summary: Reemplazar disponibilidad
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Disponibilidad' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Disponibilidad' }
+    delete:
+      tags: [Disponibilidades]
+      summary: Eliminar disponibilidad
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Eliminado
