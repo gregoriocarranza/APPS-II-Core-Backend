@@ -7,7 +7,7 @@ info:
     Recursos: cursos, materias, notas, actas, docente-materias y disponibilidades.
     Endpoints: GET/POST/GET {id}/PUT/DELETE para cada recurso.
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: http://137.184.231.145:3030
     description: Local
 tags:
   - name: Cursos
