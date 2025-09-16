@@ -18,6 +18,7 @@ tags:
   - name: Disponibilidades
   - name: Inscripciones
   - name: Correlativas
+  - name: Wallets
 components:
   parameters:
     PageParam:
@@ -160,6 +161,23 @@ components:
         uuid_materia: { type: string, format: uuid }
         uuid_materia_correlativa: { type: string, format: uuid }
       required: [uuid_materia, uuid_materia_correlativa]
+    Wallet:
+      type: object
+      description: Billetera de un usuario.
+      properties:
+        uuid: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
+        currency:
+          type: string
+          description: Código ISO 4217 (3 letras)
+          minLength: 3
+          maxLength: 3
+          example: "ARS"
+        status:
+          type: string
+          enum: [active, blocked, closed]
+        created_at: { type: string, format: date-time }
+      required: [uuid, user_id, currency, status]
 paths:
   /cursos:
     get:
@@ -892,6 +910,42 @@ paths:
           description: Eliminado
         '404':
           description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /wallets/by-user/{user_id}:
+    get:
+      tags: [Wallets]
+      summary: Obtener una wallet por usuario
+      description: |
+        Devuelve una única wallet asociada al `user_id`.
+        Si el usuario posee más de una wallet, especifique `currency` para desambiguar.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          description: Código de moneda (ISO 4217), p. ej. ARS, USD.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Wallet' }
+        '400':
+          description: Parámetros inválidos o resultado ambiguo (múltiples wallets sin `currency`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Wallet no encontrada para el usuario/moneda.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
