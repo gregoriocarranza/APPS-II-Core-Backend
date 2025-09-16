@@ -25,6 +25,7 @@ CREATE TABLE `inscripciones` (
   `uuid_curso` uuid NOT NULL,
   `uuid_alumno` uuid NOT NULL,
   `estado` varchar(255) COMMENT 'ej.: pendiente, confirmada, confirmada',
+  `rol` varchar(255) COMMENT 'ej.: titular, adjunto, ayudante, alumno',
   `created_at` timestamp DEFAULT (now())
 );
 
@@ -33,13 +34,6 @@ CREATE TABLE `users` (
   `name` varchar(255),
   `email` varchar(255) UNIQUE,
   `created_at` timestamp DEFAULT (now())
-);
-
-CREATE TABLE `docentes_curso` (
-  `uuid` uuid PRIMARY KEY,
-  `uuid_docente` uuid NOT NULL,
-  `uuid_materia` uuid NOT NULL,
-  `rol` varchar(255) COMMENT 'ej.: titular, adjunto, ayudante, alumno'
 );
 
 CREATE TABLE `docentes_materia` (
@@ -79,10 +73,6 @@ ALTER TABLE `inscripciones` ADD FOREIGN KEY (`uuid_alumno`) REFERENCES `users` (
 ALTER TABLE `correlativas` ADD FOREIGN KEY (`uuid_materia`) REFERENCES `materias` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `correlativas` ADD FOREIGN KEY (`uuid_materia_correlativa`) REFERENCES `materias` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `docentes_curso` ADD FOREIGN KEY (`uuid_docente`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `docentes_curso` ADD FOREIGN KEY (`uuid_materia`) REFERENCES `curso` (`uuid`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE `docentes_materia` ADD FOREIGN KEY (`uuid_docente`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
