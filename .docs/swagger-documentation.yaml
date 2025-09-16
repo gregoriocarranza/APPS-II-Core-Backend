@@ -16,6 +16,7 @@ tags:
   - name: Actas
   - name: Docente-Materias
   - name: Disponibilidades
+  - name: Inscripciones
 components:
   parameters:
     PageParam:
@@ -115,6 +116,34 @@ components:
         turno: { type: string, description: "p. ej. mañana/tarde/noche" }
         dia: { type: string, description: "p. ej. lunes, martes..." }
       required: [id, id_docente, turno, dia]
+    Inscripcion:
+      type: object
+      description: Registro de inscripción de un alumno a un curso.
+      properties:
+        uuid: { type: string, format: uuid }
+        uuid_curso: { type: string, format: uuid, description: "FK curso.uuid" }
+        uuid_alumno: { type: string, format: uuid, description: "FK users.uuid" }
+        estado:
+          type: string
+          description: "Estado de la inscripción (ej.: pendiente, confirmada, anulada)"
+        rol:
+          type: string
+          description: "Rol en el curso (ej.: alumno, titular, adjunto, ayudante)"
+        created_at: { type: string, format: date-time }
+      required: [uuid, uuid_curso, uuid_alumno]
+    InscripcionCreate:
+      type: object
+      description: Payload para crear una inscripción.
+      properties:
+        uuid_curso: { type: string, format: uuid }
+        uuid_alumno: { type: string, format: uuid }
+        estado:
+          type: string
+          description: "Estado inicial (ej.: pendiente)"
+        rol:
+          type: string
+          description: "Rol (por defecto 'alumno' si aplica)"
+      required: [uuid_curso, uuid_alumno]
 paths:
   /cursos:
     get:
@@ -705,3 +734,77 @@ paths:
       responses:
         '204':
           description: Eliminado
+  /inscripciones:
+    get:
+      tags: [Inscripciones]
+      summary: Listar inscripciones
+      description: Permite filtrar por curso o por usuario.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: uuid_curso
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filtrar inscripciones por curso
+        - name: uuid_alumno
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filtrar inscripciones por usuario
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "i_1"
+                    uuid_curso: "c_123"
+                    uuid_alumno: "u_555"
+                    estado: "pendiente"
+                    rol: "alumno"
+                    created_at: "2025-03-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Inscripciones]
+      summary: Crear inscripción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InscripcionCreate' }
+            example:
+              uuid_curso: "c_123"
+              uuid_alumno: "u_555"
+              estado: "pendiente"
+              rol: "alumno"
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Inscripcion' }
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /inscripciones/{id}:
+    delete:
+      tags: [Inscripciones]
+      summary: Eliminar inscripción
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204':
+          description: Eliminado
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
