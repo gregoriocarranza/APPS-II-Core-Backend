@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Deploy Info
+        run: |
+          echo "Deployed by: ${{ github.actor }}"
+          echo "Target branch: ${{ github.ref_name }}"
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -21,6 +26,8 @@ jobs:
           ssh-add private_key
 
       - name: Deploy to Digital Ocean
+        env:
+          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             if [ ! -d ~/core-backend ]; then
@@ -29,6 +36,7 @@ jobs:
               cd ~/core-backend && git pull
             fi
             cd ~/core-backend
+            echo \"${ENV_FILE_CONTENT}\" > .env
             docker stop $(docker ps -aq)
             docker compose up --build -d
           "
