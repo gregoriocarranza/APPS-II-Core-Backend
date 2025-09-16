@@ -62,6 +62,15 @@ CREATE TABLE `transactions` (
   `posted_at` timestamp
 );
 
+CREATE Table `notificaciones` {
+  `uuid` uuid PRIMARY KEY,
+  `uuid_user` uuid NOT NULL,
+  `title` varchar(25) NOT NULL,
+  `body` varchar(255) NOT NULL,
+  `from` varchar(20) NOT NULL,
+  `read` BOOLEAN DEFAULT FALSE
+}
+
 CREATE UNIQUE INDEX `wallets_index_0` ON `wallets` (`user_id`, `currency`);
 
 ALTER TABLE `curso` ADD FOREIGN KEY (`uuid_materia`) REFERENCES `materias` (`uuid`) ON DELETE RESTRICT ON UPDATE CASCADE;

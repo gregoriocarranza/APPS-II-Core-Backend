@@ -21,6 +21,7 @@ tags:
   - name: Wallets
   - name: Users
   - name: Transactions
+  - name: Notifications
 components:
   parameters:
     PageParam:
@@ -216,6 +217,26 @@ components:
         created_at: { type: string, format: date-time }
         posted_at: { type: string, format: date-time, nullable: true }
       required: [uuid, wallet_uuid, type, status, amount, currency]
+    Notification:
+      type: object
+      description: Notificación dirigida a un usuario.
+      properties:
+        uuid: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
+        title: { type: string }
+        message: { type: string }
+        read:
+          type: boolean
+          description: Indicador de lectura
+        created_at: { type: string, format: date-time }
+        read_at: { type: string, format: date-time, nullable: true }
+      required: [uuid, user_id, title, message, read]
+    NotificationReadUpdate:
+      type: object
+      description: Actualización de estado de lectura de la notificación.
+      properties:
+        read: { type: boolean }
+      required: [read]
 paths:
   /cursos:
     get:
@@ -1148,4 +1169,118 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PagedResponse' }
+  /notifications/{id}:
+    patch:
+      tags: [Notifications]
+      summary: Marcar notificación como leída/no leída
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotificationReadUpdate' }
+            example:
+              read: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Actualizada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Notification' }
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /users/{user_id}/notifications:
+    get:
+      tags: [Notifications]
+      summary: Listar notificaciones por usuario
+      description: Devuelve todas las notificaciones (leídas y no leídas) de un usuario.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "n_1"
+                    user_id: "u_1"
+                    title: "Recordatorio"
+                    message: "Tienes una inscripción pendiente"
+                    read: false
+                    created_at: "2025-03-01T10:00:00Z"
+                  - uuid: "n_2"
+                    user_id: "u_1"
+                    title: "Aviso"
+                    message: "Inscripción confirmada"
+                    read: true
+                    created_at: "2025-03-02T09:00:00Z"
+                total: 2
+                page: 1
+                page_size: 25
+  /users/{user_id}/notifications/unread:
+    get:
+      tags: [Notifications]
+      summary: Listar notificaciones no leídas por usuario
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "n_1"
+                    user_id: "u_1"
+                    title: "Recordatorio"
+                    message: "Tienes una inscripción pendiente"
+                    read: false
+                    created_at: "2025-03-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+  /users/{user_id}/notifications/unread/count:
+    get:
+      tags: [Notifications]
+      summary: Obtener cantidad de no leídas por usuario
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count: { type: integer, minimum: 0 }
+                required: [count]
         
