@@ -4,14 +4,7 @@ info:
   version: "1.2.0"
   description: |
     The CampusConnect **Core API** exposes academic and institutional resources used by all modules
-    (Student/Teacher Portal, Library, Cafeteria, Store, Analytics). It follows REST best practices:
-
-    - Nouns, lowercase, plural, in English (e.g., `/api/v1/subjects`).
-    - Versioned base path: `/api/v1`.
-    - JSON with **lowerCamelCase** keys.
-    - Timestamps as **Unix seconds**.
-    - Pagination and filtering via **query string**.
-    - Authentication via **JWT Bearer**; production requires **HTTPS**.
+    (Student/Teacher Portal, Library, Cafeteria, Store, Analytics).
 
     ### Integration map
     - Student Portal → subjects, courses, enrollments, subject-prerequisites, notifications
@@ -20,10 +13,8 @@ info:
     - Analytics → subjects, courses, users, transactions
 
 servers:
-  - url: https://api.campusconnect.edu/core/v1
-    description: Production (HTTPS)
   - url: http://137.184.231.145:3030/api/v1
-    description: Local (dev)
+    description: Production (HTTPS)
 security:
   - bearerAuth: []
 tags:
