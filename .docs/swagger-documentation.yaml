@@ -17,6 +17,7 @@ tags:
   - name: Docente-Materias
   - name: Disponibilidades
   - name: Inscripciones
+  - name: Correlativas
 components:
   parameters:
     PageParam:
@@ -144,6 +145,21 @@ components:
           type: string
           description: "Rol (por defecto 'alumno' si aplica)"
       required: [uuid_curso, uuid_alumno]
+    Correlativa:
+      type: object
+      description: Relación de correlatividad entre materias.
+      properties:
+        uuid: { type: string, format: uuid }
+        uuid_materia: { type: string, format: uuid, description: "Materia que requiere la correlativa" }
+        uuid_materia_correlativa: { type: string, format: uuid, description: "Materia requerida (correlativa)" }
+      required: [uuid, uuid_materia, uuid_materia_correlativa]
+    CorrelativaCreate:
+      type: object
+      description: Payload para crear una correlativa entre dos materias.
+      properties:
+        uuid_materia: { type: string, format: uuid }
+        uuid_materia_correlativa: { type: string, format: uuid }
+      required: [uuid_materia, uuid_materia_correlativa]
 paths:
   /cursos:
     get:
@@ -795,6 +811,77 @@ paths:
     delete:
       tags: [Inscripciones]
       summary: Eliminar inscripción
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204':
+          description: Eliminado
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /correlativas:
+    get:
+      tags: [Correlativas]
+      summary: Listar correlativas
+      description: |
+        - Para obtener las correlativas de una materia usar `uuid_materia`.
+        - Para obtener a qué materias hace correlativa otra, usar `uuid_materia_correlativa`.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: uuid_materia
+          in: query
+          schema: { type: string, format: uuid }
+          description: Materia que requiere la correlativa
+        - name: uuid_materia_correlativa
+          in: query
+          schema: { type: string, format: uuid }
+          description: Materia que es requerida como correlativa
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "corr_1"
+                    uuid_materia: "m_10"
+                    uuid_materia_correlativa: "m_2"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Correlativas]
+      summary: Crear correlativa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CorrelativaCreate' }
+            example:
+              uuid_materia: "m_10"
+              uuid_materia_correlativa: "m_2"
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Correlativa' }
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /correlativas/{id}:
+    delete:
+      tags: [Correlativas]
+      summary: Eliminar correlativa
       parameters:
         - name: id
           in: path
