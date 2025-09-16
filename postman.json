@@ -1,0 +1,196 @@
+{
+  "info": {
+    "_postman_id": "0f859215-c273-4fb5-8b2b-7ac12f2d2423",
+    "name": "Core-Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25678071"
+  },
+  "item": [
+    {
+      "name": "wallets",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/wallets",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "wallets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/wallets/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "wallets", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/wallets/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "wallets", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/wallets",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "wallets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/wallets/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "wallets", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "core-BackendBackendHost",
+      "value": "http://localhost:<PORT>",
+      "type": "string"
+    },
+    {
+      "key": "core-BackendBearerToken",
+      "value": "<token>",
+      "type": "string"
+    }
+  ]
+}
