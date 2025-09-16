@@ -31,7 +31,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             if [ ! -d ~/core-backend ]; then
-              git clone https://github.com/gregoriocarranza/WonderPeak_backend.git ~/core-backend
+              git clone https://github.com/gregoriocarranza/APPS-II-Core-Backend.git ~/core-backend
             else
               cd ~/core-backend && git pull
             fi
