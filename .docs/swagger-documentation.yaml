@@ -20,6 +20,7 @@ tags:
   - name: Correlativas
   - name: Wallets
   - name: Users
+  - name: Transactions
 components:
   parameters:
     PageParam:
@@ -190,6 +191,31 @@ components:
           format: email
         created_at: { type: string, format: date-time }
       required: [uuid, email]
+    Transaction:
+      type: object
+      description: Movimiento asociado a una wallet.
+      properties:
+        uuid: { type: string, format: uuid }
+        wallet_uuid: { type: string, format: uuid }
+        type:
+          type: string
+          enum: [topup, payment, transfer, refund, payout]
+        status:
+          type: string
+          enum: [pending, posted, failed, reversed]
+        amount:
+          type: integer
+          description: Monto en la unidad menor de la moneda (p. ej. centavos)
+        currency:
+          type: string
+          description: Código ISO 4217 (3 letras)
+          minLength: 3
+          maxLength: 3
+          example: "ARS"
+        description: { type: string }
+        created_at: { type: string, format: date-time }
+        posted_at: { type: string, format: date-time, nullable: true }
+      required: [uuid, wallet_uuid, type, status, amount, currency]
 paths:
   /cursos:
     get:
@@ -1013,4 +1039,113 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: Listar transacciones
+      description: |
+        Permite filtrar por `wallet_uuid` y por rangos de fechas.
+        Si solo envías `created_from` o `posted_from`, actúa como "fecha mayor o igual a".
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: wallet_uuid
+          in: query
+          required: false
+          schema: { type: string, format: uuid }
+          description: Filtrar por wallet
+        - name: created_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: Desde (inclusive) por fecha de creación
+        - name: created_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: Hasta (inclusive) por fecha de creación
+        - name: posted_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: Desde (inclusive) por fecha de contabilización
+        - name: posted_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: Hasta (inclusive) por fecha de contabilización
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "t_1"
+                    wallet_uuid: "w_1"
+                    type: "payment"
+                    status: "posted"
+                    amount: 12500
+                    currency: "ARS"
+                    description: "Compra en librería"
+                    created_at: "2025-03-01T10:00:00Z"
+                    posted_at: "2025-03-01T10:05:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+  /transactions/{id}:
+    get:
+      tags: [Transactions]
+      summary: Obtener transacción por UUID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Transaction' }
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /wallets/{wallet_uuid}/transactions:
+    get:
+      tags: [Transactions]
+      summary: Listar transacciones por wallet
+      description: Endpount anidado equivalente a usar `GET /transactions?wallet_uuid=...`.
+      parameters:
+        - name: wallet_uuid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: created_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: created_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: posted_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: posted_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
         
