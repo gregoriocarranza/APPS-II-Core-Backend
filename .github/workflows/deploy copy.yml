@@ -23,12 +23,12 @@ jobs:
       - name: Deploy to Digital Ocean
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
-            if [ ! -d ~/core-backend ]; then
-              git clone https://github.com/gregoriocarranza/WonderPeak_backend.git ~/core-backend
+            if [ ! -d ~/WonderPeak_backend ]; then
+              git clone https://github.com/gregoriocarranza/WonderPeak_backend.git ~/WonderPeak_backend
             else
-              cd ~/core-backend && git pull
+              cd ~/WonderPeak_backend && git pull
             fi
-            cd ~/core-backend
+            cd ~/WonderPeak_backend
             docker stop $(docker ps -aq)
             docker compose up --build -d
           "
