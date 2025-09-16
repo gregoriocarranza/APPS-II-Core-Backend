@@ -1,6 +1,6 @@
 asyncapi: '2.6.0'
 info:
-  title: CORE Event Bus (Draft)
+  title: CORE Event Bus
   version: '0.1.1'
   description: >
     Especificación AsyncAPI del bus de eventos para el módulo CORE.
