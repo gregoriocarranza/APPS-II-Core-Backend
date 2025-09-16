@@ -9,7 +9,7 @@
     "build": "tsc",
     "start:dev": "nodemon src/server.ts",
     "format": "prettier --write .",
-    "build:asyncapi": "npx @asyncapi/generator .docs/async-documentation.yaml @asyncapi/html-template -o .docs/.build/async --force-write"
+    "build:asyncapi": "npx -y @asyncapi/generator .docs/async-documentation.yaml @asyncapi/html-template -o .docs/.build/async --force-write -p singleFile=true"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
