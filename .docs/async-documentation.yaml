@@ -1,21 +1,37 @@
 asyncapi: '2.6.0'
 info:
-  title: CORE Event Bus
-  version: '0.1.1'
-  description: >
-    Especificación AsyncAPI del bus de eventos para el módulo CORE.
-    Transporte principal: RabbitMQ (AMQP 0-9-1) con exchange tipo *topic* `core.events`.
-    Los eventos siguen un *envelope* estilo **CloudEvents 1.0** (campos: specversion, id, source, type, subject, time, data).
+  title: Event Bus (RabbitMQ, topic exchanges)
+  version: '0.1.0'
+  description: |
+    Bus de eventos con RabbitMQ usando exchanges tipo `topic`.
+    - El **exchange** actúa como router (no es el evento).
+    - Los **eventos** se publican con `routingKey` (p.ej. `user.created`).
+    - Cada **microservicio** tiene **su propia cola** y la **bindea** al exchange con la `bindingKey` que necesita (p.ej. `user.*`).
+    - Entrega **at-least-once**; se recomienda idempotencia en consumidores.
+    - Envelope estilo **CloudEvents 1.0**: (specversion, id, source, type, subject, time, data).
+
 defaultContentType: application/json
+
+tags:
+  - name: Users
+    description: Eventos relacionados a usuarios
+  - name: Inscripciones
+    description: Eventos del dominio de inscripciones
+  - name: Publish
+    description: Operaciones de publicación
+  - name: Subscribe
+    description: Operaciones de suscripción
+
 servers:
   rabbitmqLocal:
     url: amqp://guest:guest@localhost:5672
     protocol: amqp
     protocolVersion: '0-9-1'
     description: RabbitMQ local (desarrollo)
+
 channels:
-  grade.published.v1:
-    description: Evento emitido cuando se publica una **nota** en un acta.
+  user.created:
+    description: Evento emitido por BackOffice cuando se crea un usuario.
     bindings:
       amqp:
         is: routingKey
@@ -25,22 +41,48 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    publish:
-      summary: El módulo Docente publica que se ha publicado una nota.
-      operationId: publishGradePublishedV1
-      message:
-        $ref: '#/components/messages/GradePublishedV1'
     subscribe:
-      summary: Otros módulos (CORE, Biblioteca, Portal Alumno, etc.) consumen este evento.
-      operationId: subscribeGradePublishedV1
+      tags:
+        - name: Users
+        - name: Subscribe
+      summary: User Creation.
+      operationId: subscribeUserCreatedV1
       bindings:
         amqp:
           ack: true
           bindingVersion: '0.2.0'
       message:
-        $ref: '#/components/messages/GradePublishedV1'
-  acta.closed.v1:
-    description: Evento emitido cuando un **acta** cambia a estado *cerrada*.
+        $ref: '#/components/messages/UserCreatedV1'
+  inscripciones.created:
+    description: Evento emitido cuando se crea una inscripción.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: inscripciones.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      summary: Registration Creation.
+      operationId: subscribeInscripcionCreatedV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/InscripcionCreatedV1'
+    publish:
+      summary: Registration Creation.
+      operationId: publishInscripcionCreatedV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/InscripcionCreatedV1'
+  inscripciones.delete:
+    description: Evento emitido cuando se elimina una inscripción.
     bindings:
       amqp:
         is: routingKey
@@ -50,163 +92,320 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    publish:
-      summary: El módulo Docente publica el cierre de un acta.
-      operationId: publishActaClosedV1
-      message:
-        $ref: '#/components/messages/ActaClosedV1'
     subscribe:
-      summary: Otros módulos consumen este evento para refrescar sus *read models*.
-      operationId: subscribeActaClosedV1
+      summary: Registration Deletion.
+      operationId: subscribeInscripcionDeleteV1
       bindings:
         amqp:
           ack: true
           bindingVersion: '0.2.0'
       message:
-        $ref: '#/components/messages/ActaClosedV1'
+        $ref: '#/components/messages/InscripcionDeletedV1'
+    publish:
+      summary: Registration Deletion.
+      operationId: publishInscripcionDeleteV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/InscripcionDeletedV1'
 components:
   schemas:
     CloudEventBase:
       type: object
-      required: [specversion, id, source, type, data]
+      required:
+        - eventId
+        - eventType
+        - occurredAt
+        - emittedAt
+        - sourceModule
+        - tenant
+        - actor
+        - payload
+        - version
       properties:
-        specversion:
+        eventId:
           type: string
-          enum: ['1.0']
-          description: Versión de CloudEvents.
-        id:
-          type: string
+          format: uuid
           description: Identificador único del evento.
-        source:
+        eventType:
           type: string
-          description: Productor del evento (dominio/recurso), ej. `docente/actas`.
-        type:
-          type: string
-          description: Nombre del evento versionado, ej. `grade.published.v1`.
-        subject:
-          type: string
-          description: Identificador del agregado, ej. `acta:{id}` o `alumno:{id}`.
-        time:
+          description: Tipo lógico del evento (sin versión), p. ej. 'UserCreated', 'GradePosted'.
+        occurredAt:
           type: string
           format: date-time
-          description: Fecha/hora del evento en ISO-8601 UTC.
-        datacontenttype:
+          description: Momento en que ocurrió el hecho de negocio (ISO-8601, UTC).
+        emittedAt:
           type: string
-          default: application/json
-          description: Tipo de contenido del payload de `data`.
-        data:
-          description: Carga útil específica del evento.
+          format: date-time
+          description: Momento en que el evento fue emitido al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalDocente'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        payload:
           type: object
-    GradePublishedData:
+          description: Carga útil específica del evento (schema propio por tipo).
+        version:
+          type: string
+          example: '1.0'
+          description: Versión del contrato del envelope.
+
+    TenantRef:
       type: object
-      required: [acta_id, curso_id, alumno_id, evaluacion, tipo, nota]
+      required: [campusId, orgId]
       properties:
-        acta_id:
+        campusId:
           type: string
-          description: ID del acta.
-        curso_id:
+          description: Identificador del campus/locación del tenant.
+        orgId:
           type: string
-          description: ID del curso.
-        alumno_id:
-          type: string
-          description: ID del alumno.
-        evaluacion:
-          type: string
-          description: Nombre de la evaluación (ej. '1er parcial').
-        tipo:
-          type: string
-          enum: [parcial, recuperatorio, final]
-        nota:
-          type: number
-          minimum: 0
-          maximum: 10
-          description: Calificación numérica.
-    ActaClosedData:
+          description: Identificador de la organización del tenant.
+
+    ActorRef:
       type: object
-      required: [acta_id, curso_id, fecha_cierre, estado]
+      required: [userId, role]
       properties:
-        acta_id:
+        userId:
           type: string
-          description: ID del acta.
-        curso_id:
+          description: Identificador del actor que ejecutó la acción.
+        role:
           type: string
-          description: ID del curso.
-        fecha_cierre:
+          description: Rol del actor, p. ej. 'DOCENTE', 'ADMIN', etc.
+
+    UserCreatedDataV1:
+      type: object
+      description: Envelope + payload específico del evento UserCreated v1.
+      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:      { type: string, format: uuid }
+        eventType:    { type: string, const: UserCreated }
+        occurredAt:   { type: string, format: date-time }
+        emittedAt:    { type: string, format: date-time }
+        sourceModule: { type: string }
+        tenant:       { $ref: '#/components/schemas/TenantRef' }
+        actor:        { $ref: '#/components/schemas/ActorRef' }
+        version:      { type: string, example: '1.0' }
+        payload:
+          type: object
+          required: [uuid, name, email, created_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador único del usuario.
+            name:
+              type: string
+              description: Nombre completo del usuario.
+            email:
+              type: string
+              format: email
+              description: Email único del usuario.
+            created_at:
+              type: string
+              format: date-time
+              description: Fecha de creación en ISO 8601.
+
+    InscripcionCreatedDataV1:
+      type: object
+      description: Envelope + payload específico del evento InscripcionCreated v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
           type: string
-          format: date
-          description: Fecha en que el acta fue cerrada.
-        estado:
+          format: uuid
+          description: Identificador único del evento.
+        eventType:
           type: string
-          enum: [cerrada]
-          description: Estado final del acta.
+          description: Tipo lógico del evento (sin versión).
+          const: InscripcionCreated
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del hecho de negocio (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emisión al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Versión del contrato del envelope.
+        payload:
+          type: object
+          description: Datos de la inscripción creada.
+          required: [uuid, uuid_curso, uuid_alumno, estado, rol, created_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador único de la inscripción.
+            uuid_curso:
+              type: string
+              format: uuid
+              description: Identificador del curso asociado.
+            uuid_alumno:
+              type: string
+              format: uuid
+              description: Identificador del alumno asociado.
+            estado:
+              type: string
+              description: Estado de la inscripción (ej. pendiente, confirmada, cancelada).
+            rol:
+              type: string
+              description: Rol de la persona en el curso (ej. titular, adjunto, ayudante, alumno).
+            created_at:
+              type: string
+              format: date-time
+              description: Fecha de creación en ISO 8601.
+    InscripcionDeletedDataV1:
+      type: object
+      description: Envelope + payload específico del evento InscripcionDeleted v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador único del evento.
+        eventType:
+          type: string
+          const: InscripcionDeleted
+          description: Tipo lógico del evento (sin versión).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del borrado lógico/físico (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emisión al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Versión del contrato del envelope.
+        payload:
+          type: object
+          description: Datos mínimos de la inscripción eliminada.
+          required: [uuid, uuid_curso, uuid_alumno, estado, deleted_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador único de la inscripción.
+            uuid_curso:
+              type: string
+              format: uuid
+              description: Identificador del curso asociado.
+            uuid_alumno:
+              type: string
+              format: uuid
+              description: Identificador del alumno asociado.
+            deleted_at:
+              type: string
+              format: date-time
+              description: Fecha de eliminación en ISO 8601.
+            estado:
+              type: string
+              description: Estado de la inscripción (ej. pendiente, confirmada, cancelada).
+            reason:
+              type: string
+              description: Motivo de la eliminación (opcional).
   messages:
-    GradePublishedV1:
-      name: grade.published.v1
-      title: Grade Published (v1)
-      summary: Se publicó una nota de un alumno en un acta.
+    UserCreatedV1:
+      name: UserCreatedV1
+      title: User Created v1
+      summary: Notifica que un usuario fue creado en BackOffice.
       contentType: application/json
       payload:
-        allOf:
-          - $ref: '#/components/schemas/CloudEventBase'
-          - type: object
-            properties:
-              type:
-                type: string
-                const: grade.published.v1
-              data:
-                $ref: '#/components/schemas/GradePublishedData'
-      examples:
-        - name: Ejemplo grade.published.v1
+        $ref: '#/components/schemas/UserCreatedDataV1'
+        example:
+          eventId: 'c0a8012e-1a2b-4f3d-9c0e-123456789abc'
+          eventType: 'UserCreated'
+          occurredAt: '2025-09-16T19:45:00Z'
+          emittedAt: '2025-09-16T19:45:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'u123', role: 'ADMIN' }
           payload:
-            specversion: '1.0'
-            id: 'evt-8bde7f8a'
-            source: 'docente/actas'
-            type: 'grade.published.v1'
-            subject: 'acta:a_1/alumno:al_55'
-            time: '2025-09-03T19:00:00Z'
-            datacontenttype: 'application/json'
-            data:
-              acta_id: 'a_1'
-              curso_id: 'c_123'
-              alumno_id: 'al_55'
-              evaluacion: '1er parcial'
-              tipo: 'parcial'
-              nota: 8
+            uuid: 'c0a8012e-1a2b-4f3d-9c0e-123456789abc'
+            name: 'Juan Pérez'
+            email: 'juan.perez@example.com'
+            created_at: '2025-09-16T19:45:00Z'
+          version: '1.0'
       bindings:
         amqp:
-          contentEncoding: 'utf-8'
+          deliveryMode: 2
+          mandatory: false
           bindingVersion: '0.2.0'
-    ActaClosedV1:
-      name: acta.closed.v1
-      title: Acta Closed (v1)
-      summary: Un acta fue cerrada.
+    InscripcionCreatedV1:
+      name: InscripcionCreatedV1
+      title: Inscripción Creada v1
+      summary: Notifica que se creó una inscripción.
       contentType: application/json
       payload:
-        allOf:
-          - $ref: '#/components/schemas/CloudEventBase'
-          - type: object
-            properties:
-              type:
-                type: string
-                const: acta.closed.v1
-              data:
-                $ref: '#/components/schemas/ActaClosedData'
-      examples:
-        - name: Ejemplo acta.closed.v1
+        $ref: '#/components/schemas/InscripcionCreatedDataV1'
+        example:
+          eventId: '6f1a4b2c-9b2e-4f0d-8c0a-1234567890ab'
+          eventType: 'InscripcionCreated'
+          occurredAt: '2025-09-16T19:55:00Z'
+          emittedAt: '2025-09-16T19:55:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-001', role: 'ADMIN' }
+          version: '1.0'
           payload:
-            specversion: '1.0'
-            id: 'evt-23cd91af'
-            source: 'docente/actas'
-            type: 'acta.closed.v1'
-            subject: 'acta:a_1'
-            time: '2025-09-03T19:05:00Z'
-            datacontenttype: 'application/json'
-            data:
-              acta_id: 'a_1'
-              curso_id: 'c_123'
-              fecha_cierre: '2025-09-01'
-              estado: 'cerrada'
+            uuid: '2a3a5e7c-1c8b-4e25-9a7e-abcdefabcdef'
+            uuid_curso: 'b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab'
+            uuid_alumno: '0a1b2c3d-4e5f-6789-abcd-ef0123456789'
+            estado: 'pendiente'
+            rol: 'alumno'
+            created_at: '2025-09-16T19:55:00Z'
       bindings:
         amqp:
-          contentEncoding: 'utf-8'
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    InscripcionDeletedV1:
+      name: InscripcionDeletedV1
+      title: Inscripción Eliminada v1
+      summary: Notifica que se eliminó una inscripción.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/InscripcionDeletedDataV1'
+        example:
+          eventId: 'e2a9e8e4-4b07-4d9f-9ab1-0d6a9b1f23cd'
+          eventType: 'InscripcionDeleted'
+          occurredAt: '2025-09-16T20:05:00Z'
+          emittedAt: '2025-09-16T20:05:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-001', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: '9f2b5c7d-1a23-4b56-8c9d-0123456789ab'
+            uuid_curso: 'b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab'
+            uuid_alumno: '0a1b2c3d-4e5f-6789-abcd-ef0123456789'
+            deleted_at: '2025-09-16T20:05:00Z'
+            reason: 'Solicitud del alumno'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
           bindingVersion: '0.2.0'
