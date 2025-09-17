@@ -65,6 +65,9 @@ channels:
           autoDelete: false
         bindingVersion: '0.2.0'
     subscribe:
+      tags:
+        - name: Inscripciones
+        - name: Subscribe
       summary: Registration Creation.
       operationId: subscribeInscripcionCreatedV1
       bindings:
@@ -74,6 +77,9 @@ channels:
       message:
         $ref: '#/components/messages/InscripcionCreatedV1'
     publish:
+      tags:
+        - name: Publish
+        - name: Subscribe
       summary: Registration Creation.
       operationId: publishInscripcionCreatedV1
       bindings:
@@ -93,6 +99,9 @@ channels:
           autoDelete: false
         bindingVersion: '0.2.0'
     subscribe:
+      tags:
+        - name: Inscripciones
+        - name: Subscribe
       summary: Registration Deletion.
       operationId: subscribeInscripcionDeleteV1
       bindings:
@@ -102,6 +111,9 @@ channels:
       message:
         $ref: '#/components/messages/InscripcionDeletedV1'
     publish:
+      tags:
+        - name: Publish
+        - name: Subscribe
       summary: Registration Deletion.
       operationId: publishInscripcionDeleteV1
       bindings:
