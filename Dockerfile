@@ -1,9 +1,14 @@
 FROM node:22-alpine
-ARG NPM_TOKEN
 WORKDIR /var/api
+
+# Copiar manifests
 COPY package*.json ./
-RUN npm ci --no-optional --prefer-offline --loglevel=warn --jobs=2
-COPY . .
-RUN npm run build
+
+# Instala SOLO dependencies (sin dev ni asyncapi)
+RUN npm ci --omit=dev --no-optional --prefer-offline --loglevel=warn --jobs=2
+
+# Copiar código compilado (dist) al contenedor
+COPY dist ./dist
+
 EXPOSE 3030
 CMD ["node", "dist/server.js"]

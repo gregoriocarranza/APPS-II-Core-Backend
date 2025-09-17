@@ -26,7 +26,11 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add private_key
 
-      # 🔹 1. Build la imagen en GitHub
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build
+
       - name: Build Docker image
         run: docker build -t core-backend:latest .
 
@@ -46,6 +50,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             echo \"${ENV_FILE_CONTENT}\" > ~/core-backend.env
             docker load < ~/core-backend.tar.gz
+            cd ~/core-backend 
             docker compose up -d
           "
 
