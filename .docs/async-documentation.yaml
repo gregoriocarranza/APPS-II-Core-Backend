@@ -1,6 +1,6 @@
 asyncapi: '2.6.0'
 info:
-  title: Event Bus (RabbitMQ, topic exchanges)
+  title: Core Event Bus
   version: '0.1.0'
   description: |
     Bus de eventos con RabbitMQ usando exchanges tipo `topic`.
