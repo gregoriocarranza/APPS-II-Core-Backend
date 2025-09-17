@@ -147,13 +147,23 @@ components:
       properties:
         uuid: { type: string, format: uuid }
         subjectUuid: { type: string, format: uuid, description: References `Subject.uuid` }
-        exam: { type: string, nullable: true, description: Optional exam label }
-        maxCount: { type: integer, minimum: 1, default: 35 }
-        minCount: { type: integer, minimum: 1, default: 10 }
+        exam: { type: string, nullable: true, description: Exam label }
+        commission: { type: string, description: Commission }
+        modality: { type: string, description: Modality }
+        campus: { type: string, description: Campus/Site }
+        classroom: { type: string, description: Classroom }
+        period: { type: string, description: Period }
+        schedule: { type: string, description: Schedule }
+        maxCount: { type: integer, minimum: 1, description: Maximum count }
+        minCount: { type: integer, minimum: 1, description: Minimum count }
         since: { type: integer, description: Start time (Unix seconds) }
         until: { type: integer, description: End time (Unix seconds) }
         createdAt: { type: integer, description: Creation time (Unix seconds) }
-      required: [uuid, subjectUuid, since, until]
+      required:
+        - uuid
+        - subjectUuid
+        - since
+        - until
     TeacherSubject:
       type: object
       description: N:N relation binding a teacher to a subject.
@@ -480,15 +490,23 @@ paths:
       tags: [courses]
       summary: List courses
       description: |
-        Returns a paged list of courses. Filter by `subjectUuid`, `exam`, and date range.
+        Returns a paged list of courses. Filter by any course property.
         Typical consumers: Student Portal, Teacher Portal, and Scheduling.
       parameters:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
         - $ref: '#/components/parameters/SortParam'
         - $ref: '#/components/parameters/QParam'
-        - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: exam, in: query, schema: { type: string } }
+        - { name: subjectUuid, in: query, schema: { type: string, format: uuid }, description: Subject UUID }
+        - { name: exam, in: query, schema: { type: string }, description: Exam label }
+        - { name: commission, in: query, schema: { type: string }, description: Commission }
+        - { name: modality, in: query, schema: { type: string }, description: Modality }
+        - { name: campus, in: query, schema: { type: string }, description: Campus/Site }
+        - { name: classroom, in: query, schema: { type: string }, description: Classroom }
+        - { name: period, in: query, schema: { type: string }, description: Period }
+        - { name: schedule, in: query, schema: { type: string }, description: Schedule }
+        - { name: maxCount, in: query, schema: { type: integer }, description: Maximum count }
+        - { name: minCount, in: query, schema: { type: integer }, description: Minimum count }
         - { name: sinceGte, in: query, schema: { type: integer }, description: since >= (Unix seconds) }
         - { name: untilLte, in: query, schema: { type: integer }, description: until <= (Unix seconds) }
       responses:
@@ -503,6 +521,12 @@ paths:
                   - uuid: 11111111-2222-3333-4444-555555555555
                     subjectUuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
                     exam: "Midterm"
+                    commission: "A"
+                    modality: "In-person"
+                    campus: "Main Campus"
+                    classroom: "101"
+                    period: "2025-Q1"
+                    schedule: "Mon 8:00-10:00"
                     maxCount: 35
                     minCount: 10
                     since: 1750000000
@@ -511,6 +535,12 @@ paths:
                   - uuid: 66666666-7777-8888-9999-000000000000
                     subjectUuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
                     exam: "Final"
+                    commission: "B"
+                    modality: "Online"
+                    campus: "North Campus"
+                    classroom: "Virtual Room"
+                    period: "2025-Q2"
+                    schedule: "Wed 14:00-16:00"
                     maxCount: 35
                     minCount: 10
                     since: 1750100000
@@ -910,6 +940,17 @@ paths:
                 oneOf:
                   - { $ref: '#/components/schemas/Wallet' }
                   - { type: array, items: { $ref: '#/components/schemas/Wallet' } }
+              example:
+                - uuid: 987e6543-e21b-12d3-a456-426614174999
+                  userUuid: 555e4444-e89b-12d3-a456-426614174888
+                  currency: USD
+                  status: active
+                  createdAt: 1750001111
+                - uuid: 888e6543-e21b-12d3-a456-426614174998
+                  userUuid: 555e4444-e89b-12d3-a456-426614174888
+                  currency: EUR
+                  status: blocked
+                  createdAt: 1750002222
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -933,7 +974,35 @@ paths:
         - { name: postedFrom, in: query, schema: { type: integer } }
         - { name: postedTo, in: query, schema: { type: integer } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 123e4567-e89b-12d3-a456-426614174010
+                    walletUuid: 987e6543-e21b-12d3-a456-426614174999
+                    type: topup
+                    status: posted
+                    amount: 5000
+                    currency: USD
+                    description: "Top-up via credit card"
+                    createdAt: 1750001111
+                    postedAt: 1750001122
+                  - uuid: 223e4567-e89b-12d3-a456-426614174011
+                    walletUuid: 987e6543-e21b-12d3-a456-426614174999
+                    type: payment
+                    status: posted
+                    amount: 1500
+                    currency: USD
+                    description: "Cafeteria purchase"
+                    createdAt: 1750001133
+                    postedAt: 1750001144
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -970,7 +1039,35 @@ paths:
         - { name: postedFrom, in: query, schema: { type: integer } }
         - { name: postedTo, in: query, schema: { type: integer } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 123e4567-e89b-12d3-a456-426614174010
+                    walletUuid: 987e6543-e21b-12d3-a456-426614174999
+                    type: topup
+                    status: posted
+                    amount: 5000
+                    currency: USD
+                    description: "Top-up via credit card"
+                    createdAt: 1750001111
+                    postedAt: 1750001122
+                  - uuid: 223e4567-e89b-12d3-a456-426614174011
+                    walletUuid: 987e6543-e21b-12d3-a456-426614174999
+                    type: payment
+                    status: posted
+                    amount: 1500
+                    currency: USD
+                    description: "Cafeteria purchase"
+                    createdAt: 1750001133
+                    postedAt: 1750001144
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -986,7 +1083,20 @@ paths:
       parameters:
         - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+              example:
+                uuid: 999e4444-e89b-12d3-a456-426614174888
+                userUuid: 555e4444-e89b-12d3-a456-426614174888
+                title: "Library Book Due"
+                message: "Your borrowed book is due tomorrow."
+                read: false
+                createdAt: 1750003333
+                readAt: null
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
