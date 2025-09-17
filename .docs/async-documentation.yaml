@@ -43,7 +43,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: user.events
           type: topic
           durable: true
           autoDelete: false
@@ -100,7 +100,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: inscripciones.events
           type: topic
           durable: true
           autoDelete: false
@@ -134,7 +134,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: materia.events
           type: topic
           durable: true
           autoDelete: false
@@ -168,7 +168,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: materia.events
           type: topic
           durable: true
           autoDelete: false
@@ -177,7 +177,7 @@ channels:
       tags:
         - name: Materias
         - name: Subscribe
-      summary: Materia Creation.
+      summary: Materia updated.
       operationId: subscribeMateriaCreatedV1
       bindings:
         amqp:
@@ -189,7 +189,7 @@ channels:
       tags:
         - name: Publish
         - name: Materias
-      summary: Materia Creation.
+      summary: Materia updated.
       operationId: publishMateriaCreatedV1
       bindings:
         amqp:
@@ -202,7 +202,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: materias.events
           type: topic
           durable: true
           autoDelete: false
@@ -236,7 +236,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: correlativas.events
           type: topic
           durable: true
           autoDelete: false
@@ -260,7 +260,7 @@ channels:
       summary: Correlativa Creation.
       operationId: publishCorrelativaCreatedV1
       bindings:
-        amqp:
+        amqp:FRco
           bindingVersion: '0.2.0'
       message:
         $ref: '#/components/messages/CorrelativaCreatedV1'
@@ -270,7 +270,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: correlativas.events
           type: topic
           durable: true
           autoDelete: false
@@ -279,7 +279,7 @@ channels:
       tags:
         - name: Correlativas
         - name: Subscribe
-      summary: Correlativa Creation.
+      summary: Correlativa updated.
       operationId: subscribeCorrelativaCreatedV1
       bindings:
         amqp:
@@ -291,7 +291,7 @@ channels:
       tags:
         - name: Publish
         - name: Correlativas
-      summary: Correlativa Creation.
+      summary: Correlativa updated.
       operationId: publishCorrelativaCreatedV1
       bindings:
         amqp:
@@ -304,7 +304,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: correlativas.events
           type: topic
           durable: true
           autoDelete: false
@@ -338,7 +338,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: docentes_materia.events
           type: topic
           durable: true
           autoDelete: false
@@ -372,7 +372,7 @@ channels:
       amqp:
         is: routingKey
         exchange:
-          name: core.events
+          name: docentes_materia.events
           type: topic
           durable: true
           autoDelete: false
