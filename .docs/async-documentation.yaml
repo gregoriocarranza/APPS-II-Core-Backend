@@ -86,7 +86,7 @@ channels:
     publish:
       tags:
         - name: Publish
-        - name: Subscribe
+        - name: Inscripciones
       summary: Registration Creation.
       operationId: publishInscripcionCreatedV1
       bindings:
@@ -120,7 +120,7 @@ channels:
     publish:
       tags:
         - name: Publish
-        - name: Subscribe
+        - name: Inscripciones
       summary: Registration Deletion.
       operationId: publishInscripcionDeleteV1
       bindings:
