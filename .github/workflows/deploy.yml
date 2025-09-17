@@ -39,8 +39,9 @@ jobs:
         run: docker save core-backend:latest | gzip > core-backend.tar.gz
 
       # 🔹 3. Copiar la imagen al server
-      - name: Copy image to server
-        run: scp -o StrictHostKeyChecking=no -i private_key core-backend.tar.gz ${{ secrets.DO_CONNECTION_URI }}:~/core-backend.tar.gz
+      - name: Copy image and compose file to server
+        run: scp -o StrictHostKeyChecking=no -i private_key core-backend.tar.gz docker-compose.yml ${{ secrets.DO_CONNECTION_URI }}:~/core-backend/
+
 
       # 🔹 4. Cargar imagen y levantar contenedor en el server
       - name: Load and run on server
@@ -48,8 +49,8 @@ jobs:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
-            echo \"${ENV_FILE_CONTENT}\" > ~/core-backend.env
-            docker load < ~/core-backend.tar.gz
+            echo \"${ENV_FILE_CONTENT}\" > ~/core-backend/.env
+            docker load < ~/core-backend/core-backend.tar.gz
             cd ~/core-backend 
             docker compose up -d
           "
