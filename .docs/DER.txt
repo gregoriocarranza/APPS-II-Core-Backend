@@ -7,6 +7,12 @@ Table curso {
   uuid uuid [pk]
   uuid_materia varchar [not null]
   examen varchar
+  comision varchar
+  modalidad varchar [note: 'ej.: PRESENCIAL, VIRTUAL']
+  sede varchar
+  aula varchar
+  periodo varchar
+  horario varchar
   cantidad_max integer [default: 35]
   cantidad_min integer [default: 10]
   desde timestamp [not null]
@@ -25,7 +31,8 @@ Table inscripciones {
   uuid_curso uuid [not null]
   uuid_alumno uuid [not null]
   estado varchar [note: 'ej.: pendiente, confirmada, confirmada']
-  rol varchar [note: 'ej.: titular, adjunto, ayudante, alumno']
+  rol varchar [default: "", note: 'esto se va a usar en el caso de que el usuario se baje de la cursada o se la cancelen de alguna manera']
+  reazon varchar [note: 'ej.: titular, adjunto, ayudante, alumno']
   created_at timestamp [default: `now()`]
 }
 
@@ -40,6 +47,18 @@ Table docentes_materia {
   uuid uuid [pk]
   uuid_docente uuid [not null]
   uuid_materia uuid [not null]
+}
+
+Table notificaciones {
+  uuid uuid [pk]
+  uuid_user uuid [not null]
+  title varchar
+  body varchar
+  from varchar
+}
+
+Table rmq_events {
+  uuid uuid [pk]
 }
 
 Ref: materias.uuid < curso.uuid_materia [delete: restrict, update: cascade]
@@ -98,4 +117,3 @@ Table transactions {
 // RELACIONES
 Ref: users.uuid < wallets.user_id [delete: cascade, update: cascade]
 Ref: wallets.uuid < transactions.wallet_uuid [delete: restrict, update: cascade]
-

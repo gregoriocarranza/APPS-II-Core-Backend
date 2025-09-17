@@ -18,9 +18,16 @@ tags:
   - name: Inscripciones
     description: Eventos del dominio de inscripciones
   - name: Publish
-    description: Operaciones de publicación
+    description: Operaciones de publicacion
   - name: Subscribe
-    description: Operaciones de suscripción
+    description: Operaciones de suscripcion
+  - name: Materias
+    description: Eventos relacionados a materias
+  - name: Correlativas
+    description: Eventos de correlatividades de materias
+  - name: DocentesMateria
+    description: Eventos sobre asignaciones docente-materia
+
 
 servers:
   rabbitmqLocal:
@@ -79,7 +86,7 @@ channels:
     publish:
       tags:
         - name: Publish
-        - name: Subscribe
+        - name: Inscripciones
       summary: Registration Creation.
       operationId: publishInscripcionCreatedV1
       bindings:
@@ -113,7 +120,7 @@ channels:
     publish:
       tags:
         - name: Publish
-        - name: Subscribe
+        - name: Inscripciones
       summary: Registration Deletion.
       operationId: publishInscripcionDeleteV1
       bindings:
@@ -121,6 +128,212 @@ channels:
           bindingVersion: '0.2.0'
       message:
         $ref: '#/components/messages/InscripcionDeletedV1'
+  materias.created:
+    description: Evento emitido cuando se crea una materia.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: Materias
+        - name: Subscribe
+      summary: Materia Creation.
+      operationId: subscribeMateriaCreatedV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/MateriaCreatedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: Materias
+      summary: Materia Creation.
+      operationId: publishMateriaCreatedV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/MateriaCreatedV1'
+  materias.delete:
+    description: Evento emitido cuando se elimina una materia.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: Materias
+        - name: Subscribe
+      summary: Materia Deletion.
+      operationId: subscribeMateriaDeleteV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/MateriaDeletedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: Materias
+      summary: Materia Deletion.
+      operationId: publishMateriaDeleteV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/MateriaDeletedV1'
+  correlativas.created:
+    description: Evento emitido cuando se crea una correlatividad entre materias.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: Correlativas
+        - name: Subscribe
+      summary: Correlativa Creation.
+      operationId: subscribeCorrelativaCreatedV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/CorrelativaCreatedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: Correlativas
+      summary: Correlativa Creation.
+      operationId: publishCorrelativaCreatedV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/CorrelativaCreatedV1'
+  correlativas.delete:
+    description: Evento emitido cuando se elimina una correlatividad entre materias.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: Correlativas
+        - name: Subscribe
+      summary: Correlativa Deletion.
+      operationId: subscribeCorrelativaDeleteV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/CorrelativaDeletedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: Correlativas
+      summary: Correlativa Deletion.
+      operationId: publishCorrelativaDeleteV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/CorrelativaDeletedV1'
+  docentes_materia.created:
+    description: Evento emitido cuando se asigna un docente a una materia.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: DocentesMateria
+        - name: Subscribe
+      summary: Docente Materia Creation.
+      operationId: subscribeDocenteMateriaCreatedV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/DocenteMateriaCreatedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: DocentesMateria
+      summary: Docente Materia Creation.
+      operationId: publishDocenteMateriaCreatedV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/DocenteMateriaCreatedV1'
+  docentes_materia.delete:
+    description: Evento emitido cuando se elimina la asignacion de un docente a una materia.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: core.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    subscribe:
+      tags:
+        - name: DocentesMateria
+        - name: Subscribe
+      summary: Docente Materia Deletion.
+      operationId: subscribeDocenteMateriaDeleteV1
+      bindings:
+        amqp:
+          ack: true
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/DocenteMateriaDeletedV1'
+    publish:
+      tags:
+        - name: Publish
+        - name: DocentesMateria
+      summary: Docente Materia Deletion.
+      operationId: publishDocenteMateriaDeleteV1
+      bindings:
+        amqp:
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/DocenteMateriaDeletedV1'
+  
+
 components:
   schemas:
     CloudEventBase:
@@ -339,6 +552,313 @@ components:
             reason:
               type: string
               description: Motivo de la eliminación (opcional).
+    MateriaCreatedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento MateriaCreated v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: MateriaCreated
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del hecho de negocio (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos de la materia creada.
+          required: [uuid, nombre]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la materia.
+            nombre:
+              type: string
+              description: Nombre unico de la materia.
+    MateriaDeletedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento MateriaDeleted v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: MateriaDeleted
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del borrado logico/fisico (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos minimos de la materia eliminada.
+          required: [uuid, deleted_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la materia.
+            nombre:
+              type: string
+              description: Nombre de la materia al momento del borrado.
+            deleted_at:
+              type: string
+              format: date-time
+              description: Fecha de eliminacion en ISO 8601.
+            reason:
+              type: string
+              description: Motivo de la eliminacion (opcional).
+    CorrelativaCreatedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento CorrelativaCreated v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: CorrelativaCreated
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del hecho de negocio (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos de la correlatividad creada.
+          required: [uuid, uuid_materia, uuid_materia_correlativa]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la correlatividad.
+            uuid_materia:
+              type: string
+              format: uuid
+              description: Identificador de la materia base.
+            uuid_materia_correlativa:
+              type: string
+              format: uuid
+              description: Identificador de la materia correlativa.
+    CorrelativaDeletedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento CorrelativaDeleted v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: CorrelativaDeleted
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del borrado logico/fisico (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos minimos de la correlatividad eliminada.
+          required: [uuid, uuid_materia, uuid_materia_correlativa, deleted_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la correlatividad.
+            uuid_materia:
+              type: string
+              format: uuid
+              description: Identificador de la materia base.
+            uuid_materia_correlativa:
+              type: string
+              format: uuid
+              description: Identificador de la materia correlativa.
+            deleted_at:
+              type: string
+              format: date-time
+              description: Fecha de eliminacion en ISO 8601.
+            reason:
+              type: string
+              description: Motivo de la eliminacion (opcional).
+    DocenteMateriaCreatedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento DocenteMateriaCreated v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: DocenteMateriaCreated
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del hecho de negocio (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos de la asignacion docente-materia creada.
+          required: [uuid, uuid_docente, uuid_materia]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la asignacion.
+            uuid_docente:
+              type: string
+              format: uuid
+              description: Identificador del docente.
+            uuid_materia:
+              type: string
+              format: uuid
+              description: Identificador de la materia.
+    DocenteMateriaDeletedDataV1:
+      type: object
+      description: Envelope + payload especifico del evento DocenteMateriaDeleted v1.
+      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Identificador unico del evento.
+        eventType:
+          type: string
+          const: DocenteMateriaDeleted
+          description: Tipo logico del evento (sin version).
+        occurredAt:
+          type: string
+          format: date-time
+          description: Momento del borrado logico/fisico (ISO-8601, UTC).
+        emittedAt:
+          type: string
+          format: date-time
+          description: Momento de emision al bus (ISO-8601, UTC).
+        sourceModule:
+          type: string
+          description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
+        tenant:
+          $ref: '#/components/schemas/TenantRef'
+        actor:
+          $ref: '#/components/schemas/ActorRef'
+        version:
+          type: string
+          example: '1.0'
+          description: Version del contrato del envelope.
+        payload:
+          type: object
+          description: Datos minimos de la asignacion docente-materia eliminada.
+          required: [uuid, uuid_docente, uuid_materia, deleted_at]
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              description: Identificador unico de la asignacion.
+            uuid_docente:
+              type: string
+              format: uuid
+              description: Identificador del docente.
+            uuid_materia:
+              type: string
+              format: uuid
+              description: Identificador de la materia.
+            deleted_at:
+              type: string
+              format: date-time
+              description: Fecha de eliminacion en ISO 8601.
+            reason:
+              type: string
+              description: Motivo de la eliminacion (opcional).
+    
+
   messages:
     UserCreatedV1:
       name: UserCreatedV1
@@ -421,3 +941,158 @@ components:
           deliveryMode: 2
           mandatory: false
           bindingVersion: '0.2.0'
+    MateriaCreatedV1:
+      name: MateriaCreatedV1
+      title: Materia Created v1
+      summary: Notifica que se creo una materia.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/MateriaCreatedDataV1'
+        example:
+          eventId: '3a9f1b2c-4d5e-678f-9012-abcdefabcdef'
+          eventType: 'MateriaCreated'
+          occurredAt: '2025-09-16T21:00:00Z'
+          emittedAt: '2025-09-16T21:00:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-001', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            nombre: 'Analisis Matematico I'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    MateriaDeletedV1:
+      name: MateriaDeletedV1
+      title: Materia Deleted v1
+      summary: Notifica que se elimino una materia.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/MateriaDeletedDataV1'
+        example:
+          eventId: '9c8d7e6f-5a4b-3210-fedc-ba9876543210'
+          eventType: 'MateriaDeleted'
+          occurredAt: '2025-09-17T10:15:00Z'
+          emittedAt: '2025-09-17T10:15:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-002', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            nombre: 'Analisis Matematico I'
+            deleted_at: '2025-09-17T10:15:00Z'
+            reason: 'Reemplazo por nuevo plan'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    CorrelativaCreatedV1:
+      name: CorrelativaCreatedV1
+      title: Correlativa Created v1
+      summary: Notifica que se creo una correlatividad entre materias.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/CorrelativaCreatedDataV1'
+        example:
+          eventId: '1f2e3d4c-5b6a-7980-91ab-cdefabcdef12'
+          eventType: 'CorrelativaCreated'
+          occurredAt: '2025-09-18T09:00:00Z'
+          emittedAt: '2025-09-18T09:00:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-003', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: 'abcdef12-3456-7890-abcd-ef1234567890'
+            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            uuid_materia_correlativa: '01234567-89ab-cdef-0123-456789abcdef'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    CorrelativaDeletedV1:
+      name: CorrelativaDeletedV1
+      title: Correlativa Deleted v1
+      summary: Notifica que se elimino una correlatividad entre materias.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/CorrelativaDeletedDataV1'
+        example:
+          eventId: '210fedcb-a987-6543-210f-edcba9876543'
+          eventType: 'CorrelativaDeleted'
+          occurredAt: '2025-09-18T12:30:00Z'
+          emittedAt: '2025-09-18T12:30:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-003', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: 'abcdef12-3456-7890-abcd-ef1234567890'
+            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            uuid_materia_correlativa: '01234567-89ab-cdef-0123-456789abcdef'
+            deleted_at: '2025-09-18T12:30:00Z'
+            reason: 'Actualizacion de plan de estudios'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    DocenteMateriaCreatedV1:
+      name: DocenteMateriaCreatedV1
+      title: Docente Materia Created v1
+      summary: Notifica que se creo una asignacion docente-materia.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DocenteMateriaCreatedDataV1'
+        example:
+          eventId: 'fedcba98-7654-3210-fedc-ba9876543210'
+          eventType: 'DocenteMateriaCreated'
+          occurredAt: '2025-09-19T08:45:00Z'
+          emittedAt: '2025-09-19T08:45:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-004', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: '0fedcba9-8765-4321-0fed-cba987654321'
+            uuid_docente: '12345678-90ab-cdef-1234-567890abcdef'
+            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+    DocenteMateriaDeletedV1:
+      name: DocenteMateriaDeletedV1
+      title: Docente Materia Deleted v1
+      summary: Notifica que se elimino una asignacion docente-materia.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DocenteMateriaDeletedDataV1'
+        example:
+          eventId: '0abc1234-def5-6789-0abc-1234def56789'
+          eventType: 'DocenteMateriaDeleted'
+          occurredAt: '2025-09-19T11:00:00Z'
+          emittedAt: '2025-09-19T11:00:01Z'
+          sourceModule: 'BackOffice'
+          tenant: { campusId: 'BA', orgId: 'UNI' }
+          actor: { userId: 'admin-004', role: 'ADMIN' }
+          version: '1.0'
+          payload:
+            uuid: '0fedcba9-8765-4321-0fed-cba987654321'
+            uuid_docente: '12345678-90ab-cdef-1234-567890abcdef'
+            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            deleted_at: '2025-09-19T11:00:00Z'
+            reason: 'Fin de contrato'
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+
