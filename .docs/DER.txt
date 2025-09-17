@@ -59,7 +59,10 @@ Table notificaciones {
 
 Table rmq_events {
   uuid uuid [pk]
+  metadata varchar
 }
+
+Ref: notificaciones.uuid < users.uuid [delete: restrict, update: cascade]
 
 Ref: materias.uuid < curso.uuid_materia [delete: restrict, update: cascade]
 Ref: curso.uuid < inscripciones.uuid_curso [delete: cascade, update: cascade]
@@ -117,3 +120,4 @@ Table transactions {
 // RELACIONES
 Ref: users.uuid < wallets.user_id [delete: cascade, update: cascade]
 Ref: wallets.uuid < transactions.wallet_uuid [delete: restrict, update: cascade]
+
