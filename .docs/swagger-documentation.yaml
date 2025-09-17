@@ -380,7 +380,21 @@ paths:
           schema: { type: string }
           description: Exact name filter.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
+                    name: Mathematics
+                  - uuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
+                    name: Physics
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -478,7 +492,33 @@ paths:
         - { name: sinceGte, in: query, schema: { type: integer }, description: since >= (Unix seconds) }
         - { name: untilLte, in: query, schema: { type: integer }, description: until <= (Unix seconds) }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 11111111-2222-3333-4444-555555555555
+                    subjectUuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
+                    exam: "Midterm"
+                    maxCount: 35
+                    minCount: 10
+                    since: 1750000000
+                    until: 1750003600
+                    createdAt: 1749999999
+                  - uuid: 66666666-7777-8888-9999-000000000000
+                    subjectUuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
+                    exam: "Final"
+                    maxCount: 35
+                    minCount: 10
+                    since: 1750100000
+                    until: 1750103600
+                    createdAt: 1750099999
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -566,7 +606,23 @@ paths:
         - { name: teacherUuid, in: query, schema: { type: string, format: uuid } }
         - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 123e4567-e89b-12d3-a456-426614174000
+                    teacherUuid: 987e6543-e21b-12d3-a456-426614174999
+                    subjectUuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
+                  - uuid: 223e4567-e89b-12d3-a456-426614174001
+                    teacherUuid: 987e6543-e21b-12d3-a456-426614174999
+                    subjectUuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -653,7 +709,29 @@ paths:
         - { name: courseUuid, in: query, schema: { type: string, format: uuid } }
         - { name: userUuid, in: query, schema: { type: string, format: uuid } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 333e4567-e89b-12d3-a456-426614174002
+                    courseUuid: 11111111-2222-3333-4444-555555555555
+                    userUuid: 555e4444-e89b-12d3-a456-426614174888
+                    status: confirmed
+                    role: student
+                    createdAt: 1750001111
+                  - uuid: 444e4567-e89b-12d3-a456-426614174003
+                    courseUuid: 66666666-7777-8888-9999-000000000000
+                    userUuid: 555e4444-e89b-12d3-a456-426614174888
+                    status: pending
+                    role: assistant
+                    createdAt: 1750002222
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -705,7 +783,23 @@ paths:
         - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
         - { name: prerequisiteSubjectUuid, in: query, schema: { type: string, format: uuid } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 555e4567-e89b-12d3-a456-426614174004
+                    subjectUuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
+                    prerequisiteSubjectUuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
+                  - uuid: 666e4567-e89b-12d3-a456-426614174005
+                    subjectUuid: a1b2c3d4-5e6f-7a8b-9c0d-abcdef123456
+                    prerequisiteSubjectUuid: b7e6c2e2-8f3a-4c1a-9e2a-123456789abc
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -758,7 +852,25 @@ paths:
         - { name: name, in: query, schema: { type: string } }
         - { name: email, in: query, schema: { type: string, format: email } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+              example:
+                items:
+                  - uuid: 555e4444-e89b-12d3-a456-426614174888
+                    name: Alice Smith
+                    email: alice.smith@example.com
+                    createdAt: 1750001111
+                  - uuid: 666e4444-e89b-12d3-a456-426614174889
+                    name: Bob Jones
+                    email: bob.jones@example.com
+                    createdAt: 1750002222
+                total: 2
+                page: 1
+                pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
