@@ -178,7 +178,7 @@ channels:
         - name: Materias
         - name: Subscribe
       summary: Materia updated.
-      operationId: subscribeMateriaCreatedV1
+      operationId: subscribeMateriaUpdatedV1
       bindings:
         amqp:
           ack: true
@@ -190,7 +190,7 @@ channels:
         - name: Publish
         - name: Materias
       summary: Materia updated.
-      operationId: publishMateriaCreatedV1
+      operationId: publishMateriaUpdatedV1
       bindings:
         amqp:
           bindingVersion: '0.2.0'
@@ -280,7 +280,7 @@ channels:
         - name: Correlativas
         - name: Subscribe
       summary: Correlativa updated.
-      operationId: subscribeCorrelativaCreatedV1
+      operationId: subscribeCorrelativaUpdatedV1
       bindings:
         amqp:
           ack: true
@@ -292,7 +292,7 @@ channels:
         - name: Publish
         - name: Correlativas
       summary: Correlativa updated.
-      operationId: publishCorrelativaCreatedV1
+      operationId: publishCorrelativaUpdatedV1
       bindings:
         amqp:
           bindingVersion: '0.2.0'
