@@ -1132,7 +1132,31 @@ paths:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PagedResponse'
+                example:
+                  items:
+                    - uuid: 999e4444-e89b-12d3-a456-426614174888
+                      userUuid: 555e4444-e89b-12d3-a456-426614174888
+                      title: "Library Book Due"
+                      message: "Your borrowed book is due tomorrow."
+                      read: false
+                      createdAt: 1750003333
+                      readAt: null
+                    - uuid: 888e4444-e89b-12d3-a456-426614174889
+                      userUuid: 555e4444-e89b-12d3-a456-426614174888
+                      title: "Cafeteria Promo"
+                      message: "Get 10% off your next purchase."
+                      read: true
+                      createdAt: 1750004444
+                      readAt: 1750004455
+                  total: 2
+                  page: 1
+                  pageSize: 25
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
