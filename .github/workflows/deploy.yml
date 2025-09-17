@@ -26,20 +26,28 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add private_key
 
-      - name: Deploy to Digital Ocean
+      # 🔹 1. Build la imagen en GitHub
+      - name: Build Docker image
+        run: docker build -t core-backend:latest .
+
+      # 🔹 2. Exportar imagen como tar.gz
+      - name: Save image as tar
+        run: docker save core-backend:latest | gzip > core-backend.tar.gz
+
+      # 🔹 3. Copiar la imagen al server
+      - name: Copy image to server
+        run: scp -o StrictHostKeyChecking=no -i private_key core-backend.tar.gz ${{ secrets.DO_CONNECTION_URI }}:~/core-backend.tar.gz
+
+      # 🔹 4. Cargar imagen y levantar contenedor en el server
+      - name: Load and run on server
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
-            if [ ! -d ~/core-backend ]; then
-              git clone https://github.com/gregoriocarranza/APPS-II-Core-Backend.git ~/core-backend
-            else
-              cd ~/core-backend && git pull
-            fi
-            cd ~/core-backend
-            echo \"${ENV_FILE_CONTENT}\" > .env
-            docker stop $(docker ps -aq)
-            docker compose up --build -d
+            echo \"${ENV_FILE_CONTENT}\" > ~/core-backend.env
+            docker load < ~/core-backend.tar.gz
+            docker stop \$(docker ps -aq) || true
+            docker run -d --name core-backend --env-file ~/core-backend.env -p 3030:3030 core-backend:latest
           "
 
       - name: Clean up SSH key
