@@ -46,8 +46,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             echo \"${ENV_FILE_CONTENT}\" > ~/core-backend.env
             docker load < ~/core-backend.tar.gz
-            docker stop \$(docker ps -aq) || true
-            docker run -d --name core-backend --env-file ~/core-backend.env -p 3030:3030 core-backend:latest
+            docker compose up -d
           "
 
       - name: Clean up SSH key
