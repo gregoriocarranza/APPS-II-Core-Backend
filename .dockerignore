@@ -2,12 +2,10 @@ node_modules
 .git
 .gitignore
 npm-debug.log*
-dist
 coverage
 logs
 .DS_Store
 .vscode
-dist
 Dockerfile
 README.md
 **/*.log
