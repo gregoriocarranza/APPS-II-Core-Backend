@@ -1,80 +1,43 @@
 openapi: 3.1.0
 info:
-  title: CampusConnect Core API
-  version: "1.3.0"
-  description: |
-    The CampusConnect **Core API** exposes academic and institutional resources used by all modules
-    (Student/Teacher Portal, Library, Cafeteria, Store, Analytics).
-
-    **Auth model**: JWT Bearer with short-lived **access token** and rotating **refresh token**.
-    All endpoints **require** authentication except `/auth/*` and `/.well-known/jwks.json`.
-
+  title: Core API
+  version: "0.1.2"
+  description: >
+    OpenAPI specification draft for the Applications Development II project.
+    Resources: courses, subjects, teacher-subjects, enrollments, prerequisites, wallets, users, transactions and notifications.
+    Endpoints: GET/POST/GET {id}/PUT/DELETE for each resource.
 servers:
-  - url: https://137.184.231.145:3030/api/v1
-    description: Production (HTTPS)
-
-security:
-  - bearerAuth: []
-
+  - url: http://137.184.231.145:3030
+    description: Local
 tags:
-  - name: auth
-    description: Authentication endpoints (login, refresh, logout) and JWKS for public key discovery.
-  - name: subjects
-    description: Academic subjects offered by the institution. A subject can have prerequisites and multiple courses.
-  - name: courses
-    description: Concrete course instances linked to a subject and delimited by a date range.
-  - name: teacher-subjects
-    description: Assignments that link a teacher to a subject they can teach.
-  - name: enrollments
-    description: Users enrolled in courses (students and teaching roles). Used by Student/Teacher Portals.
-  - name: subject-prerequisites
-    description: Prerequisite graph among subjects used for enrollment validation.
-  - name: users
-    description: Users of the platform (students, teachers, staff). Read-only in Core.
-  - name: wallets
-    description: User wallets for campus services (library fines, cafeteria/store purchases).
-  - name: transactions
-    description: Wallet transactions (topups, payments, refunds, transfers, payouts).
-  - name: notifications
-    description: User-targeted notifications; supports read/unread operations and listing by user.
-
+  - name: Courses
+  - name: Subjects
+  - name: Teacher-Subjects
+  - name: Enrollments
+  - name: Prerequisites
+  - name: Wallets
+  - name: Users
+  - name: Transactions
+  - name: Notifications
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  headers:
-    CacheControlNoStore:
-      description: "Set to `no-store` to prevent caching of auth responses."
-      schema: { type: string, example: "no-store" }
-    PragmaNoCache:
-      description: "Set to `no-cache` for legacy cache prevention."
-      schema: { type: string, example: "no-cache" }
-    WWWAuthenticate:
-      description: "Authentication challenge details for 401 responses."
-      schema: { type: string, example: "Bearer error=\"invalid_token\", error_description=\"The token is expired\"" }
   parameters:
     PageParam:
       name: page
       in: query
-      description: 1-based page index.
-      schema: { type: integer, minimum: 1, default: 1 }
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page (1-based)
     PageSizeParam:
-      name: pageSize
+      name: page_size
       in: query
-      description: Page size (max 100).
-      schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
-    SortParam:
-      name: sort
-      in: query
-      description: Comma-separated fields. Prefix with `-` for descending (e.g., `name,-createdAt`).
-      schema: { type: string }
-    QParam:
-      name: q
-      in: query
-      description: Free-text search (implementation-specific).
-      schema: { type: string }
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+      description: Page size (max 100)
   schemas:
     Error:
       type: object
@@ -82,865 +45,915 @@ components:
         error:
           type: object
           properties:
-            code: { type: string, description: Stable internal error code }
-            message: { type: string, description: Human-readable message }
-            details: { type: object, additionalProperties: true, description: Structured validation context }
-            requestId: { type: string, format: uuid, description: Correlates server logs }
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+            request_id: { type: string, format: uuid }
           required: [code, message]
       required: [error]
     PagedResponse:
       type: object
       properties:
-        items: { type: array, items: { type: object } }
-        total: { type: integer }
-        page: { type: integer }
-        pageSize: { type: integer }
-      required: [items, total, page, pageSize]
-
-    # ===== Auth =====
-    AuthLoginRequest:
-      type: object
-      required: [user, password]
-      properties:
-        user: { type: string, description: "Username or email." }
-        password: { type: string, description: "User password." }
-    AuthTokens:
-      type: object
-      required: [tokenType, jwt, refreshToken, expiresAt]
-      properties:
-        tokenType: { type: string, enum: [Bearer], description: "Always 'Bearer'." }
-        jwt: { type: string, description: "Access token (JWT, RS256)." }
-        refreshToken: { type: string, description: "Opaque or JWT refresh token (rotating)." }
-        expiresAt: { type: integer, description: "JWT expiration (Unix seconds)." }
-        refreshExpiresAt: { type: integer, description: "Refresh token expiration (Unix seconds)." }
-    AuthRefreshRequest:
-      type: object
-      required: [refreshToken]
-      properties:
-        refreshToken: { type: string, description: "Refresh token to rotate and obtain a new access token." }
-    AuthLogoutRequest:
-      type: object
-      properties:
-        refreshToken: { type: string, description: "Refresh token to revoke. If omitted with all=true, revokes all sessions for current subject." }
-        all: { type: boolean, default: false, description: "If true, revokes all active refresh tokens for the authenticated user." }
-    JWKS:
-      type: object
-      properties:
-        keys:
+        items:
           type: array
           items:
             type: object
-            additionalProperties: true
-      description: "JSON Web Key Set as per RFC 7517."
-
-    # ===== Domain =====
-    Subject:
-      type: object
-      description: Canonical subject record.
-      properties:
-        uuid: { type: string, format: uuid }
-        name: { type: string, minLength: 1, description: Unique subject name }
-      required: [uuid, name]
+        total: { type: integer }
+        page: { type: integer }
+        page_size: { type: integer }
+      required: [items, total, page, page_size]
     Course:
       type: object
-      description: A schedulable course offering linked to a subject.
       properties:
-        uuid: { type: string, format: uuid }
-        subjectUuid: { type: string, format: uuid, description: References `Subject.uuid` }
-        exam: { type: string, nullable: true, description: Optional exam label }
-        maxCount: { type: integer, minimum: 1, default: 35 }
-        minCount: { type: integer, minimum: 1, default: 10 }
-        since: { type: integer, description: Start time (Unix seconds) }
-        until: { type: integer, description: End time (Unix seconds) }
-        createdAt: { type: integer, description: Creation time (Unix seconds) }
-      required: [uuid, subjectUuid, since, until]
+        id: { type: string, format: uuid }
+        subject_id: { type: string, format: uuid, description: "FK Subject.id" }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        exam_type:
+          type: string
+          enum: [partial, makeup, final]
+        max_capacity: { type: integer, minimum: 1 }
+      required: [id, subject_id, start_date, end_date, exam_type, max_capacity]
+    Subject:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, minLength: 1 }
+      required: [id, name]
     TeacherSubject:
       type: object
-      description: N:N relation binding a teacher to a subject.
+      description: N:N relationship between teachers and subjects.
       properties:
-        uuid: { type: string, format: uuid }
-        teacherUuid: { type: string, format: uuid }
-        subjectUuid: { type: string, format: uuid }
-      required: [uuid, teacherUuid, subjectUuid]
+        id: { type: string, format: uuid }
+        teacher_id: { type: string, format: uuid, description: "FK Teacher.id (not defined in this draft)" }
+        subject_id: { type: string, format: uuid, description: "FK Subject.id" }
+      required: [id, teacher_id, subject_id]
     Enrollment:
       type: object
-      description: Enrollment of a user into a course; supports student and teaching roles.
+      description: Student enrollment record for a course.
       properties:
         uuid: { type: string, format: uuid }
-        courseUuid: { type: string, format: uuid }
-        userUuid: { type: string, format: uuid }
-        status: { type: string, description: "E.g., pending, confirmed, cancelled" }
-        role: { type: string, description: "E.g., student, head, assistant" }
-        createdAt: { type: integer, description: Unix seconds }
-      required: [uuid, courseUuid, userUuid]
+        course_uuid: { type: string, format: uuid, description: "FK course.uuid" }
+        student_uuid: { type: string, format: uuid, description: "FK users.uuid" }
+        status:
+          type: string
+          description: "Enrollment status (e.g.: pending, confirmed, cancelled)"
+        role:
+          type: string
+          description: "Role in the course (e.g.: student, titular, adjunct, assistant)"
+        created_at: { type: string, format: date-time }
+      required: [uuid, course_uuid, student_uuid]
     EnrollmentCreate:
       type: object
       description: Payload to create an enrollment.
       properties:
-        courseUuid: { type: string, format: uuid }
-        userUuid: { type: string, format: uuid }
-        status: { type: string }
-        role: { type: string }
-      required: [courseUuid, userUuid]
-    SubjectPrerequisite:
+        course_uuid: { type: string, format: uuid }
+        student_uuid: { type: string, format: uuid }
+        status:
+          type: string
+          description: "Initial status (e.g.: pending)"
+        role:
+          type: string
+          description: "Role (default 'student' if applicable)"
+      required: [course_uuid, student_uuid]
+    Prerequisite:
       type: object
-      description: Directed prerequisite edge in the subject graph.
+      description: Prerequisite relationship between subjects.
       properties:
         uuid: { type: string, format: uuid }
-        subjectUuid: { type: string, format: uuid, description: Subject that requires the prerequisite }
-        prerequisiteSubjectUuid: { type: string, format: uuid, description: Required subject }
-      required: [uuid, subjectUuid, prerequisiteSubjectUuid]
-    SubjectPrerequisiteCreate:
+        subject_uuid: { type: string, format: uuid, description: "Subject that requires the prerequisite" }
+        prerequisite_subject_uuid: { type: string, format: uuid, description: "Required subject (prerequisite)" }
+      required: [uuid, subject_uuid, prerequisite_subject_uuid]
+    PrerequisiteCreate:
       type: object
-      description: Payload to create a new prerequisite relation.
+      description: Payload to create a prerequisite between two subjects.
       properties:
-        subjectUuid: { type: string, format: uuid }
-        prerequisiteSubjectUuid: { type: string, format: uuid }
-      required: [subjectUuid, prerequisiteSubjectUuid]
+        subject_uuid: { type: string, format: uuid }
+        prerequisite_subject_uuid: { type: string, format: uuid }
+      required: [subject_uuid, prerequisite_subject_uuid]
+    Wallet:
+      type: object
+      description: User wallet.
+      properties:
+        uuid: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
+        currency:
+          type: string
+          description: ISO 4217 code (3 letters)
+          minLength: 3
+          maxLength: 3
+          example: "ARS"
+        status:
+          type: string
+          enum: [active, blocked, closed]
+        created_at: { type: string, format: date-time }
+      required: [uuid, user_id, currency, status]
     User:
       type: object
-      description: Read-only user projection.
+      description: System user.
       properties:
         uuid: { type: string, format: uuid }
         name: { type: string }
-        email: { type: string, format: email }
-        createdAt: { type: integer, description: Unix seconds }
+        email:
+          type: string
+          format: email
+        created_at: { type: string, format: date-time }
       required: [uuid, email]
-    Wallet:
-      type: object
-      description: Wallet assigned to a user.
-      properties:
-        uuid: { type: string, format: uuid }
-        userUuid: { type: string, format: uuid }
-        currency: { type: string, minLength: 3, maxLength: 3, description: ISO-4217 code }
-        status: { type: string, enum: [active, blocked, closed] }
-        createdAt: { type: integer, description: Unix seconds }
-      required: [uuid, userUuid, currency, status]
     Transaction:
       type: object
-      description: Monetary operation affecting a wallet's balance.
+      description: Movement associated with a wallet.
       properties:
         uuid: { type: string, format: uuid }
-        walletUuid: { type: string, format: uuid }
-        type: { type: string, enum: [topup, payment, transfer, refund, payout] }
-        status: { type: string, enum: [pending, posted, failed, reversed] }
-        amount: { type: integer, description: Amount in minor units }
-        currency: { type: string, minLength: 3, maxLength: 3, description: ISO-4217 }
+        wallet_uuid: { type: string, format: uuid }
+        type:
+          type: string
+          enum: [topup, payment, transfer, refund, payout]
+        status:
+          type: string
+          enum: [pending, posted, failed, reversed]
+        amount:
+          type: integer
+          description: Amount in the smallest currency unit (e.g. cents)
+        currency:
+          type: string
+          description: ISO 4217 code (3 letters)
+          minLength: 3
+          maxLength: 3
+          example: "ARS"
         description: { type: string }
-        createdAt: { type: integer, description: Unix seconds }
-        postedAt: { type: integer, nullable: true, description: Unix seconds }
-      required: [uuid, walletUuid, type, status, amount, currency]
+        created_at: { type: string, format: date-time }
+        posted_at: { type: string, format: date-time, nullable: true }
+      required: [uuid, wallet_uuid, type, status, amount, currency]
     Notification:
       type: object
-      description: User-targeted message stored server-side.
+      description: Notification directed to a user.
       properties:
         uuid: { type: string, format: uuid }
-        userUuid: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
         title: { type: string }
         message: { type: string }
-        read: { type: boolean }
-        createdAt: { type: integer, description: Unix seconds }
-        readAt: { type: integer, nullable: true, description: Unix seconds }
-      required: [uuid, userUuid, title, message, read]
+        read:
+          type: boolean
+          description: Read indicator
+        created_at: { type: string, format: date-time }
+        read_at: { type: string, format: date-time, nullable: true }
+      required: [uuid, user_id, title, message, read]
     NotificationReadUpdate:
       type: object
-      description: Partial update to toggle read status.
+      description: Notification read status update.
       properties:
         read: { type: boolean }
       required: [read]
-  responses:
-    BadRequest: { description: Bad Request, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    Unauthorized:
-      description: Unauthorized
-      headers:
-        WWW-Authenticate: { $ref: '#/components/headers/WWWAuthenticate' }
-      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
-    Forbidden: { description: Forbidden, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    NotFound: { description: Not Found, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    Conflict: { description: Conflict, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    UnprocessableEntity: { description: Unprocessable Entity, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    TooManyRequests: { description: Too Many Requests, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    InternalServerError: { description: Internal Server Error, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    ServiceUnavailable: { description: Service Unavailable, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-
 paths:
-  # ===================== AUTH =====================
-  /auth/login:
-    post:
-      tags: [auth]
-      summary: Login with user credentials
-      description: |
-        Authenticates a user and returns a **JWT access token** plus a **refresh token**.
-        Access tokens are **short-lived** (e.g., 15 minutes). Refresh tokens are **rotated** on every use.
-        Responses include cache-prevention headers.
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/AuthLoginRequest' }
-            example: { user: "alice@example.com", password: "s3cretPass" }
-      responses:
-        '200':
-          description: Authenticated
-          headers:
-            Cache-Control: { $ref: '#/components/headers/CacheControlNoStore' }
-            Pragma: { $ref: '#/components/headers/PragmaNoCache' }
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/AuthTokens' }
-              example:
-                tokenType: Bearer
-                jwt: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
-                refreshToken: "Af63..."
-                expiresAt: 1750001111
-                refreshExpiresAt: 1752593111
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /auth/refresh:
-    post:
-      tags: [auth]
-      summary: Rotate refresh token and issue a new access token
-      description: |
-        Exchanges a valid **refresh token** for a new pair `{ jwt, refreshToken }`.
-        Implements **rotation** and detection of token reuse. On reuse, server **revokes** the entire session chain.
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/AuthRefreshRequest' }
-            example: { refreshToken: "Af63..." }
-      responses:
-        '200':
-          description: New tokens issued
-          headers:
-            Cache-Control: { $ref: '#/components/headers/CacheControlNoStore' }
-            Pragma: { $ref: '#/components/headers/PragmaNoCache' }
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/AuthTokens' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /auth/logout:
-    post:
-      tags: [auth]
-      summary: Revoke refresh token(s)
-      description: |
-        Revokes the provided `refreshToken`. If `all=true`, revokes **all** active refresh tokens of the authenticated user.
-        Use this to terminate sessions on logout or security events.
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/AuthLogoutRequest' }
-            example: { refreshToken: "Af63...", all: false }
-      responses:
-        '204': { description: Revoked }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /.well-known/jwks.json:
+  /courses:
     get:
-      tags: [auth]
-      summary: JWKS (public keys for JWT verification)
-      description: Returns the JSON Web Key Set (public keys) to validate JWT signatures (RS256).
-      security: []
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/JWKS' } } } }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== SUBJECTS =====================
-  /subjects:
-    get:
-      tags: [subjects]
-      summary: List subjects
-      description: |
-        Returns a paged list of subjects. Supports optional text search and exact name filter.
-        Typical consumers: Student/Teacher Portals and Analytics.
+      tags: [Courses]
+      summary: List courses
       parameters:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
-        - $ref: '#/components/parameters/SortParam'
-        - $ref: '#/components/parameters/QParam'
+        - name: subject_id
+          in: query
+          schema: { type: string }
+          description: Filter by Subject
+        - name: exam_type
+          in: query
+          schema:
+            type: string
+            enum: [partial, makeup, final]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "c_123"
+                    subject_id: "m_10"
+                    start_date: "2025-03-01"
+                    end_date: "2025-07-01"
+                    exam_type: "partial"
+                    max_capacity: 30
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Courses]
+      summary: Create course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+            example:
+              id: "c_123"
+              subject_id: "m_10"
+              start_date: "2025-03-01"
+              end_date: "2025-07-01"
+              exam_type: "partial"
+              max_capacity: 30
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Course' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /courses/{id}:
+    get:
+      tags: [Courses]
+      summary: Get course
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Course' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Courses]
+      summary: Replace course
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Curso' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Course' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    delete:
+      tags: [Courses]
+      summary: Delete course
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /subjects:
+    get:
+      tags: [Subjects]
+      summary: List subjects
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
         - name: name
           in: query
           schema: { type: string }
-          description: Exact name filter.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "m_10"
+                    name: "Software Engineering"
+                total: 1
+                page: 1
+                page_size: 25
     post:
-      tags: [subjects]
+      tags: [Subjects]
       summary: Create subject
-      description: Creates a new subject. The `name` must be unique.
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/Subject' }
       responses:
-        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Subject' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /subjects/{uuid}:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Subject' }
+  /subjects/{id}:
     get:
-      tags: [subjects]
+      tags: [Subjects]
       summary: Get subject
-      description: Retrieves a subject by UUID.
       parameters:
-        - name: uuid
+        - name: id
           in: path
           required: true
-          schema: { type: string, format: uuid }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Subject' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    put:
-      tags: [subjects]
-      summary: Replace subject
-      description: Replaces a subject entirely. Use when updating all fields.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/Subject' } } }
-      responses:
-        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Subject' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    delete:
-      tags: [subjects]
-      summary: Delete subject
-      description: Deletes the subject by UUID. Fails with `409` if in use by courses.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '204': { description: Deleted }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== COURSES =====================
-  /courses:
-    get:
-      tags: [courses]
-      summary: List courses
-      description: |
-        Returns a paged list of courses. Filter by `subjectUuid`, `exam`, and date range.
-        Typical consumers: Student Portal, Teacher Portal, and Scheduling.
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - $ref: '#/components/parameters/SortParam'
-        - $ref: '#/components/parameters/QParam'
-        - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: exam, in: query, schema: { type: string } }
-        - { name: sinceGte, in: query, schema: { type: integer }, description: since >= (Unix seconds) }
-        - { name: untilLte, in: query, schema: { type: integer }, description: until <= (Unix seconds) }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    post:
-      tags: [courses]
-      summary: Create course
-      description: Creates a new course linked to a subject.
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } }
-      responses:
-        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /courses/{uuid}:
-    get:
-      tags: [courses]
-      summary: Get course
-      description: Retrieves a course by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    put:
-      tags: [courses]
-      summary: Replace course
-      description: Replaces an existing course. Use when updating all fields.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } }
-      responses:
-        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    delete:
-      tags: [courses]
-      summary: Delete course
-      description: Deletes a course by UUID. Enrollment constraints may cause `409`.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '204': { description: Deleted }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== TEACHER-SUBJECTS =====================
-  /teacher-subjects:
-    get:
-      tags: [teacher-subjects]
-      summary: List teacher-subject assignments
-      description: Returns assignments linking teachers and subjects.
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - $ref: '#/components/parameters/SortParam'
-        - { name: teacherUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    post:
-      tags: [teacher-subjects]
-      summary: Create teacher-subject assignment
-      description: Creates a new assignment for a teacher and a subject.
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/TeacherSubject' } } }
-      responses:
-        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/TeacherSubject' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /teacher-subjects/{uuid}:
-    get:
-      tags: [teacher-subjects]
-      summary: Get teacher-subject assignment
-      description: Retrieves a teacher-subject assignment by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/TeacherSubject' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    put:
-      tags: [teacher-subjects]
-      summary: Replace teacher-subject assignment
-      description: Replaces an existing assignment.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/TeacherSubject' } } }
-      responses:
-        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/TeacherSubject' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    delete:
-      tags: [teacher-subjects]
-      summary: Delete teacher-subject assignment
-      description: Deletes an assignment by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '204': { description: Deleted }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== ENROLLMENTS & PREREQUISITES =====================
-  /enrollments:
-    get:
-      tags: [enrollments]
-      summary: List enrollments
-      description: Filter by `courseUuid` or `userUuid`.
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - { name: courseUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: userUuid, in: query, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    post:
-      tags: [enrollments]
-      summary: Create enrollment
-      description: Creates a new enrollment for a user and course.
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/EnrollmentCreate' } } }
-      responses:
-        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Enrollment' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /enrollments/{uuid}:
-    delete:
-      tags: [enrollments]
-      summary: Delete enrollment
-      description: Cancels an enrollment by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '204': { description: Deleted }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /subject-prerequisites:
-    get:
-      tags: [subject-prerequisites]
-      summary: List subject prerequisites
-      description: Filter by `subjectUuid` (prerequisites of a subject) or `prerequisiteSubjectUuid` (subjects that require another).
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - { name: subjectUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: prerequisiteSubjectUuid, in: query, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    post:
-      tags: [subject-prerequisites]
-      summary: Create subject prerequisite
-      description: Creates a prerequisite relation between two subjects.
-      requestBody:
-        required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/SubjectPrerequisiteCreate' } } }
-      responses:
-        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/SubjectPrerequisite' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '422': { $ref: '#/components/responses/UnprocessableEntity' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /subject-prerequisites/{uuid}:
-    delete:
-      tags: [subject-prerequisites]
-      summary: Delete subject prerequisite
-      description: Deletes a prerequisite relation by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '204': { description: Deleted }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '409': { $ref: '#/components/responses/Conflict' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== USERS & WALLETS =====================
-  /users:
-    get:
-      tags: [users]
-      summary: List users
-      description: Filter by `name` and/or `email` (exact or partial per implementation).
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - { name: name, in: query, schema: { type: string } }
-        - { name: email, in: query, schema: { type: string, format: email } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /users/{uuid}:
-    get:
-      tags: [users]
-      summary: Get user by UUID
-      description: Retrieves a user by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /users/{userUuid}/wallets:
-    get:
-      tags: [wallets]
-      summary: Get wallet(s) by user
-      description: Returns one or more wallets owned by the given user. Provide `currency` to narrow down if multiple.
-      parameters:
-        - { name: userUuid, in: path, required: true, schema: { type: string, format: uuid } }
-        - { name: currency, in: query, schema: { type: string, minLength: 3, maxLength: 3 } }
+          schema: { type: string }
       responses:
         '200':
           description: OK
           content:
             application/json:
-              schema:
-                oneOf:
-                  - { $ref: '#/components/schemas/Wallet' }
-                  - { type: array, items: { $ref: '#/components/schemas/Wallet' } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== TRANSACTIONS =====================
-  /transactions:
-    get:
-      tags: [transactions]
-      summary: List transactions
-      description: Filter by `walletUuid` and creation/posting time ranges (Unix seconds).
+              schema: { $ref: '#/components/schemas/Subject' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Subjects]
+      summary: Replace subject
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - { name: walletUuid, in: query, schema: { type: string, format: uuid } }
-        - { name: createdFrom, in: query, schema: { type: integer } }
-        - { name: createdTo, in: query, schema: { type: integer } }
-        - { name: postedFrom, in: query, schema: { type: integer } }
-        - { name: postedTo, in: query, schema: { type: integer } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /transactions/{uuid}:
-    get:
-      tags: [transactions]
-      summary: Get transaction by UUID
-      description: Retrieves a wallet transaction by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Transaction' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /wallets/{walletUuid}/transactions:
-    get:
-      tags: [transactions]
-      summary: List transactions by wallet
-      description: Equivalent to `GET /transactions?walletUuid=...`.
-      parameters:
-        - { name: walletUuid, in: path, required: true, schema: { type: string, format: uuid } }
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - { name: createdFrom, in: query, schema: { type: integer } }
-        - { name: createdTo, in: query, schema: { type: integer } }
-        - { name: postedFrom, in: query, schema: { type: integer } }
-        - { name: postedTo, in: query, schema: { type: integer } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  # ===================== NOTIFICATIONS =====================
-  /notifications/{uuid}:
-    get:
-      tags: [notifications]
-      summary: Get notification by UUID
-      description: Retrieves a notification by UUID.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-    patch:
-      tags: [notifications]
-      summary: Mark notification as read/unread
-      description: Sets the `read` flag for a notification.
-      parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
       requestBody:
         required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/NotificationReadUpdate' } } }
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Subject' }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /users/{userUuid}/notifications:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Subject' }
+    delete:
+      tags: [Subjects]
+      summary: Delete subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Deleted
+  /teacher-subjects:
     get:
-      tags: [notifications]
+      tags: [Teacher-Subjects]
+      summary: List teacher-subject assignments
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: teacher_id
+          in: query
+          schema: { type: string }
+        - name: subject_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - id: "dm_1"
+                    teacher_id: "d_5"
+                    subject_id: "m_10"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Teacher-Subjects]
+      summary: Create teacher-subject assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TeacherSubject' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TeacherSubject' }
+  /teacher-subjects/{id}:
+    get:
+      tags: [Teacher-Subjects]
+      summary: Get teacher-subject assignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TeacherSubject' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    put:
+      tags: [Teacher-Subjects]
+      summary: Replace teacher-subject assignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TeacherSubject' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TeacherSubject' }
+    delete:
+      tags: [Teacher-Subjects]
+      summary: Delete teacher-subject assignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Deleted
+  /enrollments:
+    get:
+      tags: [Enrollments]
+      summary: List enrollments
+      description: Allows filtering by course or by user.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: course_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filter enrollments by course
+        - name: student_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filter enrollments by user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "i_1"
+                    course_uuid: "c_123"
+                    student_uuid: "u_555"
+                    status: "pending"
+                    role: "student"
+                    created_at: "2025-03-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Enrollments]
+      summary: Create enrollment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EnrollmentCreate' }
+            example:
+              course_uuid: "c_123"
+              student_uuid: "u_555"
+              status: "pending"
+              role: "student"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Enrollment' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /enrollments/{id}:
+    delete:
+      tags: [Enrollments]
+      summary: Delete enrollment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /prerequisites:
+    get:
+      tags: [Prerequisites]
+      summary: List prerequisites
+      description: |
+        - To get prerequisites of a subject use `subject_uuid`.
+        - To get what subjects another one is prerequisite for, use `prerequisite_subject_uuid`.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: subject_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Subject that requires the prerequisite
+        - name: prerequisite_subject_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Subject that is required as prerequisite
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "corr_1"
+                    subject_uuid: "m_10"
+                    prerequisite_subject_uuid: "m_2"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Prerequisites]
+      summary: Create prerequisite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PrerequisiteCreate' }
+            example:
+              subject_uuid: "m_10"
+              prerequisite_subject_uuid: "m_2"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Prerequisite' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /prerequisites/{id}:
+    delete:
+      tags: [Prerequisites]
+      summary: Delete prerequisite
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /wallets/by-user/{user_id}:
+    get:
+      tags: [Wallets]
+      summary: Get wallet by user
+      description: |
+        Returns a single wallet associated with the `user_id`.
+        If the user has more than one wallet, specify `currency` to disambiguate.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          description: Currency code (ISO 4217), e.g. ARS, USD.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Wallet' }
+        '400':
+          description: Invalid parameters or ambiguous result (multiple wallets without `currency`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Wallet not found for user/currency.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      description: Filter by name or email. Exact or partial match according to implementation.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: name
+          in: query
+          required: false
+          schema: { type: string }
+          description: Filter by name
+        - name: email
+          in: query
+          required: false
+          schema: { type: string, format: email }
+          description: Filter by email
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "u_1"
+                    name: "Ada Lovelace"
+                    email: "ada@example.com"
+                total: 1
+                page: 1
+                page_size: 25
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by UUID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: List transactions
+      description: |
+        Allows filtering by `wallet_uuid` and by date ranges.
+        If you only send `created_from` or `posted_from`, it acts as "date greater than or equal to".
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: wallet_uuid
+          in: query
+          required: false
+          schema: { type: string, format: uuid }
+          description: Filter by wallet
+        - name: created_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: From (inclusive) by creation date
+        - name: created_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: To (inclusive) by creation date
+        - name: posted_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: From (inclusive) by posting date
+        - name: posted_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+          description: To (inclusive) by posting date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "t_1"
+                    wallet_uuid: "w_1"
+                    type: "payment"
+                    status: "posted"
+                    amount: 12500
+                    currency: "ARS"
+                    description: "Compra en librería"
+                    created_at: "2025-03-01T10:00:00Z"
+                    posted_at: "2025-03-01T10:05:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+  /transactions/{id}:
+    get:
+      tags: [Transactions]
+      summary: Get transaction by UUID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Transaction' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /wallets/{wallet_uuid}/transactions:
+    get:
+      tags: [Transactions]
+      summary: List transactions by wallet
+      description: Nested endpoint equivalent to using `GET /transactions?wallet_uuid=...`.
+      parameters:
+        - name: wallet_uuid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: created_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: created_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: posted_from
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+        - name: posted_to
+          in: query
+          required: false
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+  /notifications/{id}:
+    patch:
+      tags: [Notifications]
+      summary: Mark notification as read/unread
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotificationReadUpdate' }
+            example:
+              read: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Notification' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /users/{user_id}/notifications:
+    get:
+      tags: [Notifications]
       summary: List notifications by user
-      description: Returns all notifications (read and unread) for the user.
+      description: Returns all notifications (read and unread) from a user.
       parameters:
-        - { name: userUuid, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /users/{userUuid}/notifications/unread:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "n_1"
+                    user_id: "u_1"
+                    title: "Recordatorio"
+                    message: "Tienes una inscripción pendiente"
+                    read: false
+                    created_at: "2025-03-01T10:00:00Z"
+                  - uuid: "n_2"
+                    user_id: "u_1"
+                    title: "Aviso"
+                    message: "Inscripción confirmada"
+                    read: true
+                    created_at: "2025-03-02T09:00:00Z"
+                total: 2
+                page: 1
+                page_size: 25
+  /users/{user_id}/notifications/unread:
     get:
-      tags: [notifications]
+      tags: [Notifications]
       summary: List unread notifications by user
-      description: Returns only unread notifications for the user.
       parameters:
-        - { name: userUuid, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedResponse' } } } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-
-  /users/{userUuid}/notifications/unread/count:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedResponse' }
+              example:
+                items:
+                  - uuid: "n_1"
+                    user_id: "u_1"
+                    title: "Recordatorio"
+                    message: "Tienes una inscripción pendiente"
+                    read: false
+                    created_at: "2025-03-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+  /users/{user_id}/notifications/unread/count:
     get:
-      tags: [notifications]
+      tags: [Notifications]
       summary: Get unread count by user
-      description: Returns the unread notifications count for the user.
       parameters:
-        - { name: userUuid, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       responses:
         '200':
           description: OK
@@ -948,10 +961,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: { count: { type: integer, minimum: 0 } }
+                properties:
+                  count: { type: integer, minimum: 0 }
                 required: [count]
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+        
