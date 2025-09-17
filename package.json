@@ -9,7 +9,7 @@
     "build": "tsc",
     "start:dev": "nodemon src/server.ts",
     "format": "prettier --write .",
-    "build:asyncapi": "npx -y @asyncapi/generator .docs/async-documentation.yaml @asyncapi/html-template -o .docs/.build/async --force-write -p singleFile=true"
+    "build:asyncapi": "asyncapi generate fromTemplate .docs/async-documentation.yaml @asyncapi/html-template@3.0.0 --use-new-generator -o .docs/.build/async --force-write -p singleFile=true sidebarOrganization=byTagsNoRoot"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
@@ -21,6 +21,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@asyncapi/cli": "^3.5.2",
     "@asyncapi/generator": "^2.8.3",
     "@asyncapi/html-template": "^3.3.1",
     "@sundaysf/cli": "^0.2.9",
