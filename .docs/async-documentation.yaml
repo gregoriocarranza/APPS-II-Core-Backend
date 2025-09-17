@@ -260,7 +260,7 @@ channels:
       summary: Correlativa Creation.
       operationId: publishCorrelativaCreatedV1
       bindings:
-        amqp:FRco
+        amqp:
           bindingVersion: '0.2.0'
       message:
         $ref: '#/components/messages/CorrelativaCreatedV1'
