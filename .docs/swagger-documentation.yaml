@@ -169,6 +169,7 @@ components:
         type:
           type: string
           enum: [topup, payment, transfer, refund, payout]
+          description: Transaction type. `topup` adding funds; `payment` spending funds; `transfer` moving funds between wallets; `refund` returning funds to wallet; `payout` withdrawing funds from wallet.
         status:
           type: string
           enum: [pending, posted, failed, reversed]
@@ -479,7 +480,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Curso' }
+            schema: { $ref: '#/components/schemas/Course' }
       responses:
         '200':
           description: Updated
@@ -978,6 +979,33 @@ paths:
                 total: 1
                 page: 1
                 page_size: 25
+    post:
+      tags: [Transactions]
+      summary: Create transaction
+      description: Creates a new transaction.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+            example:
+              wallet_uuid: "w_1"
+              type: "topup"
+              amount: 50000
+              currency: "ARS"
+              description: "Recarga inicial"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Transaction' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /transactions/{id}:
     get:
       tags: [Transactions]
