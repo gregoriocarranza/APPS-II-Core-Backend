@@ -165,7 +165,16 @@ components:
       description: Movement associated with a wallet.
       properties:
         uuid: { type: string, format: uuid }
-        wallet_uuid: { type: string, format: uuid }
+        to_wallet_uuid:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Destination wallet"
+        from_wallet_uuid:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Source wallet"
         type:
           type: string
           enum: [topup, payment, transfer, refund, payout]
@@ -185,7 +194,7 @@ components:
         description: { type: string }
         created_at: { type: string, format: date-time }
         posted_at: { type: string, format: date-time, nullable: true }
-      required: [uuid, wallet_uuid, type, status, amount, currency]
+      required: [uuid, type, status, amount, currency]
     Notification:
       type: object
       description: Notification directed to a user.
@@ -934,11 +943,16 @@ paths:
       parameters:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
-        - name: wallet_uuid
+        - name: from_wallet_uuid
           in: query
           required: false
           schema: { type: string, format: uuid }
-          description: Filter by wallet
+          description: Filter by source wallet (from_wallet_uuid)
+        - name: to_wallet_uuid
+          in: query
+          required: false
+          schema: { type: string, format: uuid }
+          description: Filter by destination wallet (to_wallet_uuid)
         - name: created_from
           in: query
           required: false
@@ -968,7 +982,8 @@ paths:
               example:
                 items:
                   - uuid: "t_1"
-                    wallet_uuid: "w_1"
+                    from_wallet_uuid: "w_1"
+                    to_wallet_uuid: "w_2"
                     type: "payment"
                     status: "posted"
                     amount: 12500
@@ -990,11 +1005,12 @@ paths:
             schema:
               $ref: '#/components/schemas/Transaction'
             example:
-              wallet_uuid: "w_1"
-              type: "topup"
-              amount: 50000
+              to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              type: "payment"
+              amount: 12500
               currency: "ARS"
-              description: "Recarga inicial"
+              description: "Compra en librería"
       responses:
         '201':
           description: Created
