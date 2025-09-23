@@ -165,16 +165,27 @@ components:
       description: Movement associated with a wallet.
       properties:
         uuid: { type: string, format: uuid }
-        wallet_uuid: { type: string, format: uuid }
+        to_wallet_uuid:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Destination wallet"
+        from_wallet_uuid:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Source wallet"
         type:
           type: string
           enum: [topup, payment, transfer, refund, payout]
+          description: Transaction type. `topup` adding funds; `payment` spending funds; `transfer` moving funds between wallets; `refund` returning funds to wallet; `payout` withdrawing funds from wallet.
         status:
           type: string
           enum: [pending, posted, failed, reversed]
         amount:
           type: integer
           description: Amount in the smallest currency unit (e.g. cents)
+          example: 12500
         currency:
           type: string
           description: ISO 4217 code (3 letters)
@@ -184,7 +195,7 @@ components:
         description: { type: string }
         created_at: { type: string, format: date-time }
         posted_at: { type: string, format: date-time, nullable: true }
-      required: [uuid, wallet_uuid, type, status, amount, currency]
+      required: [uuid, type, status, amount, currency]
     Notification:
       type: object
       description: Notification directed to a user.
@@ -479,7 +490,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Curso' }
+            schema: { $ref: '#/components/schemas/Course' }
       responses:
         '200':
           description: Updated
@@ -933,11 +944,16 @@ paths:
       parameters:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PageSizeParam'
-        - name: wallet_uuid
+        - name: from_wallet_uuid
           in: query
           required: false
           schema: { type: string, format: uuid }
-          description: Filter by wallet
+          description: Filter by source wallet (from_wallet_uuid)
+        - name: to_wallet_uuid
+          in: query
+          required: false
+          schema: { type: string, format: uuid }
+          description: Filter by destination wallet (to_wallet_uuid)
         - name: created_from
           in: query
           required: false
@@ -967,17 +983,46 @@ paths:
               example:
                 items:
                   - uuid: "t_1"
-                    wallet_uuid: "w_1"
-                    type: "payment"
+                    to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    type: "topup"
                     status: "posted"
                     amount: 12500
                     currency: "ARS"
-                    description: "Compra en librería"
+                    description: "Recarga de saldo"
                     created_at: "2025-03-01T10:00:00Z"
                     posted_at: "2025-03-01T10:05:00Z"
                 total: 1
                 page: 1
                 page_size: 25
+    post:
+      tags: [Transactions]
+      summary: Create transaction
+      description: Creates an accounting movement in Core that debits/credits the user wallet and the corresponding institutional wallet(s) (store, cafeteria, library, etc. Returns the created transaction.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+            example:
+              to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              type: "topup"
+              amount: 12500
+              currency: "ARS"
+              description: "Recarga de saldo"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Transaction' }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /transactions/{id}:
     get:
       tags: [Transactions]
