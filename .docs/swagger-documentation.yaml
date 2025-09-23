@@ -982,8 +982,8 @@ paths:
               example:
                 items:
                   - uuid: "t_1"
-                    from_wallet_uuid: "w_1"
-                    to_wallet_uuid: "w_2"
+                    to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6
                     type: "payment"
                     status: "posted"
                     amount: 12500
