@@ -185,6 +185,7 @@ components:
         amount:
           type: integer
           description: Amount in the smallest currency unit (e.g. cents)
+          example: 12500
         currency:
           type: string
           description: ISO 4217 code (3 letters)
@@ -983,12 +984,12 @@ paths:
                 items:
                   - uuid: "t_1"
                     to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                    from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6
-                    type: "payment"
+                    from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    type: "topup"
                     status: "posted"
                     amount: 12500
                     currency: "ARS"
-                    description: "Compra en librería"
+                    description: "Recarga de saldo"
                     created_at: "2025-03-01T10:00:00Z"
                     posted_at: "2025-03-01T10:05:00Z"
                 total: 1
@@ -997,7 +998,7 @@ paths:
     post:
       tags: [Transactions]
       summary: Create transaction
-      description: Creates a new transaction.
+      description: Creates an accounting movement in Core that debits/credits the user wallet and the corresponding institutional wallet(s) (store, cafeteria, library, etc. Returns the created transaction.
       requestBody:
         required: true
         content:
@@ -1007,10 +1008,10 @@ paths:
             example:
               to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-              type: "payment"
+              type: "topup"
               amount: 12500
               currency: "ARS"
-              description: "Compra en librería"
+              description: "Recarga de saldo"
       responses:
         '201':
           description: Created
