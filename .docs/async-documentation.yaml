@@ -61,7 +61,7 @@ channels:
       message:
         $ref: '#/components/messages/UserCreatedV1'
   inscripciones.created:
-    description: Evento emitido cuando se crea una inscripción.
+    description: Evento emitido cuando se crea una inscripción. Evento producido por CORE, consumido por Alumnos (entre otros).
     bindings:
       amqp:
         is: routingKey
@@ -71,18 +71,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Inscripciones
-        - name: Subscribe
-      summary: Registration Creation.
-      operationId: subscribeInscripcionCreatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/InscripcionCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -95,7 +83,7 @@ channels:
       message:
         $ref: '#/components/messages/InscripcionCreatedV1'
   inscripciones.delete:
-    description: Evento emitido cuando se elimina una inscripción.
+    description: Evento emitido cuando se elimina una inscripción. Evento producido por CORE, consumido por Alumnos (entre otros)
     bindings:
       amqp:
         is: routingKey
@@ -105,18 +93,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Inscripciones
-        - name: Subscribe
-      summary: Registration Deletion.
-      operationId: subscribeInscripcionDeleteV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/InscripcionDeletedV1'
     publish:
       tags:
         - name: Publish
@@ -129,7 +105,7 @@ channels:
       message:
         $ref: '#/components/messages/InscripcionDeletedV1'
   materias.created:
-    description: Evento emitido cuando se crea una materia.
+    description: Evento emitido cuando se crea una materia. Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
       amqp:
         is: routingKey
@@ -139,18 +115,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Materias
-        - name: Subscribe
-      summary: Materia Creation.
-      operationId: subscribeMateriaCreatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/MateriaCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -163,7 +127,7 @@ channels:
       message:
         $ref: '#/components/messages/MateriaCreatedV1'
   materias.updated:
-    description: Evento emitido cuando se actualiza una materia.
+    description: Evento emitido cuando se actualiza una materia. Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
       amqp:
         is: routingKey
@@ -173,18 +137,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Materias
-        - name: Subscribe
-      summary: Materia updated.
-      operationId: subscribeMateriaUpdatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/MateriaCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -197,7 +149,7 @@ channels:
       message:
         $ref: '#/components/messages/MateriaCreatedV1'
   materias.delete:
-    description: Evento emitido cuando se elimina una materia.
+    description: Evento emitido cuando se elimina una materia, Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
       amqp:
         is: routingKey
@@ -207,18 +159,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Materias
-        - name: Subscribe
-      summary: Materia Deletion.
-      operationId: subscribeMateriaDeleteV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/MateriaDeletedV1'
     publish:
       tags:
         - name: Publish
@@ -231,7 +171,7 @@ channels:
       message:
         $ref: '#/components/messages/MateriaDeletedV1'
   correlativas.created:
-    description: Evento emitido cuando se crea una correlatividad entre materias.
+    description: Evento emitido cuando se crea una correlatividad entre materias.  Evento producido por CORE, consumido por Varios.
     bindings:
       amqp:
         is: routingKey
@@ -241,18 +181,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Correlativas
-        - name: Subscribe
-      summary: Correlativa Creation.
-      operationId: subscribeCorrelativaCreatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/CorrelativaCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -265,7 +193,7 @@ channels:
       message:
         $ref: '#/components/messages/CorrelativaCreatedV1'
   correlativas.updated:
-    description: Evento emitido cuando se actualiza una correlatividad entre materias.
+    description: Evento emitido cuando se actualiza una correlatividad entre materias.  Evento producido por CORE, consumido por Varios.
     bindings:
       amqp:
         is: routingKey
@@ -275,18 +203,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Correlativas
-        - name: Subscribe
-      summary: Correlativa updated.
-      operationId: subscribeCorrelativaUpdatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/CorrelativaCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -299,7 +215,7 @@ channels:
       message:
         $ref: '#/components/messages/CorrelativaCreatedV1'
   correlativas.delete:
-    description: Evento emitido cuando se elimina una correlatividad entre materias.
+    description: Evento emitido cuando se elimina una correlatividad entre materias. Evento producido por CORE, consumido por Varios.
     bindings:
       amqp:
         is: routingKey
@@ -309,18 +225,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: Correlativas
-        - name: Subscribe
-      summary: Correlativa Deletion.
-      operationId: subscribeCorrelativaDeleteV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/CorrelativaDeletedV1'
     publish:
       tags:
         - name: Publish
@@ -333,7 +237,7 @@ channels:
       message:
         $ref: '#/components/messages/CorrelativaDeletedV1'
   docentes_materia.created:
-    description: Evento emitido cuando se asigna un docente a una materia.
+    description: Evento emitido cuando se asigna un docente a una materia. Evento producido por CORE, consumido por Docentes.
     bindings:
       amqp:
         is: routingKey
@@ -343,18 +247,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: DocentesMateria
-        - name: Subscribe
-      summary: Docente Materia Creation.
-      operationId: subscribeDocenteMateriaCreatedV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/DocenteMateriaCreatedV1'
     publish:
       tags:
         - name: Publish
@@ -367,7 +259,7 @@ channels:
       message:
         $ref: '#/components/messages/DocenteMateriaCreatedV1'
   docentes_materia.delete:
-    description: Evento emitido cuando se elimina la asignacion de un docente a una materia.
+    description: Evento emitido cuando se elimina la asignacion de un docente a una materia. Evento producido por CORE, consumido por Docentes.
     bindings:
       amqp:
         is: routingKey
@@ -377,18 +269,6 @@ channels:
           durable: true
           autoDelete: false
         bindingVersion: '0.2.0'
-    subscribe:
-      tags:
-        - name: DocentesMateria
-        - name: Subscribe
-      summary: Docente Materia Deletion.
-      operationId: subscribeDocenteMateriaDeleteV1
-      bindings:
-        amqp:
-          ack: true
-          bindingVersion: '0.2.0'
-      message:
-        $ref: '#/components/messages/DocenteMateriaDeletedV1'
     publish:
       tags:
         - name: Publish
@@ -400,6 +280,102 @@ channels:
           bindingVersion: '0.2.0'
       message:
         $ref: '#/components/messages/DocenteMateriaDeletedV1'
+  wallet.created:
+    description: Evento emitido cuando se crea una wallet. Producido por CORE, consumido por docentes, alumnos, tienda, comedor.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: wallets.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    publish:
+      tags:
+        - name: Publish
+        - name: Wallets
+      summary: Wallet Creation.
+      operationId: publishWalletCreatedV1
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/WalletCreatedV1'
+  wallet.amount.updated:
+    description: Se actualiza el balance de una wallet (por movimientos/ajustes). Producido por CORE.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: wallets.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    publish:
+      tags:
+        - name: Publish
+        - name: Wallets
+      summary: Wallet Balance Updated.
+      operationId: publishWalletAmountUpdatedV1
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/WalletAmountUpdatedV1'
+  transfer.created:
+    description: Se inicia una transferencia entre wallets. Producido por CORE.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: transfers.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    publish:
+      tags:
+        - name: Publish
+        - name: Transfers
+      summary: Transfer Created.
+      operationId: publishTransferCreatedV1
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/TransferCreatedV1'
+  transfer.canceled:
+    description: Una transferencia iniciada se cancela. Producido por CORE.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: transfers.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: '0.2.0'
+    publish:
+      tags:
+        - name: Publish
+        - name: Transfers
+      summary: Transfer Canceled.
+      operationId: publishTransferCanceledV1
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: false
+          bindingVersion: '0.2.0'
+      message:
+        $ref: '#/components/messages/TransferCanceledV1'
   
 
 components:
@@ -925,8 +901,102 @@ components:
             reason:
               type: string
               description: Motivo de la eliminacion (opcional).
-    
-
+    WalletCreatedDataV1:
+      type: object
+      description: Envelope + payload para WalletCreated v1.
+      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:      { type: string, format: uuid }
+        eventType:    { type: string, const: WalletCreated }
+        occurredAt:   { type: string, format: date-time }
+        emittedAt:    { type: string, format: date-time }
+        sourceModule: { type: string }
+        tenant:       { $ref: '#/components/schemas/TenantRef' }
+        actor:        { $ref: '#/components/schemas/ActorRef' }
+        version:      { type: string }
+        payload:
+          type: object
+          required: [uuid, user_id, currency, status, created_at]
+          properties:
+            uuid:        { type: string, format: uuid, description: Identificador de la wallet }
+            user_id:     { type: string, format: uuid, description: Usuario dueño de la wallet }
+            currency:    { type: string, minLength: 3, maxLength: 3 }
+            status:      { type: string, description: Estado lógico de la wallet }
+            created_at:  { type: string, format: date-time }
+    WalletAmountUpdatedDataV1:
+      type: object
+      description: Envelope + payload para WalletAmountUpdated v1.
+      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:      { type: string, format: uuid }
+        eventType:    { type: string, const: WalletAmountUpdated }
+        occurredAt:   { type: string, format: date-time }
+        emittedAt:    { type: string, format: date-time }
+        sourceModule: { type: string }
+        tenant:       { $ref: '#/components/schemas/TenantRef' }
+        actor:        { $ref: '#/components/schemas/ActorRef' }
+        version:      { type: string }
+        payload:
+          type: object
+          required: [wallet_uuid, previous_amount, new_amount, currency, posted_at]
+          properties:
+            wallet_uuid:     { type: string, format: uuid }
+            previous_amount: { type: string, description: Monto anterior (decimal string) }
+            new_amount:      { type: string, description: Monto nuevo (decimal string) }
+            currency:        { type: string, minLength: 3, maxLength: 3 }
+            reason:          { type: string, description: Motivo del cambio (p.ej. DEBIT_TRANSACTION - CREDIT_TRANSACTION - ADJUSTMENT) }
+            transaction_uuid: { type: string, format: uuid, nullable: true }
+            posted_at:       { type: string, format: date-time }
+    TransferCreatedDataV1:
+      type: object
+      description: Envelope + payload para TransferCreated v1.
+      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:      { type: string, format: uuid }
+        eventType:    { type: string, const: TransferCreated }
+        occurredAt:   { type: string, format: date-time }
+        emittedAt:    { type: string, format: date-time }
+        sourceModule: { type: string }
+        tenant:       { $ref: '#/components/schemas/TenantRef' }
+        actor:        { $ref: '#/components/schemas/ActorRef' }
+        version:      { type: string }
+        payload:
+          type: object
+          required: [transfer_uuid, from_wallet_uuid, to_wallet_uuid, amount, currency, status, created_at]
+          properties:
+            transfer_uuid:   { type: string, format: uuid }
+            from_wallet_uuid: { type: string, format: uuid }
+            to_wallet_uuid:  { type: string, format: uuid }
+            amount:          { type: string, description: Monto transferido (decimal string) }
+            currency:        { type: string, minLength: 3, maxLength: 3 }
+            description:     { type: string, nullable: true }
+            status:          { type: string, description: Estado inicial (PENDING - PROCESSING - COMPLETED - CANCELED) }
+            created_at:      { type: string, format: date-time }
+    TransferCanceledDataV1:
+      type: object
+      description: Envelope + payload para TransferCanceled v1.
+      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      properties:
+        eventId:      { type: string, format: uuid }
+        eventType:    { type: string, const: TransferCanceled }
+        occurredAt:   { type: string, format: date-time }
+        emittedAt:    { type: string, format: date-time }
+        sourceModule: { type: string }
+        tenant:       { $ref: '#/components/schemas/TenantRef' }
+        actor:        { $ref: '#/components/schemas/ActorRef' }
+        version:      { type: string }
+        payload:
+          type: object
+          required: [transfer_uuid, from_wallet_uuid, to_wallet_uuid, amount, currency, status, canceled_at]
+          properties:
+            transfer_uuid:   { type: string, format: uuid }
+            from_wallet_uuid: { type: string, format: uuid }
+            to_wallet_uuid:  { type: string, format: uuid }
+            amount:          { type: string }
+            currency:        { type: string, minLength: 3, maxLength: 3 }
+            reason:          { type: string, description: Causa de cancelación }
+            canceled_at:     { type: string, format: date-time }
+            status:          { type: string, const: CANCELED }
   messages:
     UserCreatedV1:
       name: UserCreatedV1
@@ -1163,4 +1233,99 @@ components:
           deliveryMode: 2
           mandatory: false
           bindingVersion: '0.2.0'
-
+    WalletCreatedV1:
+      name: WalletCreatedV1
+      title: Wallet Created v1
+      summary: Notifica que se creó una wallet.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WalletCreatedDataV1'
+        example:
+          eventId: '6d6d6f7a-6a6a-4aaa-9b9b-111111111111'
+          eventType: 'WalletCreated'
+          occurredAt: '2025-09-22T10:00:00Z'
+          emittedAt: '2025-09-22T10:00:01Z'
+          sourceModule: 'CORE'
+          tenant: { campusId: 'AR', orgId: 'FIN' }
+          actor: { userId: 'system', role: 'SERVICE' }
+          version: '1.0'
+          payload:
+            uuid: '11111111-2222-3333-4444-555555555555'
+            user_id: '99999999-aaaa-bbbb-cccc-dddddddddddd'
+            currency: 'ARS'
+            status: 'ACTIVE'
+            created_at: '2025-09-22T10:00:00Z'
+    WalletAmountUpdatedV1:
+      name: WalletAmountUpdatedV1
+      title: Wallet Amount Updated v1
+      summary: Notifica cambio de balance en una wallet.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WalletAmountUpdatedDataV1'
+        example:
+          eventId: '77777777-8888-9999-aaaa-bbbbbbbbbbbb'
+          eventType: 'WalletAmountUpdated'
+          occurredAt: '2025-09-22T10:05:00Z'
+          emittedAt: '2025-09-22T10:05:01Z'
+          sourceModule: 'CORE'
+          tenant: { campusId: 'AR', orgId: 'FIN' }
+          actor: { userId: 'system', role: 'SERVICE' }
+          version: '1.0'
+          payload:
+            wallet_uuid: '11111111-2222-3333-4444-555555555555'
+            previous_amount: '150000.00'
+            new_amount: '149500.00'
+            currency: 'ARS'
+            reason: 'DEBIT_TRANSACTION'
+            transaction_uuid: 'aaaa1111-bbbb-2222-cccc-333333333333'
+            posted_at: '2025-09-22T10:05:00Z'
+    TransferCreatedV1:
+      name: TransferCreatedV1
+      title: Transfer Created v1
+      summary: Notifica que se inició una transferencia entre wallets.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/TransferCreatedDataV1'
+        example:
+          eventId: '12121212-3434-5656-7878-909090909090'
+          eventType: 'TransferCreated'
+          occurredAt: '2025-09-22T10:10:00Z'
+          emittedAt: '2025-09-22T10:10:01Z'
+          sourceModule: 'CORE'
+          tenant: { campusId: 'AR', orgId: 'FIN' }
+          actor: { userId: 'system', role: 'SERVICE' }
+          version: '1.0'
+          payload:
+            transfer_uuid: '9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
+            from_wallet_uuid: '11111111-2222-3333-4444-555555555555'
+            to_wallet_uuid: '66666666-7777-8888-9999-000000000000'
+            amount: '500.00'
+            currency: 'ARS'
+            description: 'Envio a Juan'
+            status: 'PENDING'
+            created_at: '2025-09-22T10:10:00Z'
+    TransferCanceledV1:
+      name: TransferCanceledV1
+      title: Transfer Canceled v1
+      summary: Notifica que una transferencia fue cancelada.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/TransferCanceledDataV1'
+        example:
+          eventId: 'abababab-cdcd-efef-0101-232323232323'
+          eventType: 'TransferCanceled'
+          occurredAt: '2025-09-22T10:12:00Z'
+          emittedAt: '2025-09-22T10:12:01Z'
+          sourceModule: 'CORE'
+          tenant: { campusId: 'AR', orgId: 'FIN' }
+          actor: { userId: 'system', role: 'SERVICE' }
+          version: '1.0'
+          payload:
+            transfer_uuid: '9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
+            from_wallet_uuid: '11111111-2222-3333-4444-555555555555'
+            to_wallet_uuid: '66666666-7777-8888-9999-000000000000'
+            amount: '500.00'
+            currency: 'ARS'
+            reason: 'USER_REQUEST'
+            canceled_at: '2025-09-22T10:12:00Z'
+            status: 'CANCELED'
