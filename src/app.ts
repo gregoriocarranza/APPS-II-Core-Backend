@@ -6,17 +6,17 @@ import { IndexRouter } from "./routes/index";
 import { errorMiddleware } from "./middlewares/error/error.middleware";
 import { getAllowedOrigins } from "./common/config/origins/origins.config";
 
-import swaggerUi from 'swagger-ui-express';
-import fs from 'fs';
-import yaml from 'js-yaml';
-import path from 'path';
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import yaml from "js-yaml";
+import path from "path";
 
 dotenv.config();
 
 const app: Express = express();
 
 const swaggerDocument = yaml.load(
-  fs.readFileSync('.docs/swagger-documentation.yaml', 'utf8')
+  fs.readFileSync(".docs/swagger-documentation.yaml", "utf8"),
 ) as object;
 
 app.use(
@@ -27,15 +27,13 @@ app.use(
   }),
 );
 
-if (process.env.ENVIRONMENT !== 'production') {
-  app.use('/docs', swaggerUi.serve);
-  app.get('/docs', swaggerUi.setup(swaggerDocument));
+if (process.env.ENVIRONMENT !== "production") {
+  app.use("/docs", swaggerUi.serve);
+  app.get("/docs", swaggerUi.setup(swaggerDocument));
 
-  const asyncOutDir = path.join(__dirname, '../.docs/.build/async');
-  app.use('/docs/async', express.static(asyncOutDir));
+  const asyncOutDir = path.join(__dirname, "../.docs/.build/async");
+  app.use("/docs/async", express.static(asyncOutDir));
 }
-
-
 
 app.use(
   cors({

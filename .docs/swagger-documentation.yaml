@@ -86,7 +86,12 @@ components:
       description: N:N relationship between teachers and subjects.
       properties:
         id: { type: string, format: uuid }
-        teacher_id: { type: string, format: uuid, description: "FK Teacher.id (not defined in this draft)" }
+        teacher_id:
+          {
+            type: string,
+            format: uuid,
+            description: "FK Teacher.id (not defined in this draft)",
+          }
         subject_id: { type: string, format: uuid, description: "FK Subject.id" }
       required: [id, teacher_id, subject_id]
     Enrollment:
@@ -94,8 +99,10 @@ components:
       description: Student enrollment record for a course.
       properties:
         uuid: { type: string, format: uuid }
-        course_uuid: { type: string, format: uuid, description: "FK course.uuid" }
-        student_uuid: { type: string, format: uuid, description: "FK users.uuid" }
+        course_uuid:
+          { type: string, format: uuid, description: "FK course.uuid" }
+        student_uuid:
+          { type: string, format: uuid, description: "FK users.uuid" }
         status:
           type: string
           description: "Enrollment status (e.g.: pending, confirmed, cancelled)"
@@ -122,8 +129,18 @@ components:
       description: Prerequisite relationship between subjects.
       properties:
         uuid: { type: string, format: uuid }
-        subject_uuid: { type: string, format: uuid, description: "Subject that requires the prerequisite" }
-        prerequisite_subject_uuid: { type: string, format: uuid, description: "Required subject (prerequisite)" }
+        subject_uuid:
+          {
+            type: string,
+            format: uuid,
+            description: "Subject that requires the prerequisite",
+          }
+        prerequisite_subject_uuid:
+          {
+            type: string,
+            format: uuid,
+            description: "Required subject (prerequisite)",
+          }
       required: [uuid, subject_uuid, prerequisite_subject_uuid]
     PrerequisiteCreate:
       type: object
@@ -221,7 +238,8 @@ components:
       description: Login credentials payload.
       properties:
         user: { type: string, description: "Username or email" }
-        password: { type: string, format: password, description: "User password" }
+        password:
+          { type: string, format: password, description: "User password" }
       required: [user, password]
     AuthResponse:
       type: object
@@ -234,7 +252,8 @@ components:
             access_token: { type: string, description: "JWT access token" }
             refresh_token: { type: string, description: "JWT refresh token" }
             token_type: { type: string, default: "Bearer" }
-            expires_in: { type: integer, description: "Token expiration time in seconds" }
+            expires_in:
+              { type: integer, description: "Token expiration time in seconds" }
             user:
               type: object
               properties:
@@ -253,7 +272,8 @@ components:
       type: object
       description: Logout request payload.
       properties:
-        refresh_token: { type: string, description: "Refresh token to invalidate" }
+        refresh_token:
+          { type: string, description: "Refresh token to invalidate" }
       required: [refresh_token]
     AuthError:
       type: object
@@ -273,17 +293,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
             example:
               user: "john.doe@example.com"
               password: "securePassword123"
       responses:
-        '200':
+        "200":
           description: Login successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
               example:
                 success: true
                 data:
@@ -295,21 +315,21 @@ paths:
                     uuid: "u_123"
                     name: "John Doe"
                     email: "john.doe@example.com"
-        '401':
+        "401":
           description: Invalid credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthError'
+                $ref: "#/components/schemas/AuthError"
               example:
                 success: false
                 message: "Invalid username or password"
-        '400':
+        "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /auth/refresh:
     post:
       tags: [Auth]
@@ -320,16 +340,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshRequest'
+              $ref: "#/components/schemas/RefreshRequest"
             example:
               refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       responses:
-        '200':
+        "200":
           description: Token refreshed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
               example:
                 success: true
                 data:
@@ -341,21 +361,21 @@ paths:
                     uuid: "u_123"
                     name: "John Doe"
                     email: "john.doe@example.com"
-        '401':
+        "401":
           description: Invalid or expired refresh token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthError'
+                $ref: "#/components/schemas/AuthError"
               example:
                 success: false
                 message: "Invalid or expired refresh token"
-        '400':
+        "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /auth/logout:
     post:
       tags: [Auth]
@@ -366,11 +386,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LogoutRequest'
+              $ref: "#/components/schemas/LogoutRequest"
             example:
               refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       responses:
-        '200':
+        "200":
           description: Logout successful
           content:
             application/json:
@@ -383,28 +403,28 @@ paths:
               example:
                 success: true
                 message: "Logout successful"
-        '401':
+        "401":
           description: Invalid refresh token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthError'
+                $ref: "#/components/schemas/AuthError"
               example:
                 success: false
                 message: "Invalid refresh token"
-        '400':
+        "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /courses:
     get:
       tags: [Courses]
       summary: List courses
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: subject_id
           in: query
           schema: { type: string }
@@ -415,11 +435,11 @@ paths:
             type: string
             enum: [partial, makeup, final]
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - id: "c_123"
@@ -439,7 +459,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Course'
+              $ref: "#/components/schemas/Course"
             example:
               id: "c_123"
               subject_id: "m_10"
@@ -448,16 +468,16 @@ paths:
               exam_type: "partial"
               max_capacity: 30
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Course' }
-        '400':
+              schema: { $ref: "#/components/schemas/Course" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /courses/{id}:
     get:
       tags: [Courses]
@@ -468,16 +488,16 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Course' }
-        '404':
+              schema: { $ref: "#/components/schemas/Course" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
     put:
       tags: [Courses]
       summary: Replace course
@@ -490,23 +510,23 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Course' }
+            schema: { $ref: "#/components/schemas/Course" }
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Course' }
-        '400':
+              schema: { $ref: "#/components/schemas/Course" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
-        '404':
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
     delete:
       tags: [Courses]
       summary: Delete course
@@ -516,29 +536,29 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '204':
+        "204":
           description: Deleted
-        '404':
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /subjects:
     get:
       tags: [Subjects]
       summary: List subjects
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: name
           in: query
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - id: "m_10"
@@ -553,13 +573,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Subject' }
+            schema: { $ref: "#/components/schemas/Subject" }
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Subject' }
+              schema: { $ref: "#/components/schemas/Subject" }
   /subjects/{id}:
     get:
       tags: [Subjects]
@@ -570,16 +590,16 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Subject' }
-        '404':
+              schema: { $ref: "#/components/schemas/Subject" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
     put:
       tags: [Subjects]
       summary: Replace subject
@@ -592,13 +612,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Subject' }
+            schema: { $ref: "#/components/schemas/Subject" }
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Subject' }
+              schema: { $ref: "#/components/schemas/Subject" }
     delete:
       tags: [Subjects]
       summary: Delete subject
@@ -608,15 +628,15 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '204':
+        "204":
           description: Deleted
   /teacher-subjects:
     get:
       tags: [Teacher-Subjects]
       summary: List teacher-subject assignments
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: teacher_id
           in: query
           schema: { type: string }
@@ -624,11 +644,11 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - id: "dm_1"
@@ -644,13 +664,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/TeacherSubject' }
+            schema: { $ref: "#/components/schemas/TeacherSubject" }
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TeacherSubject' }
+              schema: { $ref: "#/components/schemas/TeacherSubject" }
   /teacher-subjects/{id}:
     get:
       tags: [Teacher-Subjects]
@@ -661,16 +681,16 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TeacherSubject' }
-        '404':
+              schema: { $ref: "#/components/schemas/TeacherSubject" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
     put:
       tags: [Teacher-Subjects]
       summary: Replace teacher-subject assignment
@@ -683,13 +703,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/TeacherSubject' }
+            schema: { $ref: "#/components/schemas/TeacherSubject" }
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TeacherSubject' }
+              schema: { $ref: "#/components/schemas/TeacherSubject" }
     delete:
       tags: [Teacher-Subjects]
       summary: Delete teacher-subject assignment
@@ -699,7 +719,7 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '204':
+        "204":
           description: Deleted
   /enrollments:
     get:
@@ -707,8 +727,8 @@ paths:
       summary: List enrollments
       description: Allows filtering by course or by user.
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: course_uuid
           in: query
           schema: { type: string, format: uuid }
@@ -718,11 +738,11 @@ paths:
           schema: { type: string, format: uuid }
           description: Filter enrollments by user
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "i_1"
@@ -741,23 +761,23 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/EnrollmentCreate' }
+            schema: { $ref: "#/components/schemas/EnrollmentCreate" }
             example:
               course_uuid: "c_123"
               student_uuid: "u_555"
               status: "pending"
               role: "student"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Enrollment' }
-        '400':
+              schema: { $ref: "#/components/schemas/Enrollment" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /enrollments/{id}:
     delete:
       tags: [Enrollments]
@@ -768,13 +788,13 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '204':
+        "204":
           description: Deleted
-        '404':
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /prerequisites:
     get:
       tags: [Prerequisites]
@@ -783,8 +803,8 @@ paths:
         - To get prerequisites of a subject use `subject_uuid`.
         - To get what subjects another one is prerequisite for, use `prerequisite_subject_uuid`.
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: subject_uuid
           in: query
           schema: { type: string, format: uuid }
@@ -794,11 +814,11 @@ paths:
           schema: { type: string, format: uuid }
           description: Subject that is required as prerequisite
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "corr_1"
@@ -814,21 +834,21 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/PrerequisiteCreate' }
+            schema: { $ref: "#/components/schemas/PrerequisiteCreate" }
             example:
               subject_uuid: "m_10"
               prerequisite_subject_uuid: "m_2"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Prerequisite' }
-        '400':
+              schema: { $ref: "#/components/schemas/Prerequisite" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /prerequisites/{id}:
     delete:
       tags: [Prerequisites]
@@ -839,13 +859,13 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '204':
+        "204":
           description: Deleted
-        '404':
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /wallets/by-user/{user_id}:
     get:
       tags: [Wallets]
@@ -867,29 +887,29 @@ paths:
             maxLength: 3
           description: Currency code (ISO 4217), e.g. ARS, USD.
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Wallet' }
-        '400':
+              schema: { $ref: "#/components/schemas/Wallet" }
+        "400":
           description: Invalid parameters or ambiguous result (multiple wallets without `currency`).
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
-        '404':
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
           description: Wallet not found for user/currency.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /users:
     get:
       tags: [Users]
       summary: List users
       description: Filter by name or email. Exact or partial match according to implementation.
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: name
           in: query
           required: false
@@ -901,11 +921,11 @@ paths:
           schema: { type: string, format: email }
           description: Filter by email
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "u_1"
@@ -924,16 +944,16 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/User' }
-        '404':
+              schema: { $ref: "#/components/schemas/User" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /transactions:
     get:
       tags: [Transactions]
@@ -942,8 +962,8 @@ paths:
         Allows filtering by `wallet_uuid` and by date ranges.
         If you only send `created_from` or `posted_from`, it acts as "date greater than or equal to".
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: from_wallet_uuid
           in: query
           required: false
@@ -975,11 +995,11 @@ paths:
           schema: { type: string, format: date-time }
           description: To (inclusive) by posting date
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "t_1"
@@ -1004,7 +1024,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Transaction'
+              $ref: "#/components/schemas/Transaction"
             example:
               to_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               from_wallet_uuid: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
@@ -1013,16 +1033,16 @@ paths:
               currency: "ARS"
               description: "Recarga de saldo"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Transaction' }
-        '400':
+              schema: { $ref: "#/components/schemas/Transaction" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /transactions/{id}:
     get:
       tags: [Transactions]
@@ -1033,16 +1053,16 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Transaction' }
-        '404':
+              schema: { $ref: "#/components/schemas/Transaction" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /wallets/{wallet_uuid}/transactions:
     get:
       tags: [Transactions]
@@ -1053,8 +1073,8 @@ paths:
           in: path
           required: true
           schema: { type: string, format: uuid }
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
         - name: created_from
           in: query
           required: false
@@ -1072,11 +1092,11 @@ paths:
           required: false
           schema: { type: string, format: date-time }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
   /notifications/{id}:
     patch:
       tags: [Notifications]
@@ -1085,7 +1105,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/NotificationReadUpdate' }
+            schema: { $ref: "#/components/schemas/NotificationReadUpdate" }
             example:
               read: true
       parameters:
@@ -1094,21 +1114,21 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Notification' }
-        '400':
+              schema: { $ref: "#/components/schemas/Notification" }
+        "400":
           description: Validation error
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
-        '404':
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
           description: Not found
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Error' }
+              schema: { $ref: "#/components/schemas/Error" }
   /users/{user_id}/notifications:
     get:
       tags: [Notifications]
@@ -1119,14 +1139,14 @@ paths:
           in: path
           required: true
           schema: { type: string, format: uuid }
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "n_1"
@@ -1153,14 +1173,14 @@ paths:
           in: path
           required: true
           schema: { type: string, format: uuid }
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PagedResponse' }
+              schema: { $ref: "#/components/schemas/PagedResponse" }
               example:
                 items:
                   - uuid: "n_1"
@@ -1182,7 +1202,7 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1191,4 +1211,3 @@ paths:
                 properties:
                   count: { type: integer, minimum: 0 }
                 required: [count]
-        

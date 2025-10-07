@@ -42,7 +42,6 @@ jobs:
       - name: Copy image and compose file to server
         run: scp -o StrictHostKeyChecking=no -i private_key core-backend.tar.gz docker-compose.yml ${{ secrets.DO_CONNECTION_URI }}:~/core-backend/
 
-
       # 🔹 4. Cargar imagen y levantar contenedor en el server
       - name: Load and run on server
         env:

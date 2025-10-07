@@ -1,7 +1,7 @@
-asyncapi: '2.6.0'
+asyncapi: "2.6.0"
 info:
   title: Core Event Bus
-  version: '0.1.0'
+  version: "0.1.0"
   description: |
     Bus de eventos con RabbitMQ usando exchanges tipo `topic`.
     - El **exchange** actúa como router (no es el evento).
@@ -28,12 +28,11 @@ tags:
   - name: DocentesMateria
     description: Eventos sobre asignaciones docente-materia
 
-
 servers:
   rabbitmqLocal:
     url: amqp://guest:guest@localhost:5672
     protocol: amqp
-    protocolVersion: '0-9-1'
+    protocolVersion: "0-9-1"
     description: RabbitMQ local (desarrollo)
 
 channels:
@@ -47,7 +46,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     subscribe:
       tags:
         - name: Users
@@ -57,9 +56,9 @@ channels:
       bindings:
         amqp:
           ack: true
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/UserCreatedV1'
+        $ref: "#/components/messages/UserCreatedV1"
   inscripciones.created:
     description: Evento emitido cuando se crea una inscripción. Evento producido por CORE, consumido por Alumnos (entre otros).
     bindings:
@@ -70,7 +69,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -79,9 +78,9 @@ channels:
       operationId: publishInscripcionCreatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/InscripcionCreatedV1'
+        $ref: "#/components/messages/InscripcionCreatedV1"
   inscripciones.delete:
     description: Evento emitido cuando se elimina una inscripción. Evento producido por CORE, consumido por Alumnos (entre otros)
     bindings:
@@ -92,7 +91,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -101,9 +100,9 @@ channels:
       operationId: publishInscripcionDeleteV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/InscripcionDeletedV1'
+        $ref: "#/components/messages/InscripcionDeletedV1"
   materias.created:
     description: Evento emitido cuando se crea una materia. Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
@@ -114,7 +113,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -123,9 +122,9 @@ channels:
       operationId: publishMateriaCreatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/MateriaCreatedV1'
+        $ref: "#/components/messages/MateriaCreatedV1"
   materias.updated:
     description: Evento emitido cuando se actualiza una materia. Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
@@ -136,7 +135,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -145,9 +144,9 @@ channels:
       operationId: publishMateriaUpdatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/MateriaCreatedV1'
+        $ref: "#/components/messages/MateriaCreatedV1"
   materias.delete:
     description: Evento emitido cuando se elimina una materia, Evento producido por CORE, consumido por Docentes (entre otros).
     bindings:
@@ -158,7 +157,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -167,9 +166,9 @@ channels:
       operationId: publishMateriaDeleteV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/MateriaDeletedV1'
+        $ref: "#/components/messages/MateriaDeletedV1"
   correlativas.created:
     description: Evento emitido cuando se crea una correlatividad entre materias.  Evento producido por CORE, consumido por Varios.
     bindings:
@@ -180,7 +179,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -189,9 +188,9 @@ channels:
       operationId: publishCorrelativaCreatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/CorrelativaCreatedV1'
+        $ref: "#/components/messages/CorrelativaCreatedV1"
   correlativas.updated:
     description: Evento emitido cuando se actualiza una correlatividad entre materias.  Evento producido por CORE, consumido por Varios.
     bindings:
@@ -202,7 +201,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -211,9 +210,9 @@ channels:
       operationId: publishCorrelativaUpdatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/CorrelativaCreatedV1'
+        $ref: "#/components/messages/CorrelativaCreatedV1"
   correlativas.delete:
     description: Evento emitido cuando se elimina una correlatividad entre materias. Evento producido por CORE, consumido por Varios.
     bindings:
@@ -224,7 +223,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -233,9 +232,9 @@ channels:
       operationId: publishCorrelativaDeleteV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/CorrelativaDeletedV1'
+        $ref: "#/components/messages/CorrelativaDeletedV1"
   docentes_materia.created:
     description: Evento emitido cuando se asigna un docente a una materia. Evento producido por CORE, consumido por Docentes.
     bindings:
@@ -246,7 +245,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -255,9 +254,9 @@ channels:
       operationId: publishDocenteMateriaCreatedV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/DocenteMateriaCreatedV1'
+        $ref: "#/components/messages/DocenteMateriaCreatedV1"
   docentes_materia.delete:
     description: Evento emitido cuando se elimina la asignacion de un docente a una materia. Evento producido por CORE, consumido por Docentes.
     bindings:
@@ -268,7 +267,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -277,9 +276,9 @@ channels:
       operationId: publishDocenteMateriaDeleteV1
       bindings:
         amqp:
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/DocenteMateriaDeletedV1'
+        $ref: "#/components/messages/DocenteMateriaDeletedV1"
   wallet.created:
     description: Evento emitido cuando se crea una wallet. Producido por CORE, consumido por docentes, alumnos, tienda, comedor.
     bindings:
@@ -290,7 +289,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -301,9 +300,9 @@ channels:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/WalletCreatedV1'
+        $ref: "#/components/messages/WalletCreatedV1"
   wallet.amount.updated:
     description: Se actualiza el balance de una wallet (por movimientos/ajustes). Producido por CORE.
     bindings:
@@ -314,7 +313,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -325,9 +324,9 @@ channels:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/WalletAmountUpdatedV1'
+        $ref: "#/components/messages/WalletAmountUpdatedV1"
   transfer.created:
     description: Se inicia una transferencia entre wallets. Producido por CORE.
     bindings:
@@ -338,7 +337,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -349,9 +348,9 @@ channels:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/TransferCreatedV1'
+        $ref: "#/components/messages/TransferCreatedV1"
   transfer.canceled:
     description: Una transferencia iniciada se cancela. Producido por CORE.
     bindings:
@@ -362,7 +361,7 @@ channels:
           type: topic
           durable: true
           autoDelete: false
-        bindingVersion: '0.2.0'
+        bindingVersion: "0.2.0"
     publish:
       tags:
         - name: Publish
@@ -373,10 +372,9 @@ channels:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
       message:
-        $ref: '#/components/messages/TransferCanceledV1'
-  
+        $ref: "#/components/messages/TransferCanceledV1"
 
 components:
   schemas:
@@ -412,15 +410,15 @@ components:
           type: string
           description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalDocente'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         payload:
           type: object
           description: Carga útil específica del evento (schema propio por tipo).
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Versión del contrato del envelope.
 
     TenantRef:
@@ -448,16 +446,27 @@ components:
     UserCreatedDataV1:
       type: object
       description: Envelope + payload específico del evento UserCreated v1.
-      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
-        eventId:      { type: string, format: uuid }
-        eventType:    { type: string, const: UserCreated }
-        occurredAt:   { type: string, format: date-time }
-        emittedAt:    { type: string, format: date-time }
+        eventId: { type: string, format: uuid }
+        eventType: { type: string, const: UserCreated }
+        occurredAt: { type: string, format: date-time }
+        emittedAt: { type: string, format: date-time }
         sourceModule: { type: string }
-        tenant:       { $ref: '#/components/schemas/TenantRef' }
-        actor:        { $ref: '#/components/schemas/ActorRef' }
-        version:      { type: string, example: '1.0' }
+        tenant: { $ref: "#/components/schemas/TenantRef" }
+        actor: { $ref: "#/components/schemas/ActorRef" }
+        version: { type: string, example: "1.0" }
         payload:
           type: object
           required: [uuid, name, email, created_at]
@@ -481,7 +490,18 @@ components:
     InscripcionCreatedDataV1:
       type: object
       description: Envelope + payload específico del evento InscripcionCreated v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -503,12 +523,12 @@ components:
           type: string
           description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Versión del contrato del envelope.
         payload:
           type: object
@@ -540,7 +560,18 @@ components:
     InscripcionDeletedDataV1:
       type: object
       description: Envelope + payload específico del evento InscripcionDeleted v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -562,12 +593,12 @@ components:
           type: string
           description: Nombre del módulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Versión del contrato del envelope.
         payload:
           type: object
@@ -599,7 +630,18 @@ components:
     MateriaCreatedDataV1:
       type: object
       description: Envelope + payload especifico del evento MateriaCreated v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -621,12 +663,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -643,7 +685,18 @@ components:
     MateriaDeletedDataV1:
       type: object
       description: Envelope + payload especifico del evento MateriaDeleted v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -665,12 +718,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -694,7 +747,18 @@ components:
     CorrelativaCreatedDataV1:
       type: object
       description: Envelope + payload especifico del evento CorrelativaCreated v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -716,12 +780,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -743,7 +807,18 @@ components:
     CorrelativaDeletedDataV1:
       type: object
       description: Envelope + payload especifico del evento CorrelativaDeleted v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -765,12 +840,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -799,7 +874,18 @@ components:
     DocenteMateriaCreatedDataV1:
       type: object
       description: Envelope + payload especifico del evento DocenteMateriaCreated v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -821,12 +907,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -848,7 +934,18 @@ components:
     DocenteMateriaDeletedDataV1:
       type: object
       description: Envelope + payload especifico del evento DocenteMateriaDeleted v1.
-      required: [ eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
         eventId:
           type: string
@@ -870,12 +967,12 @@ components:
           type: string
           description: Nombre del modulo/productor, p. ej. 'BackOffice', 'PortalAlumno'.
         tenant:
-          $ref: '#/components/schemas/TenantRef'
+          $ref: "#/components/schemas/TenantRef"
         actor:
-          $ref: '#/components/schemas/ActorRef'
+          $ref: "#/components/schemas/ActorRef"
         version:
           type: string
-          example: '1.0'
+          example: "1.0"
           description: Version del contrato del envelope.
         payload:
           type: object
@@ -904,99 +1001,183 @@ components:
     WalletCreatedDataV1:
       type: object
       description: Envelope + payload para WalletCreated v1.
-      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
-        eventId:      { type: string, format: uuid }
-        eventType:    { type: string, const: WalletCreated }
-        occurredAt:   { type: string, format: date-time }
-        emittedAt:    { type: string, format: date-time }
+        eventId: { type: string, format: uuid }
+        eventType: { type: string, const: WalletCreated }
+        occurredAt: { type: string, format: date-time }
+        emittedAt: { type: string, format: date-time }
         sourceModule: { type: string }
-        tenant:       { $ref: '#/components/schemas/TenantRef' }
-        actor:        { $ref: '#/components/schemas/ActorRef' }
-        version:      { type: string }
+        tenant: { $ref: "#/components/schemas/TenantRef" }
+        actor: { $ref: "#/components/schemas/ActorRef" }
+        version: { type: string }
         payload:
           type: object
           required: [uuid, user_id, currency, status, created_at]
           properties:
-            uuid:        { type: string, format: uuid, description: Identificador de la wallet }
-            user_id:     { type: string, format: uuid, description: Usuario dueño de la wallet }
-            currency:    { type: string, minLength: 3, maxLength: 3 }
-            status:      { type: string, description: Estado lógico de la wallet }
-            created_at:  { type: string, format: date-time }
+            uuid:
+              {
+                type: string,
+                format: uuid,
+                description: Identificador de la wallet,
+              }
+            user_id:
+              {
+                type: string,
+                format: uuid,
+                description: Usuario dueño de la wallet,
+              }
+            currency: { type: string, minLength: 3, maxLength: 3 }
+            status: { type: string, description: Estado lógico de la wallet }
+            created_at: { type: string, format: date-time }
     WalletAmountUpdatedDataV1:
       type: object
       description: Envelope + payload para WalletAmountUpdated v1.
-      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
-        eventId:      { type: string, format: uuid }
-        eventType:    { type: string, const: WalletAmountUpdated }
-        occurredAt:   { type: string, format: date-time }
-        emittedAt:    { type: string, format: date-time }
+        eventId: { type: string, format: uuid }
+        eventType: { type: string, const: WalletAmountUpdated }
+        occurredAt: { type: string, format: date-time }
+        emittedAt: { type: string, format: date-time }
         sourceModule: { type: string }
-        tenant:       { $ref: '#/components/schemas/TenantRef' }
-        actor:        { $ref: '#/components/schemas/ActorRef' }
-        version:      { type: string }
+        tenant: { $ref: "#/components/schemas/TenantRef" }
+        actor: { $ref: "#/components/schemas/ActorRef" }
+        version: { type: string }
         payload:
           type: object
-          required: [wallet_uuid, previous_amount, new_amount, currency, posted_at]
+          required:
+            [wallet_uuid, previous_amount, new_amount, currency, posted_at]
           properties:
-            wallet_uuid:     { type: string, format: uuid }
-            previous_amount: { type: string, description: Monto anterior (decimal string) }
-            new_amount:      { type: string, description: Monto nuevo (decimal string) }
-            currency:        { type: string, minLength: 3, maxLength: 3 }
-            reason:          { type: string, description: Motivo del cambio (p.ej. DEBIT_TRANSACTION - CREDIT_TRANSACTION - ADJUSTMENT) }
+            wallet_uuid: { type: string, format: uuid }
+            previous_amount:
+              { type: string, description: Monto anterior (decimal string) }
+            new_amount:
+              { type: string, description: Monto nuevo (decimal string) }
+            currency: { type: string, minLength: 3, maxLength: 3 }
+            reason:
+              {
+                type: string,
+                description: Motivo del cambio (p.ej. DEBIT_TRANSACTION - CREDIT_TRANSACTION - ADJUSTMENT),
+              }
             transaction_uuid: { type: string, format: uuid, nullable: true }
-            posted_at:       { type: string, format: date-time }
+            posted_at: { type: string, format: date-time }
     TransferCreatedDataV1:
       type: object
       description: Envelope + payload para TransferCreated v1.
-      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
-        eventId:      { type: string, format: uuid }
-        eventType:    { type: string, const: TransferCreated }
-        occurredAt:   { type: string, format: date-time }
-        emittedAt:    { type: string, format: date-time }
+        eventId: { type: string, format: uuid }
+        eventType: { type: string, const: TransferCreated }
+        occurredAt: { type: string, format: date-time }
+        emittedAt: { type: string, format: date-time }
         sourceModule: { type: string }
-        tenant:       { $ref: '#/components/schemas/TenantRef' }
-        actor:        { $ref: '#/components/schemas/ActorRef' }
-        version:      { type: string }
+        tenant: { $ref: "#/components/schemas/TenantRef" }
+        actor: { $ref: "#/components/schemas/ActorRef" }
+        version: { type: string }
         payload:
           type: object
-          required: [transfer_uuid, from_wallet_uuid, to_wallet_uuid, amount, currency, status, created_at]
+          required:
+            [
+              transfer_uuid,
+              from_wallet_uuid,
+              to_wallet_uuid,
+              amount,
+              currency,
+              status,
+              created_at,
+            ]
           properties:
-            transfer_uuid:   { type: string, format: uuid }
+            transfer_uuid: { type: string, format: uuid }
             from_wallet_uuid: { type: string, format: uuid }
-            to_wallet_uuid:  { type: string, format: uuid }
-            amount:          { type: string, description: Monto transferido (decimal string) }
-            currency:        { type: string, minLength: 3, maxLength: 3 }
-            description:     { type: string, nullable: true }
-            status:          { type: string, description: Estado inicial (PENDING - PROCESSING - COMPLETED - CANCELED) }
-            created_at:      { type: string, format: date-time }
+            to_wallet_uuid: { type: string, format: uuid }
+            amount:
+              { type: string, description: Monto transferido (decimal string) }
+            currency: { type: string, minLength: 3, maxLength: 3 }
+            description: { type: string, nullable: true }
+            status:
+              {
+                type: string,
+                description: Estado inicial (PENDING - PROCESSING - COMPLETED - CANCELED),
+              }
+            created_at: { type: string, format: date-time }
     TransferCanceledDataV1:
       type: object
       description: Envelope + payload para TransferCanceled v1.
-      required: [eventId, eventType, occurredAt, emittedAt, sourceModule, tenant, actor, payload, version]
+      required:
+        [
+          eventId,
+          eventType,
+          occurredAt,
+          emittedAt,
+          sourceModule,
+          tenant,
+          actor,
+          payload,
+          version,
+        ]
       properties:
-        eventId:      { type: string, format: uuid }
-        eventType:    { type: string, const: TransferCanceled }
-        occurredAt:   { type: string, format: date-time }
-        emittedAt:    { type: string, format: date-time }
+        eventId: { type: string, format: uuid }
+        eventType: { type: string, const: TransferCanceled }
+        occurredAt: { type: string, format: date-time }
+        emittedAt: { type: string, format: date-time }
         sourceModule: { type: string }
-        tenant:       { $ref: '#/components/schemas/TenantRef' }
-        actor:        { $ref: '#/components/schemas/ActorRef' }
-        version:      { type: string }
+        tenant: { $ref: "#/components/schemas/TenantRef" }
+        actor: { $ref: "#/components/schemas/ActorRef" }
+        version: { type: string }
         payload:
           type: object
-          required: [transfer_uuid, from_wallet_uuid, to_wallet_uuid, amount, currency, status, canceled_at]
+          required:
+            [
+              transfer_uuid,
+              from_wallet_uuid,
+              to_wallet_uuid,
+              amount,
+              currency,
+              status,
+              canceled_at,
+            ]
           properties:
-            transfer_uuid:   { type: string, format: uuid }
+            transfer_uuid: { type: string, format: uuid }
             from_wallet_uuid: { type: string, format: uuid }
-            to_wallet_uuid:  { type: string, format: uuid }
-            amount:          { type: string }
-            currency:        { type: string, minLength: 3, maxLength: 3 }
-            reason:          { type: string, description: Causa de cancelación }
-            canceled_at:     { type: string, format: date-time }
-            status:          { type: string, const: CANCELED }
+            to_wallet_uuid: { type: string, format: uuid }
+            amount: { type: string }
+            currency: { type: string, minLength: 3, maxLength: 3 }
+            reason: { type: string, description: Causa de cancelación }
+            canceled_at: { type: string, format: date-time }
+            status: { type: string, const: CANCELED }
   messages:
     UserCreatedV1:
       name: UserCreatedV1
@@ -1004,328 +1185,328 @@ components:
       summary: Notifica que un usuario fue creado en BackOffice.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/UserCreatedDataV1'
+        $ref: "#/components/schemas/UserCreatedDataV1"
         example:
-          eventId: 'c0a8012e-1a2b-4f3d-9c0e-123456789abc'
-          eventType: 'UserCreated'
-          occurredAt: '2025-09-16T19:45:00Z'
-          emittedAt: '2025-09-16T19:45:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'u123', role: 'ADMIN' }
+          eventId: "c0a8012e-1a2b-4f3d-9c0e-123456789abc"
+          eventType: "UserCreated"
+          occurredAt: "2025-09-16T19:45:00Z"
+          emittedAt: "2025-09-16T19:45:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "u123", role: "ADMIN" }
           payload:
-            uuid: 'c0a8012e-1a2b-4f3d-9c0e-123456789abc'
-            name: 'Juan Pérez'
-            email: 'juan.perez@example.com'
-            created_at: '2025-09-16T19:45:00Z'
-          version: '1.0'
+            uuid: "c0a8012e-1a2b-4f3d-9c0e-123456789abc"
+            name: "Juan Pérez"
+            email: "juan.perez@example.com"
+            created_at: "2025-09-16T19:45:00Z"
+          version: "1.0"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     InscripcionCreatedV1:
       name: InscripcionCreatedV1
       title: Inscripción Creada v1
       summary: Notifica que se creó una inscripción.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/InscripcionCreatedDataV1'
+        $ref: "#/components/schemas/InscripcionCreatedDataV1"
         example:
-          eventId: '6f1a4b2c-9b2e-4f0d-8c0a-1234567890ab'
-          eventType: 'InscripcionCreated'
-          occurredAt: '2025-09-16T19:55:00Z'
-          emittedAt: '2025-09-16T19:55:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-001', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "6f1a4b2c-9b2e-4f0d-8c0a-1234567890ab"
+          eventType: "InscripcionCreated"
+          occurredAt: "2025-09-16T19:55:00Z"
+          emittedAt: "2025-09-16T19:55:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-001", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '2a3a5e7c-1c8b-4e25-9a7e-abcdefabcdef'
-            uuid_curso: 'b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab'
-            uuid_alumno: '0a1b2c3d-4e5f-6789-abcd-ef0123456789'
-            estado: 'pendiente'
-            rol: 'alumno'
-            created_at: '2025-09-16T19:55:00Z'
+            uuid: "2a3a5e7c-1c8b-4e25-9a7e-abcdefabcdef"
+            uuid_curso: "b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab"
+            uuid_alumno: "0a1b2c3d-4e5f-6789-abcd-ef0123456789"
+            estado: "pendiente"
+            rol: "alumno"
+            created_at: "2025-09-16T19:55:00Z"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     InscripcionDeletedV1:
       name: InscripcionDeletedV1
       title: Inscripción Eliminada v1
       summary: Notifica que se eliminó una inscripción.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/InscripcionDeletedDataV1'
+        $ref: "#/components/schemas/InscripcionDeletedDataV1"
         example:
-          eventId: 'e2a9e8e4-4b07-4d9f-9ab1-0d6a9b1f23cd'
-          eventType: 'InscripcionDeleted'
-          occurredAt: '2025-09-16T20:05:00Z'
-          emittedAt: '2025-09-16T20:05:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-001', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "e2a9e8e4-4b07-4d9f-9ab1-0d6a9b1f23cd"
+          eventType: "InscripcionDeleted"
+          occurredAt: "2025-09-16T20:05:00Z"
+          emittedAt: "2025-09-16T20:05:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-001", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '9f2b5c7d-1a23-4b56-8c9d-0123456789ab'
-            uuid_curso: 'b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab'
-            uuid_alumno: '0a1b2c3d-4e5f-6789-abcd-ef0123456789'
-            deleted_at: '2025-09-16T20:05:00Z'
-            reason: 'Solicitud del alumno'
+            uuid: "9f2b5c7d-1a23-4b56-8c9d-0123456789ab"
+            uuid_curso: "b9f1d2c3-4a5b-6c7d-8e9f-0123456789ab"
+            uuid_alumno: "0a1b2c3d-4e5f-6789-abcd-ef0123456789"
+            deleted_at: "2025-09-16T20:05:00Z"
+            reason: "Solicitud del alumno"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     MateriaCreatedV1:
       name: MateriaCreatedV1
       title: Materia Created v1
       summary: Notifica que se creo una materia.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/MateriaCreatedDataV1'
+        $ref: "#/components/schemas/MateriaCreatedDataV1"
         example:
-          eventId: '3a9f1b2c-4d5e-678f-9012-abcdefabcdef'
-          eventType: 'MateriaCreated'
-          occurredAt: '2025-09-16T21:00:00Z'
-          emittedAt: '2025-09-16T21:00:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-001', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "3a9f1b2c-4d5e-678f-9012-abcdefabcdef"
+          eventType: "MateriaCreated"
+          occurredAt: "2025-09-16T21:00:00Z"
+          emittedAt: "2025-09-16T21:00:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-001", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
-            nombre: 'Analisis Matematico I'
+            uuid: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
+            nombre: "Analisis Matematico I"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     MateriaDeletedV1:
       name: MateriaDeletedV1
       title: Materia Deleted v1
       summary: Notifica que se elimino una materia.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/MateriaDeletedDataV1'
+        $ref: "#/components/schemas/MateriaDeletedDataV1"
         example:
-          eventId: '9c8d7e6f-5a4b-3210-fedc-ba9876543210'
-          eventType: 'MateriaDeleted'
-          occurredAt: '2025-09-17T10:15:00Z'
-          emittedAt: '2025-09-17T10:15:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-002', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "9c8d7e6f-5a4b-3210-fedc-ba9876543210"
+          eventType: "MateriaDeleted"
+          occurredAt: "2025-09-17T10:15:00Z"
+          emittedAt: "2025-09-17T10:15:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-002", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
-            nombre: 'Analisis Matematico I'
-            deleted_at: '2025-09-17T10:15:00Z'
-            reason: 'Reemplazo por nuevo plan'
+            uuid: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
+            nombre: "Analisis Matematico I"
+            deleted_at: "2025-09-17T10:15:00Z"
+            reason: "Reemplazo por nuevo plan"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     CorrelativaCreatedV1:
       name: CorrelativaCreatedV1
       title: Correlativa Created v1
       summary: Notifica que se creo una correlatividad entre materias.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/CorrelativaCreatedDataV1'
+        $ref: "#/components/schemas/CorrelativaCreatedDataV1"
         example:
-          eventId: '1f2e3d4c-5b6a-7980-91ab-cdefabcdef12'
-          eventType: 'CorrelativaCreated'
-          occurredAt: '2025-09-18T09:00:00Z'
-          emittedAt: '2025-09-18T09:00:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-003', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "1f2e3d4c-5b6a-7980-91ab-cdefabcdef12"
+          eventType: "CorrelativaCreated"
+          occurredAt: "2025-09-18T09:00:00Z"
+          emittedAt: "2025-09-18T09:00:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-003", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: 'abcdef12-3456-7890-abcd-ef1234567890'
-            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
-            uuid_materia_correlativa: '01234567-89ab-cdef-0123-456789abcdef'
+            uuid: "abcdef12-3456-7890-abcd-ef1234567890"
+            uuid_materia: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
+            uuid_materia_correlativa: "01234567-89ab-cdef-0123-456789abcdef"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     CorrelativaDeletedV1:
       name: CorrelativaDeletedV1
       title: Correlativa Deleted v1
       summary: Notifica que se elimino una correlatividad entre materias.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/CorrelativaDeletedDataV1'
+        $ref: "#/components/schemas/CorrelativaDeletedDataV1"
         example:
-          eventId: '210fedcb-a987-6543-210f-edcba9876543'
-          eventType: 'CorrelativaDeleted'
-          occurredAt: '2025-09-18T12:30:00Z'
-          emittedAt: '2025-09-18T12:30:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-003', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "210fedcb-a987-6543-210f-edcba9876543"
+          eventType: "CorrelativaDeleted"
+          occurredAt: "2025-09-18T12:30:00Z"
+          emittedAt: "2025-09-18T12:30:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-003", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: 'abcdef12-3456-7890-abcd-ef1234567890'
-            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
-            uuid_materia_correlativa: '01234567-89ab-cdef-0123-456789abcdef'
-            deleted_at: '2025-09-18T12:30:00Z'
-            reason: 'Actualizacion de plan de estudios'
+            uuid: "abcdef12-3456-7890-abcd-ef1234567890"
+            uuid_materia: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
+            uuid_materia_correlativa: "01234567-89ab-cdef-0123-456789abcdef"
+            deleted_at: "2025-09-18T12:30:00Z"
+            reason: "Actualizacion de plan de estudios"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     DocenteMateriaCreatedV1:
       name: DocenteMateriaCreatedV1
       title: Docente Materia Created v1
       summary: Notifica que se creo una asignacion docente-materia.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/DocenteMateriaCreatedDataV1'
+        $ref: "#/components/schemas/DocenteMateriaCreatedDataV1"
         example:
-          eventId: 'fedcba98-7654-3210-fedc-ba9876543210'
-          eventType: 'DocenteMateriaCreated'
-          occurredAt: '2025-09-19T08:45:00Z'
-          emittedAt: '2025-09-19T08:45:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-004', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "fedcba98-7654-3210-fedc-ba9876543210"
+          eventType: "DocenteMateriaCreated"
+          occurredAt: "2025-09-19T08:45:00Z"
+          emittedAt: "2025-09-19T08:45:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-004", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '0fedcba9-8765-4321-0fed-cba987654321'
-            uuid_docente: '12345678-90ab-cdef-1234-567890abcdef'
-            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
+            uuid: "0fedcba9-8765-4321-0fed-cba987654321"
+            uuid_docente: "12345678-90ab-cdef-1234-567890abcdef"
+            uuid_materia: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     DocenteMateriaDeletedV1:
       name: DocenteMateriaDeletedV1
       title: Docente Materia Deleted v1
       summary: Notifica que se elimino una asignacion docente-materia.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/DocenteMateriaDeletedDataV1'
+        $ref: "#/components/schemas/DocenteMateriaDeletedDataV1"
         example:
-          eventId: '0abc1234-def5-6789-0abc-1234def56789'
-          eventType: 'DocenteMateriaDeleted'
-          occurredAt: '2025-09-19T11:00:00Z'
-          emittedAt: '2025-09-19T11:00:01Z'
-          sourceModule: 'BackOffice'
-          tenant: { campusId: 'BA', orgId: 'UNI' }
-          actor: { userId: 'admin-004', role: 'ADMIN' }
-          version: '1.0'
+          eventId: "0abc1234-def5-6789-0abc-1234def56789"
+          eventType: "DocenteMateriaDeleted"
+          occurredAt: "2025-09-19T11:00:00Z"
+          emittedAt: "2025-09-19T11:00:01Z"
+          sourceModule: "BackOffice"
+          tenant: { campusId: "BA", orgId: "UNI" }
+          actor: { userId: "admin-004", role: "ADMIN" }
+          version: "1.0"
           payload:
-            uuid: '0fedcba9-8765-4321-0fed-cba987654321'
-            uuid_docente: '12345678-90ab-cdef-1234-567890abcdef'
-            uuid_materia: '7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd'
-            deleted_at: '2025-09-19T11:00:00Z'
-            reason: 'Fin de contrato'
+            uuid: "0fedcba9-8765-4321-0fed-cba987654321"
+            uuid_docente: "12345678-90ab-cdef-1234-567890abcdef"
+            uuid_materia: "7b6c5d4e-3f2a-1b0c-9d8e-76543210abcd"
+            deleted_at: "2025-09-19T11:00:00Z"
+            reason: "Fin de contrato"
       bindings:
         amqp:
           deliveryMode: 2
           mandatory: false
-          bindingVersion: '0.2.0'
+          bindingVersion: "0.2.0"
     WalletCreatedV1:
       name: WalletCreatedV1
       title: Wallet Created v1
       summary: Notifica que se creó una wallet.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/WalletCreatedDataV1'
+        $ref: "#/components/schemas/WalletCreatedDataV1"
         example:
-          eventId: '6d6d6f7a-6a6a-4aaa-9b9b-111111111111'
-          eventType: 'WalletCreated'
-          occurredAt: '2025-09-22T10:00:00Z'
-          emittedAt: '2025-09-22T10:00:01Z'
-          sourceModule: 'CORE'
-          tenant: { campusId: 'AR', orgId: 'FIN' }
-          actor: { userId: 'system', role: 'SERVICE' }
-          version: '1.0'
+          eventId: "6d6d6f7a-6a6a-4aaa-9b9b-111111111111"
+          eventType: "WalletCreated"
+          occurredAt: "2025-09-22T10:00:00Z"
+          emittedAt: "2025-09-22T10:00:01Z"
+          sourceModule: "CORE"
+          tenant: { campusId: "AR", orgId: "FIN" }
+          actor: { userId: "system", role: "SERVICE" }
+          version: "1.0"
           payload:
-            uuid: '11111111-2222-3333-4444-555555555555'
-            user_id: '99999999-aaaa-bbbb-cccc-dddddddddddd'
-            currency: 'ARS'
-            status: 'ACTIVE'
-            created_at: '2025-09-22T10:00:00Z'
+            uuid: "11111111-2222-3333-4444-555555555555"
+            user_id: "99999999-aaaa-bbbb-cccc-dddddddddddd"
+            currency: "ARS"
+            status: "ACTIVE"
+            created_at: "2025-09-22T10:00:00Z"
     WalletAmountUpdatedV1:
       name: WalletAmountUpdatedV1
       title: Wallet Amount Updated v1
       summary: Notifica cambio de balance en una wallet.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/WalletAmountUpdatedDataV1'
+        $ref: "#/components/schemas/WalletAmountUpdatedDataV1"
         example:
-          eventId: '77777777-8888-9999-aaaa-bbbbbbbbbbbb'
-          eventType: 'WalletAmountUpdated'
-          occurredAt: '2025-09-22T10:05:00Z'
-          emittedAt: '2025-09-22T10:05:01Z'
-          sourceModule: 'CORE'
-          tenant: { campusId: 'AR', orgId: 'FIN' }
-          actor: { userId: 'system', role: 'SERVICE' }
-          version: '1.0'
+          eventId: "77777777-8888-9999-aaaa-bbbbbbbbbbbb"
+          eventType: "WalletAmountUpdated"
+          occurredAt: "2025-09-22T10:05:00Z"
+          emittedAt: "2025-09-22T10:05:01Z"
+          sourceModule: "CORE"
+          tenant: { campusId: "AR", orgId: "FIN" }
+          actor: { userId: "system", role: "SERVICE" }
+          version: "1.0"
           payload:
-            wallet_uuid: '11111111-2222-3333-4444-555555555555'
-            previous_amount: '150000.00'
-            new_amount: '149500.00'
-            currency: 'ARS'
-            reason: 'DEBIT_TRANSACTION'
-            transaction_uuid: 'aaaa1111-bbbb-2222-cccc-333333333333'
-            posted_at: '2025-09-22T10:05:00Z'
+            wallet_uuid: "11111111-2222-3333-4444-555555555555"
+            previous_amount: "150000.00"
+            new_amount: "149500.00"
+            currency: "ARS"
+            reason: "DEBIT_TRANSACTION"
+            transaction_uuid: "aaaa1111-bbbb-2222-cccc-333333333333"
+            posted_at: "2025-09-22T10:05:00Z"
     TransferCreatedV1:
       name: TransferCreatedV1
       title: Transfer Created v1
       summary: Notifica que se inició una transferencia entre wallets.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/TransferCreatedDataV1'
+        $ref: "#/components/schemas/TransferCreatedDataV1"
         example:
-          eventId: '12121212-3434-5656-7878-909090909090'
-          eventType: 'TransferCreated'
-          occurredAt: '2025-09-22T10:10:00Z'
-          emittedAt: '2025-09-22T10:10:01Z'
-          sourceModule: 'CORE'
-          tenant: { campusId: 'AR', orgId: 'FIN' }
-          actor: { userId: 'system', role: 'SERVICE' }
-          version: '1.0'
+          eventId: "12121212-3434-5656-7878-909090909090"
+          eventType: "TransferCreated"
+          occurredAt: "2025-09-22T10:10:00Z"
+          emittedAt: "2025-09-22T10:10:01Z"
+          sourceModule: "CORE"
+          tenant: { campusId: "AR", orgId: "FIN" }
+          actor: { userId: "system", role: "SERVICE" }
+          version: "1.0"
           payload:
-            transfer_uuid: '9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
-            from_wallet_uuid: '11111111-2222-3333-4444-555555555555'
-            to_wallet_uuid: '66666666-7777-8888-9999-000000000000'
-            amount: '500.00'
-            currency: 'ARS'
-            description: 'Envio a Juan'
-            status: 'PENDING'
-            created_at: '2025-09-22T10:10:00Z'
+            transfer_uuid: "9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            from_wallet_uuid: "11111111-2222-3333-4444-555555555555"
+            to_wallet_uuid: "66666666-7777-8888-9999-000000000000"
+            amount: "500.00"
+            currency: "ARS"
+            description: "Envio a Juan"
+            status: "PENDING"
+            created_at: "2025-09-22T10:10:00Z"
     TransferCanceledV1:
       name: TransferCanceledV1
       title: Transfer Canceled v1
       summary: Notifica que una transferencia fue cancelada.
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/TransferCanceledDataV1'
+        $ref: "#/components/schemas/TransferCanceledDataV1"
         example:
-          eventId: 'abababab-cdcd-efef-0101-232323232323'
-          eventType: 'TransferCanceled'
-          occurredAt: '2025-09-22T10:12:00Z'
-          emittedAt: '2025-09-22T10:12:01Z'
-          sourceModule: 'CORE'
-          tenant: { campusId: 'AR', orgId: 'FIN' }
-          actor: { userId: 'system', role: 'SERVICE' }
-          version: '1.0'
+          eventId: "abababab-cdcd-efef-0101-232323232323"
+          eventType: "TransferCanceled"
+          occurredAt: "2025-09-22T10:12:00Z"
+          emittedAt: "2025-09-22T10:12:01Z"
+          sourceModule: "CORE"
+          tenant: { campusId: "AR", orgId: "FIN" }
+          actor: { userId: "system", role: "SERVICE" }
+          version: "1.0"
           payload:
-            transfer_uuid: '9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
-            from_wallet_uuid: '11111111-2222-3333-4444-555555555555'
-            to_wallet_uuid: '66666666-7777-8888-9999-000000000000'
-            amount: '500.00'
-            currency: 'ARS'
-            reason: 'USER_REQUEST'
-            canceled_at: '2025-09-22T10:12:00Z'
-            status: 'CANCELED'
+            transfer_uuid: "9999aaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            from_wallet_uuid: "11111111-2222-3333-4444-555555555555"
+            to_wallet_uuid: "66666666-7777-8888-9999-000000000000"
+            amount: "500.00"
+            currency: "ARS"
+            reason: "USER_REQUEST"
+            canceled_at: "2025-09-22T10:12:00Z"
+            status: "CANCELED"

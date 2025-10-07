@@ -1,46 +1,59 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  mi-mariadb:
-    image: mariadb:latest
-    container_name: CoreTeam-mariadb
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    env_file: ".env"
+    ports:
+      - "5672:5672" # AMQP apps
+      - "15672:15672" # UI admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - CoreTeam-network
+    restart: unless-stopped
+
+  mi-postgres:
+    image: postgres:16
+    container_name: CoreTeam-postgres
     env_file: ".env"
     networks:
       - CoreTeam-network
     ports:
-      - "127.0.0.1:3306:3306"
+      - "127.0.0.1:5432:5432"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  my-phpmyadmin-mari:
-    image: phpmyadmin/phpmyadmin
-    container_name: CoreTeam-my-phpmyadmin-mari
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: CoreTeam-pgadmin
+    env_file: ".env"
     networks:
       - CoreTeam-network
-    environment:
-      PMA_HOST: mi-mariadb
-      PMA_PORT: 3306
     ports:
       - "127.0.0.1:8080:80"
     depends_on:
-      - mi-mariadb
+      - mi-postgres
     restart: unless-stopped
 
-  app:
-    image: core-backend:latest
-    env_file: ".env"
-    container_name: CoreTeam-app
-    networks:
-      - CoreTeam-network
-    ports:
-      # - "127.0.0.1:3030:3030" #Solucionar Ngnix y dns antes de activar este
-      - "3030:3030"
-    depends_on:
-      - mi-mariadb
-    restart: unless-stopped
+  # app:
+  #   image: core-backend:latest
+  #   env_file: ".env"
+  #   container_name: CoreTeam-app
+  #   networks:
+  #     - CoreTeam-network
+  #   ports:
+  #     - "3030:3030"
+  #   depends_on:
+  #     - rabbitmq
+  #     - mi-postgres
+  #   restart: unless-stopped
 
 volumes:
-  mariadb_data:
+  postgres_data:
+  rabbitmq_data:
 
 networks:
   CoreTeam-network:
