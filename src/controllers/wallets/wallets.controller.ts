@@ -18,7 +18,7 @@ export class WalletsController implements IBaseController {
       const { page, limit, user_id } = req.query as {
         page?: string;
         limit?: string;
-        user_id?: string;
+        user_id?: number;
       };
 
       if (user_id) {
@@ -97,7 +97,6 @@ export class WalletsController implements IBaseController {
     try {
       const { uuid } = req.params;
       await this.service.delete(uuid);
-      // 204 sin body, o 200 con body — elijo 204
       res.status(204).end();
     } catch (err: any) {
       if (err instanceof NotFoundError) {
