@@ -4,12 +4,16 @@ import { IBaseController } from "../../types";
 import walletsService, { WalletsService } from "../../service/wallets.service";
 import { IWallet } from "../../database/interfaces/wallet/wallet.interfaces";
 import { NotFoundError } from "../../common/utils/errors";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export class WalletsController implements IBaseController {
   constructor(private service: WalletsService = walletsService) {}
 
-  public async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getAll(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { page, limit, user_id } = req.query as {
         page?: string;
@@ -34,7 +38,11 @@ export class WalletsController implements IBaseController {
     }
   }
 
-  public async getByUuid(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getByUuid(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { uuid } = req.params;
       const wallet = await this.service.getByUuid(uuid);
@@ -48,9 +56,13 @@ export class WalletsController implements IBaseController {
     }
   }
 
-  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async create(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-      const payload = { ...req.body,uuid: uuidv4() } ;
+      const payload = { ...req.body, uuid: uuidv4() };
       const created = await this.service.create(payload);
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
@@ -58,7 +70,11 @@ export class WalletsController implements IBaseController {
     }
   }
 
-  public async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async update(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { uuid } = req.params;
       const partial = req.body as Partial<IWallet>;
@@ -73,7 +89,11 @@ export class WalletsController implements IBaseController {
     }
   }
 
-  public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async delete(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { uuid } = req.params;
       await this.service.delete(uuid);

@@ -11,7 +11,6 @@ if (isNaN(parseInt(envPort))) {
 const PORT: number = parseInt(envPort);
 
 (async () => {})().then(async () => {
-
   try {
     await KnexManager.connect();
     console.log("✅ Database connected");

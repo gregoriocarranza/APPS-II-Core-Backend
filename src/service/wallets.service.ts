@@ -10,7 +10,10 @@ export class WalletsService {
     this.dao = dao ?? new WalletDAO();
   }
 
-  async getAll(params?: { page?: number; limit?: number }): Promise<IDataPaginator<IWallet>> {
+  async getAll(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<IDataPaginator<IWallet>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
     return this.dao.getAll(page, limit);
