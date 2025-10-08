@@ -14,9 +14,9 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("wallets", (table) => {
     table.uuid("uuid").primary();
     table
-      .uuid("user_id")
+      .integer("user_id")
       .notNullable()
-      .references("uuid")
+      .references("user_id")
       .inTable("users")
       .onDelete("CASCADE") // elimina wallets si se borra el user
       .onUpdate("CASCADE");

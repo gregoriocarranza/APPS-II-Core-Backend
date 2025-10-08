@@ -8,12 +8,12 @@ export class WalletDAO implements IBaseDAO<IWallet> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
 
   async create(item: IWallet): Promise<IWallet> {
-    const [created] = await this._knex("IWallet").insert(item).returning("*");
+    const [created] = await this._knex("wallets").insert(item).returning("*");
     return created;
   }
 
   async getById(uuid: string): Promise<IWallet | null> {
-    const result = await this._knex("IWallet")
+    const result = await this._knex("wallets")
       .select("*")
       .where("uuid", uuid)
       .first();
@@ -36,7 +36,7 @@ export class WalletDAO implements IBaseDAO<IWallet> {
   async getAll(page: number, limit: number): Promise<IDataPaginator<IWallet>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("IWallet").select("*");
+    const query = this._knex("wallets").select("*");
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;

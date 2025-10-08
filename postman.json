@@ -340,7 +340,7 @@
   "variable": [
     {
       "key": "core-BackendBackendHost",
-      "value": "http://localhost:<PORT>",
+      "value": "http://localhost:3030",
       "type": "string"
     },
     {
