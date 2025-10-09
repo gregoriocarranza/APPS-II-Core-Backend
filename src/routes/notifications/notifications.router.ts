@@ -19,10 +19,6 @@ export class NotificationsRouter {
         this._notificationsController,
       ),
     );
-    this._router.put(
-      "/:uuid",
-      this._notificationsController.update.bind(this._notificationsController),
-    );
     this._router.post(
       "/",
       this._notificationsController.create.bind(this._notificationsController),

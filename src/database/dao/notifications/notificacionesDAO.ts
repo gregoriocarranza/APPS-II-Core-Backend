@@ -43,7 +43,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
       .clone()
       .limit(limit)
       .offset(offset)
-      .orderBy("id", "desc");
+      .orderBy("created_at", "desc");
 
     return {
       success: true,
@@ -56,10 +56,27 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     };
   }
 
-  async getByUserId(user_id: number): Promise<INotificacion[]> {
-    return this._knex<INotificacion>("notificaciones")
-      .select("*")
-      .where({ user_id })
+  async getByUserId(user_id: number,page: number, limit: number): Promise<IDataPaginator<INotificacion>> {
+    const offset = (page - 1) * limit;
+
+    const query = this._knex("notificaciones").select("*").where({ user_id });
+
+    const [countResult] = await query.clone().clearSelect().count("* as count");
+    const totalCount = +countResult.count;
+    const data = await query
+      .clone()
+      .limit(limit)
+      .offset(offset)
       .orderBy("created_at", "desc");
+
+    return {
+      success: true,
+      data,
+      page,
+      limit,
+      count: data.length,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+    };
   }
 }
