@@ -473,6 +473,373 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "calendar-events",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-events?page=1&limit=20",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-events"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "type",
+                  "value": "EXAMEN",
+                  "disabled": true
+                },
+                {
+                  "key": "location",
+                  "value": "Aula 305",
+                  "disabled": true
+                },
+                {
+                  "key": "start_from",
+                  "value": "2025-01-01T00:00:00Z",
+                  "disabled": true
+                },
+                {
+                  "key": "start_to",
+                  "value": "2025-12-31T23:59:59Z",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-events/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-events", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Examen Final Actualizado\",\n  \"description\": \"Descripción actualizada\",\n  \"type\": \"EXAMEN\",\n  \"location\": \"Aula 305\",\n  \"capacity\": 50,\n  \"start_at\": \"2025-12-15T09:00:00Z\",\n  \"end_at\": \"2025-12-15T12:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-events/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-events", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Examen Final de Programación\",\n  \"description\": \"Examen final teórico-práctico\",\n  \"type\": \"EXAMEN\",\n  \"location\": \"Aula 305\",\n  \"capacity\": 40,\n  \"start_at\": \"2025-12-15T09:00:00Z\",\n  \"end_at\": \"2025-12-15T12:00:00Z\",\n  \"created_by\": \"<user_uuid>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-events",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-events"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-events/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-events", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "calendar-event-registrations",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-event-registrations?page=1&limit=20",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-event-registrations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "event_uuid",
+                  "value": "<event_uuid>",
+                  "disabled": true
+                },
+                {
+                  "key": "user_uuid",
+                  "value": "<user_uuid>",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "inscripto",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-event-registrations/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-event-registrations", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"cancelado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-event-registrations/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-event-registrations", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_uuid\": \"<event_uuid>\",\n  \"user_uuid\": \"<user_uuid>\",\n  \"status\": \"inscripto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-event-registrations",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-event-registrations"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/calendar-event-registrations/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "calendar-event-registrations", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [

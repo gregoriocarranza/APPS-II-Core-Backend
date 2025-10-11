@@ -7,7 +7,7 @@ info:
     Resources: courses, subjects, teacher-subjects, enrollments, prerequisites, wallets, users, transactions and notifications.
     Endpoints: GET/POST/GET {id}/PUT/DELETE for each resource.
 servers:
-  - url: http://137.184.231.145:3030
+  - url: http://localhost:3030
     description: Local
 tags:
   - name: Auth
@@ -20,6 +20,8 @@ tags:
   - name: Users
   - name: Transactions
   - name: Notifications
+  - name: Calendar Events
+  - name: Calendar Event Registrations
 components:
   parameters:
     PageParam:
@@ -282,6 +284,73 @@ components:
         success: { type: boolean, default: false }
         message: { type: string, description: "Error message" }
       required: [success, message]
+    CalendarEvent:
+      type: object
+      description: Academic calendar event (exam, class, cafeteria, etc.)
+      properties:
+        uuid: { type: string, format: uuid }
+        title: { type: string, description: "Event title" }
+        description: { type: string, description: "Event description" }
+        type:
+          type: string
+          description: "Event type (e.g., EXAMEN, CLASE, EVENTO, COMEDOR)"
+          example: "EXAMEN"
+        location: { type: string, description: "Venue/classroom or other location" }
+        capacity:
+          type: integer
+          minimum: 1
+          description: "Maximum capacity"
+        start_at: { type: string, format: date-time, description: "Start date and time" }
+        end_at: { type: string, format: date-time, description: "End date and time" }
+        created_by:
+          type: string
+          format: uuid
+          description: "UUID of the user who created the event (FK to users.uuid)"
+        created_at: { type: string, format: date-time }
+      required: [uuid, title, start_at, end_at, created_by]
+    CalendarEventCreate:
+      type: object
+      description: Payload to create a calendar event.
+      properties:
+        title: { type: string }
+        description: { type: string }
+        type: { type: string, example: "EXAMEN" }
+        location: { type: string }
+        capacity: { type: integer, minimum: 1 }
+        start_at: { type: string, format: date-time }
+        end_at: { type: string, format: date-time }
+        created_by: { type: string, format: uuid }
+      required: [title, start_at, end_at, created_by]
+    CalendarEventRegistration:
+      type: object
+      description: User registration to a calendar event.
+      properties:
+        uuid: { type: string, format: uuid }
+        event_uuid:
+          type: string
+          format: uuid
+          description: "Event UUID (FK to calendar_events.uuid)"
+        user_uuid:
+          type: string
+          format: uuid
+          description: "User UUID (FK to users.uuid)"
+        status:
+          type: string
+          description: "Registration status (e.g., inscripto, cancelado, en_espera)"
+          default: "inscripto"
+        created_at: { type: string, format: date-time }
+      required: [uuid, event_uuid, user_uuid, status]
+    CalendarEventRegistrationCreate:
+      type: object
+      description: Payload to create a calendar event registration.
+      properties:
+        event_uuid: { type: string, format: uuid }
+        user_uuid: { type: string, format: uuid }
+        status:
+          type: string
+          description: "Initial status (default: inscripto)"
+          default: "inscripto"
+      required: [event_uuid, user_uuid]
 paths:
   /auth/login:
     post:
@@ -1211,3 +1280,312 @@ paths:
                 properties:
                   count: { type: integer, minimum: 0 }
                 required: [count]
+  /calendar-events:
+    get:
+      tags: [Calendar Events]
+      summary: List calendar events
+      description: Filter by type, location, and date range.
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: type
+          in: query
+          schema: { type: string }
+          description: Filter by event type (e.g., EXAMEN, CLASE)
+        - name: location
+          in: query
+          schema: { type: string }
+          description: Filter by location
+        - name: start_from
+          in: query
+          schema: { type: string, format: date-time }
+          description: Filter events starting from this date/time
+        - name: start_to
+          in: query
+          schema: { type: string, format: date-time }
+          description: Filter events starting until this date/time
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PagedResponse" }
+              example:
+                items:
+                  - uuid: "evt_1"
+                    title: "Examen Final de Programación"
+                    description: "Examen final teórico-práctico"
+                    type: "EXAMEN"
+                    location: "Aula 305"
+                    capacity: 40
+                    start_at: "2025-12-15T09:00:00Z"
+                    end_at: "2025-12-15T12:00:00Z"
+                    created_by: "u_admin_1"
+                    created_at: "2025-10-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Calendar Events]
+      summary: Create calendar event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CalendarEventCreate" }
+            example:
+              title: "Examen Final de Programación"
+              description: "Examen final teórico-práctico"
+              type: "EXAMEN"
+              location: "Aula 305"
+              capacity: 40
+              start_at: "2025-12-15T09:00:00Z"
+              end_at: "2025-12-15T12:00:00Z"
+              created_by: "u_admin_1"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CalendarEvent" }
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /calendar-events/{id}:
+    get:
+      tags: [Calendar Events]
+      summary: Get calendar event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CalendarEvent" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+    put:
+      tags: [Calendar Events]
+      summary: Update calendar event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CalendarEventCreate" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CalendarEvent" }
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+    delete:
+      tags: [Calendar Events]
+      summary: Delete calendar event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /calendar-event-registrations:
+    get:
+      tags: [Calendar Event Registrations]
+      summary: List calendar event registrations
+      description: Filter registrations by event or by user.
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: event_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filter by event UUID
+        - name: user_uuid
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filter by user UUID
+        - name: status
+          in: query
+          schema: { type: string }
+          description: Filter by registration status
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PagedResponse" }
+              example:
+                items:
+                  - uuid: "reg_1"
+                    event_uuid: "evt_1"
+                    user_uuid: "u_555"
+                    status: "inscripto"
+                    created_at: "2025-11-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+    post:
+      tags: [Calendar Event Registrations]
+      summary: Create calendar event registration
+      description: Register a user to a calendar event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CalendarEventRegistrationCreate" }
+            example:
+              event_uuid: "evt_1"
+              user_uuid: "u_555"
+              status: "inscripto"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CalendarEventRegistration" }
+        "400":
+          description: Validation error (e.g., event at capacity, duplicate registration)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /calendar-event-registrations/{id}:
+    get:
+      tags: [Calendar Event Registrations]
+      summary: Get calendar event registration
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CalendarEventRegistration" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+    delete:
+      tags: [Calendar Event Registrations]
+      summary: Delete calendar event registration
+      description: Cancel a user's registration to an event.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /calendar-events/{event_id}/registrations:
+    get:
+      tags: [Calendar Event Registrations]
+      summary: List registrations for a specific event
+      description: Nested endpoint to get all registrations for a given event.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: status
+          in: query
+          schema: { type: string }
+          description: Filter by registration status
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PagedResponse" }
+              example:
+                items:
+                  - uuid: "reg_1"
+                    event_uuid: "evt_1"
+                    user_uuid: "u_555"
+                    status: "inscripto"
+                    created_at: "2025-11-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+        "404":
+          description: Event not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /users/{user_id}/calendar-event-registrations:
+    get:
+      tags: [Calendar Event Registrations]
+      summary: List registrations for a specific user
+      description: Get all event registrations for a given user.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: status
+          in: query
+          schema: { type: string }
+          description: Filter by registration status
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PagedResponse" }
+              example:
+                items:
+                  - uuid: "reg_1"
+                    event_uuid: "evt_1"
+                    user_uuid: "u_555"
+                    status: "inscripto"
+                    created_at: "2025-11-01T10:00:00Z"
+                total: 1
+                page: 1
+                page_size: 25
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
