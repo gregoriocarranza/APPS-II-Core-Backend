@@ -24,7 +24,7 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
 
   async update(
     uuid: string,
-    item: Partial<ICalendarEvent>,
+    item: Partial<ICalendarEvent>
   ): Promise<ICalendarEvent | null> {
     const [updated] = await this._knex("calendar_events")
       .where({ uuid })
@@ -46,13 +46,12 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
       location?: string;
       start_from?: string;
       start_to?: string;
-    },
+    }
   ): Promise<IDataPaginator<ICalendarEvent>> {
     const offset = (page - 1) * limit;
 
     let query = this._knex("calendar_events").select("*");
 
-    // Apply filters
     if (filters?.type) {
       query = query.where("type", filters.type);
     }
@@ -85,10 +84,31 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
     };
   }
 
-  async getByCreator(created_by: string): Promise<ICalendarEvent[]> {
-    return this._knex<ICalendarEvent>("calendar_events")
-      .select("*")
-      .where({ created_by })
+  async getByUser(
+    page: number,
+    limit: number,
+    user_id: number
+  ): Promise<IDataPaginator<ICalendarEvent>> {
+    const offset = (page - 1) * limit;
+
+    let query = this._knex("calendar_events").select("*").where({ user_id });
+
+    const [countResult] = await query.clone().clearSelect().count("* as count");
+    const totalCount = +countResult.count;
+    const data = await query
+      .clone()
+      .limit(limit)
+      .offset(offset)
       .orderBy("start_at", "asc");
+
+    return {
+      success: true,
+      data,
+      page,
+      limit,
+      count: data.length,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+    };
   }
 }

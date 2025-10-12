@@ -9,33 +9,22 @@ import { NotFoundError } from "../../common/utils/errors";
 import { v4 as uuidv4 } from "uuid";
 
 export class CalendarEventsController implements IBaseController {
-  constructor(
-    private service: CalendarEventsService = calendarEventsService,
-  ) {}
+  constructor(private service: CalendarEventsService = calendarEventsService) {}
 
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
-      const { page, limit, type, location, start_from, start_to } =
-        req.query as {
-          page?: string;
-          limit?: string;
-          type?: string;
-          location?: string;
-          start_from?: string;
-          start_to?: string;
-        };
-
-      const result = await this.service.getAll({
+      const { page, limit, userId } = req.query;
+      const user_id = Number(userId);
+      if (!user_id || typeof user_id !== "number") {
+        throw new Error("userUuid es obligatorio y debe ser una cadena");
+      }
+      const result = await this.service.getAllByUserUuid(user_id, {
         page: page ? +page : 1,
         limit: limit ? +limit : 20,
-        type,
-        location,
-        start_from,
-        start_to,
       });
 
       res.status(200).json(result);
@@ -47,7 +36,7 @@ export class CalendarEventsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -65,7 +54,7 @@ export class CalendarEventsController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const payload = { ...req.body, uuid: uuidv4() };
@@ -79,7 +68,7 @@ export class CalendarEventsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -98,7 +87,7 @@ export class CalendarEventsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;

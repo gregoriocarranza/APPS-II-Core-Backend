@@ -1,0 +1,23 @@
+meta {
+  name: GET BY UUID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/calendar-events/:uuid
+  body: none
+  auth: bearer
+}
+
+params:path {
+  uuid: <uuid>
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+}

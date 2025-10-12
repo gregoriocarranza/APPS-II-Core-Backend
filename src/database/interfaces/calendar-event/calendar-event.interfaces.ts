@@ -3,10 +3,10 @@ export interface ICalendarEvent {
   title: string;
   description?: string;
   type?: string;
-  location?: string;
-  capacity?: number;
+  metadata?: Record<string, any>;
+  status: string;
   start_at: string;
   end_at: string;
-  created_by: string;
+  user_id: number;
   created_at?: string;
 }

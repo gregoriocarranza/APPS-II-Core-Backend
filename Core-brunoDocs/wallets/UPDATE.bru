@@ -1,0 +1,27 @@
+meta {
+  name: UPDATE
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{core-BackendBackendHost}}/api/wallets/:uuid
+  body: json
+  auth: bearer
+}
+
+params:path {
+  uuid: <uuid>
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {}
+}
+
+settings {
+  encodeUrl: true
+}

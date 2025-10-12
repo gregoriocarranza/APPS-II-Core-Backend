@@ -12,7 +12,7 @@ import type { Knex } from "knex";
  */
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("notificaciones", (table) => {
-    table.uuid("uuid").primary();
+    table.string("uuid").primary();
     table
       .integer("user_id")
       .notNullable()
