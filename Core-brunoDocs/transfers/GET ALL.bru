@@ -1,0 +1,19 @@
+meta {
+  name: GET ALL
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/transfers
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+}

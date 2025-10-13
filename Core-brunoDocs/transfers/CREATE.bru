@@ -1,0 +1,23 @@
+meta {
+  name: CREATE
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/transfers
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {}
+}
+
+settings {
+  encodeUrl: true
+}

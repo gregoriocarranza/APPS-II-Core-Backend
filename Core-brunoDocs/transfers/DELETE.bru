@@ -1,0 +1,23 @@
+meta {
+  name: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{core-BackendBackendHost}}/api/transfers/:uuid
+  body: none
+  auth: bearer
+}
+
+params:path {
+  uuid: <uuid>
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+}

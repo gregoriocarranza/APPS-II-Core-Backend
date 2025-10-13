@@ -1,0 +1,35 @@
+meta {
+  name: UPDATE
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{core-BackendBackendHost}}/api/calendar-events/:uuid
+  body: json
+  auth: bearer
+}
+
+params:path {
+  uuid: <uuid>
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "title": "Examen Final Actualizado",
+    "description": "Descripción actualizada",
+    "type": "EXAMEN",
+    "location": "Aula 305",
+    "capacity": 50,
+    "start_at": "2025-12-15T09:00:00Z",
+    "end_at": "2025-12-15T12:00:00Z"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

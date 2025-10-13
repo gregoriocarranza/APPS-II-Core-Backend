@@ -1,0 +1,30 @@
+meta {
+  name: CREATE
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/calendar-events
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "title": "Examen Final de Programación",
+    "description": "Examen final teórico-práctico",
+    "type": "EXAMEN",
+    "start_at": "2025-12-15T09:00:00Z",
+    "end_at": "2025-12-15T12:00:00Z",
+    "user_id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+}
