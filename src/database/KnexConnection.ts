@@ -12,7 +12,7 @@ class KnexManager {
     let connection: any;
 
     if (url) {
-      const caPath = path.resolve(process.cwd(), "certs/rds-combined-ca-bundle.pem");
+      const caPath = path.resolve(process.cwd(), "src/certs/us-east-2-bundle.pem");
       const ca = fs.readFileSync(caPath, "utf8");       // <- CA de RDS
       connection = { connectionString: url, ssl: { ca } }; // valida el cert del servidor
     } else {
