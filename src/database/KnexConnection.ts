@@ -1,4 +1,6 @@
 import knex, { Knex } from "knex";
+import fs from "fs";
+import path from "path";
 
 class KnexManager {
   private static knexInstance: Knex | null = null;
@@ -7,20 +9,25 @@ class KnexManager {
     if (this.knexInstance) return this.knexInstance;
 
     const url = process.env.DATABASE_URL;
-    const connection =
-      url
-        ? { connectionString: url, ssl: { rejectUnauthorized: false } }
-        : {
-            host: process.env.SQL_HOST,
-            port: process.env.SQL_PORT ? Number(process.env.SQL_PORT) : 5432,
-            database: process.env.SQL_DB_NAME,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            ssl:
-              process.env.SQL_HOST === "localhost" || process.env.SQL_HOST === "127.0.0.1"
-                ? false
-                : { rejectUnauthorized: false },
-          };
+    let connection: any;
+
+    if (url) {
+      const caPath = path.resolve(process.cwd(), "certs/rds-combined-ca-bundle.pem");
+      const ca = fs.readFileSync(caPath, "utf8");       // <- CA de RDS
+      connection = { connectionString: url, ssl: { ca } }; // valida el cert del servidor
+    } else {
+      connection = {
+        host: process.env.SQL_HOST,
+        port: process.env.SQL_PORT ? Number(process.env.SQL_PORT) : 5432,
+        database: process.env.SQL_DB_NAME,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        ssl:
+          process.env.SQL_HOST === "localhost" || process.env.SQL_HOST === "127.0.0.1"
+            ? false
+            : { rejectUnauthorized: false }, // local no; remoto sí con TLS (sin validar CA)
+      };
+    }
 
     const finalConfig: Knex.Config = cfg || {
       client: "pg",
@@ -34,7 +41,6 @@ class KnexManager {
       migrations: { tableName: "knex_migrations" },
     };
 
-    // 2) Log seguro del host (sin credenciales)
     try {
       const cn: any = finalConfig.connection as any;
       const host = typeof cn === "string" ? new URL(cn).hostname : cn?.host ?? cn?.connection?.host;
@@ -43,7 +49,6 @@ class KnexManager {
       /* ignore */
     }
 
-    // 3) Crear instancia y probar
     this.knexInstance = knex(finalConfig);
     try {
       await this.knexInstance.raw("select 1");
