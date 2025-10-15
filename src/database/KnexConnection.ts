@@ -6,20 +6,21 @@ class KnexManager {
   static async connect(cfg?: Knex.Config, connections?: number): Promise<Knex> {
     if (this.knexInstance) return this.knexInstance;
 
-    // 1) Prioriza DATABASE_URL; si no existe, usa SQL_*
-    const connection: string | Knex.StaticConnectionConfig =
-      process.env.DATABASE_URL ||
-      {
-        host: process.env.SQL_HOST,
-        port: process.env.SQL_PORT ? Number(process.env.SQL_PORT) : 5432,
-        database: process.env.SQL_DB_NAME,
-        user: process.env.SQL_USER,
-        password: process.env.SQL_PASSWORD,
-        ssl:
-          process.env.SQL_HOST === "localhost" || process.env.SQL_HOST === "127.0.0.1"
-            ? false
-            : { rejectUnauthorized: false },
-      };
+    const url = process.env.DATABASE_URL;
+    const connection =
+      url
+        ? { connectionString: url, ssl: { rejectUnauthorized: false } }
+        : {
+            host: process.env.SQL_HOST,
+            port: process.env.SQL_PORT ? Number(process.env.SQL_PORT) : 5432,
+            database: process.env.SQL_DB_NAME,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            ssl:
+              process.env.SQL_HOST === "localhost" || process.env.SQL_HOST === "127.0.0.1"
+                ? false
+                : { rejectUnauthorized: false },
+          };
 
     const finalConfig: Knex.Config = cfg || {
       client: "pg",
