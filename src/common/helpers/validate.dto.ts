@@ -6,7 +6,7 @@ interface IInputValidator {
 }
 
 export const inputValidator = async <T extends object>(
-  inputData: T
+  inputData: T,
 ): Promise<IInputValidator> => {
   const objectEntries = Object.entries(inputData);
 

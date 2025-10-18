@@ -13,7 +13,7 @@ import type { Knex } from "knex";
  *  - end_at: fecha/hora de fin
  *  - user_uuid: UUID del usuario inscrito (FK a users.uuid)
  *  - created_at: timestamp con default now()
- * 
+ *
  * Indexes:
  *  - (start_at, user_uuid): índice para optimizar búsqueda por usuario y fecha
  */

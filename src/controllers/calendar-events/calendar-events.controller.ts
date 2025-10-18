@@ -14,7 +14,7 @@ export class CalendarEventsController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { page, limit, userId } = req.query;
@@ -36,7 +36,7 @@ export class CalendarEventsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -54,7 +54,7 @@ export class CalendarEventsController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const payload = { ...req.body, uuid: uuidv4() };
@@ -68,7 +68,7 @@ export class CalendarEventsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -87,7 +87,7 @@ export class CalendarEventsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;

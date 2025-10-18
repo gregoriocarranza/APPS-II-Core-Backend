@@ -44,7 +44,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
 
   async getAll(
     page: number,
-    limit: number
+    limit: number,
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
@@ -72,7 +72,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   async getByUserId(
     user_id: number,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 

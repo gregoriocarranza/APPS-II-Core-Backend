@@ -295,13 +295,20 @@ components:
           type: string
           description: "Event type (e.g., EXAMEN, CLASE, EVENTO, COMEDOR)"
           example: "EXAMEN"
-        location: { type: string, description: "Venue/classroom or other location" }
+        location:
+          { type: string, description: "Venue/classroom or other location" }
         capacity:
           type: integer
           minimum: 1
           description: "Maximum capacity"
-        start_at: { type: string, format: date-time, description: "Start date and time" }
-        end_at: { type: string, format: date-time, description: "End date and time" }
+        start_at:
+          {
+            type: string,
+            format: date-time,
+            description: "Start date and time",
+          }
+        end_at:
+          { type: string, format: date-time, description: "End date and time" }
         created_by:
           type: string
           format: uuid
@@ -1462,7 +1469,8 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/CalendarEventRegistrationCreate" }
+            schema:
+              { $ref: "#/components/schemas/CalendarEventRegistrationCreate" }
             example:
               event_uuid: "evt_1"
               user_uuid: "u_555"

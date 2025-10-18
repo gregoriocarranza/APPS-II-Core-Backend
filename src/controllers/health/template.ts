@@ -4,7 +4,7 @@ export interface HealthEmailData {
   version: string;
   environment: string;
   serviceName?: string;
-  timestamp : number;
+  timestamp: number;
 }
 
 export function healthBodyText(data: HealthEmailData): string {

@@ -24,7 +24,7 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
 
   async update(
     uuid: string,
-    item: Partial<ICalendarEvent>
+    item: Partial<ICalendarEvent>,
   ): Promise<ICalendarEvent | null> {
     const [updated] = await this._knex("calendar_events")
       .where({ uuid })
@@ -46,7 +46,7 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
       location?: string;
       start_from?: string;
       start_to?: string;
-    }
+    },
   ): Promise<IDataPaginator<ICalendarEvent>> {
     const offset = (page - 1) * limit;
 
@@ -87,7 +87,7 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
   async getByUser(
     page: number,
     limit: number,
-    user_id: number
+    user_id: number,
   ): Promise<IDataPaginator<ICalendarEvent>> {
     const offset = (page - 1) * limit;
 

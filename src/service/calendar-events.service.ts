@@ -15,7 +15,7 @@ export class CalendarEventsService {
     params?: {
       page?: number;
       limit?: number;
-    }
+    },
   ): Promise<IDataPaginator<ICalendarEvent>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
@@ -35,7 +35,7 @@ export class CalendarEventsService {
 
   async update(
     uuid: string,
-    partial: Partial<ICalendarEvent>
+    partial: Partial<ICalendarEvent>,
   ): Promise<ICalendarEvent> {
     const updated = await this.dao.update(uuid, partial);
     if (!updated)

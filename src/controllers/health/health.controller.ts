@@ -14,7 +14,7 @@ export class HealthController {
   public async getHealthStatus(
     _req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       let info = null;
