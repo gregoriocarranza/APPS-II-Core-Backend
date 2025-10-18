@@ -9,5 +9,12 @@ export interface INotificacion {
 export interface ICreateNotificationDTO {
   user_id: number;
   title: string;
+  bodyType: "html" | "text";
   body: string;
+  attachments: attachment;
+}
+
+export interface attachment {
+  filename: string;
+  href: string;
 }

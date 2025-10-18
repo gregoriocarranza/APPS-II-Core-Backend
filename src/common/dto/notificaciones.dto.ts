@@ -1,31 +1,42 @@
-import { INotificacion } from "../../database/interfaces/notification/notification.interfaces";
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 
-export class NotificationCreatedDTO {
-  user_id: number;
-  title: string;
-  bodyType: "html" | "text";
-  body: string;
+import { Type } from "class-transformer";
 
-  constructor(data: NotificationCreatedDTO) {
-    this.user_id = data.user_id;
-    this.title = data.title;
-    this.bodyType = data.bodyType;
-    this.body = data.body;
-  }
+export enum bodyTypes {
+  html = "html",
+  text = "text",
+}
+export class attachmentClass {
+  @IsString()
+  filename!: string;
+
+  @IsString()
+  href!: string;
 }
 
-export class NotificationResponseDTO {
-  uuid: string;
-  user_id: number;
-  title: string;
-  body: string;
-  created_at: string;
+export class NotificationCreatedDTO {
+  @IsInt()
+  user_id!: number;
 
-  constructor(data: INotificacion) {
-    this.uuid = data.uuid;
-    this.user_id = data.user_id;
-    this.title = data.title;
-    this.body = data.body;
-    this.created_at = data.created_at || new Date().toISOString();
-  }
+  @IsString()
+  title!: string;
+
+  @IsEnum(bodyTypes)
+  bodyType!: bodyTypes;
+
+  @IsString()
+  body!: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => attachmentClass)
+  attachments!: attachmentClass[];
 }

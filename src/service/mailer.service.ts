@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import mailerConfig from "../config/mailer.config";
+import { Attachment } from "nodemailer/lib/mailer";
+import { bodyTypes } from "../common/dto/notificaciones.dto";
 
 export class EmailerService {
   private static _instance: EmailerService;
@@ -24,14 +26,16 @@ export class EmailerService {
   async sendMail(dest: {
     to: string;
     subject: string;
-    bodyType: "html" | "text";
+    bodyType: bodyTypes;
     body: string;
+    attachments?: Attachment[];
   }): Promise<any> {
     const toSend: nodemailer.SendMailOptions = {
       from: mailerConfig.defaultFrom,
       to: dest.to,
       subject: dest.subject,
       [dest.bodyType]: dest.body,
+      attachments: dest.attachments,
     };
 
     const info = await this.transporter.sendMail(toSend);

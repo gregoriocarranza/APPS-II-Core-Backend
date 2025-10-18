@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import "reflect-metadata";
 import KnexManager from "./database/KnexConnection";
 dotenv.config();
 

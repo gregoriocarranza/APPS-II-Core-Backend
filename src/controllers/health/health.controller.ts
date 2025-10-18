@@ -4,6 +4,7 @@ import { getServiceEnvironment } from "../../common/utils/environment.resolver";
 import { EmailerService } from "../../service/mailer.service";
 import { healthBodyText, HealthEmailData } from "./template";
 import dotenv from "dotenv";
+import { bodyTypes } from "../../common/dto/notificaciones.dto";
 dotenv.config();
 export class HealthController {
   constructor(private emailService: EmailerService = EmailerService.instance) {
@@ -14,7 +15,7 @@ export class HealthController {
   public async getHealthStatus(
     _req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       let info = null;
@@ -39,7 +40,7 @@ export class HealthController {
             process.env.HEALTH_CHECK_DESTINATION ||
             "gregoriocarranza@hotmail.com",
           subject: "🩺 Health Check - " + serviceName,
-          bodyType: "html",
+          bodyType: bodyTypes.html,
           body: healthBodyText(emailData),
         });
       }

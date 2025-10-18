@@ -4,12 +4,10 @@ import { NotificationsService } from "../../service/notifications.service";
 import { NotFoundError } from "../../common/utils/errors";
 import { v4 as uuidv4 } from "uuid";
 import { INotificacion } from "../../database/interfaces/notification/notification.interfaces";
-import { NotificationCreatedDTO } from "../../common/dto/notificaciones.dto";
-import { inputValidator } from "../../common/helpers/validate.dto";
 import { EmailerService } from "../../service/mailer.service";
 import { UserService } from "../../service/user.service";
 import { IUser } from "../../database/interfaces/user/user.interfaces";
-
+// import { inputValidator } from "../../common/helpers/validate.dto";
 export class NotificationsController implements IBaseController {
   notificationService: NotificationsService;
   emailerService: EmailerService;
@@ -23,7 +21,7 @@ export class NotificationsController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { page, limit, user_id } = req.query as {
@@ -56,7 +54,7 @@ export class NotificationsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -74,19 +72,17 @@ export class NotificationsController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<any> {
     try {
-      const notificationDto = new NotificationCreatedDTO(req.body);
+      const notificationDto = req.body;
 
-      const isValid = await inputValidator(notificationDto);
-      if (!isValid) return res.status(400).json({ error: "Datos inválidos" });
       const user: IUser | undefined = await this.userService.getByUserId(
-        notificationDto.user_id,
+        notificationDto.user_id
       );
       if (!user)
         throw new NotFoundError(
-          `User ${notificationDto.user_id} no encontrado`,
+          `User ${notificationDto.user_id} no encontrado`
         );
       const payload = { ...req.body, uuid: uuidv4(), user };
       const created = await this.notificationService.create(payload);
@@ -96,6 +92,7 @@ export class NotificationsController implements IBaseController {
         subject: notificationDto.title,
         bodyType: notificationDto.bodyType,
         body: notificationDto.body,
+        attachments: notificationDto.attachments || undefined,
       });
       res.status(201).json({ success: true, data: created, info });
     } catch (err: any) {
@@ -106,7 +103,7 @@ export class NotificationsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -125,7 +122,7 @@ export class NotificationsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
