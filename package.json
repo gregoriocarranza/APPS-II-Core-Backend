@@ -22,6 +22,7 @@
     "knex": "^3.1.0",
     "lodash": "^4.17.21",
     "morgan": "^1.10.1",
+    "nodemailer": "^7.0.9",
     "pg": "^8.16.3",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
@@ -38,6 +39,7 @@
     "@types/lodash": "^4.17.16",
     "@types/morgan": "^1.9.10",
     "@types/node": "^22.13.13",
+    "@types/nodemailer": "^7.0.2",
     "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^8.33.0",
     "eslint-config-standard-with-typescript": "^34.0.0",
