@@ -7,7 +7,17 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
 
   async create(item: INotificacion): Promise<INotificacion> {
-    const [created] = await this._knex("notificaciones").insert(item).returning("*");
+    const insert = {
+      uuid: item.uuid,
+      user_id: item.user_id,
+      title: item.title,
+      body: item.body,
+      from: process.env.SMTP_USER || "placehoder@gmail.com",
+    };
+
+    const [created] = await this._knex("notificaciones")
+      .insert(insert)
+      .returning("*");
     return created;
   }
 
@@ -19,9 +29,9 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     return result || null;
   }
 
- /**
- *  * @deprecated Not supported. This DAO does not support updates.
- */
+  /**
+   *  * @deprecated Not supported. This DAO does not support updates.
+   */
   async update(uuid: string, item: Partial<INotificacion>): Promise<any> {
     console.info("Function not suported");
     return "Function not suported";
@@ -32,7 +42,10 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<INotificacion>> {
+  async getAll(
+    page: number,
+    limit: number
+  ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("notificaciones").select("*");
@@ -56,7 +69,11 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     };
   }
 
-  async getByUserId(user_id: number,page: number, limit: number): Promise<IDataPaginator<INotificacion>> {
+  async getByUserId(
+    user_id: number,
+    page: number,
+    limit: number
+  ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("notificaciones").select("*").where({ user_id });

@@ -15,9 +15,16 @@ auth:bearer {
 }
 
 body:json {
-  {}
+  {
+    "user_id": 1,
+    "title": "Nueva notificación del sistema",
+    "bodyType": "html",
+    "body": "<p>Hola! Tu solicitud fue <strong>aprobada</strong>. Podés verla en tu perfil.</p>"
+  }
+  
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }
