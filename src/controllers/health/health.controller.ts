@@ -13,13 +13,13 @@ export class HealthController {
   }
 
   public async getHealthStatus(
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
       let info = null;
-
+      const { sendEmail } = req.query;
       const version: string = await getServiceVersion();
       const environment: string = await getServiceEnvironment();
       const timestamp: number = new Date().getTime();
@@ -34,7 +34,10 @@ export class HealthController {
         timestamp,
       };
 
-      if (process.env.HEALTH_CHECK_SEND_EMAIL === "true") {
+      if (
+        process.env.HEALTH_CHECK_SEND_EMAIL === "true" ||
+        sendEmail === "true"
+      ) {
         info = await this.emailService.sendMail({
           to:
             process.env.HEALTH_CHECK_DESTINATION ||
@@ -44,9 +47,6 @@ export class HealthController {
           body: healthBodyText(emailData),
         });
       }
-
-      console.log(new Date());
-
       res.status(200).json({
         success: true,
         health: "Up!",
