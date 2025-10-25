@@ -25,7 +25,7 @@ export class CarrerasRouter {
     );
     this._router.post(
       "/",
-    bodyValidationMiddleware(CarreraCreateDTO),
+      bodyValidationMiddleware(CarreraCreateDTO),
       this._carrerasController.create.bind(this._carrerasController),
     );
     this._router.delete(

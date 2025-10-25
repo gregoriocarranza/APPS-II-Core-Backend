@@ -4,7 +4,6 @@ import { CarrerasService } from "../../service/carreras.service";
 import { NotFoundError } from "../../common/utils/errors";
 
 export class CarrerasController implements IBaseController {
-
   carrerasService: CarrerasService;
   constructor() {
     this.carrerasService = new CarrerasService();
@@ -22,7 +21,7 @@ export class CarrerasController implements IBaseController {
       };
 
       const result = await this.carrerasService.getAll({
-        page: page ? + page : 1,
+        page: page ? +page : 1,
         limit: limit ? +limit : 20,
       });
 

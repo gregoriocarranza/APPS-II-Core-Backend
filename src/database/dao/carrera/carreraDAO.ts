@@ -35,10 +35,7 @@ export class CarrerasDAO implements IBaseDAO<ICarrera> {
     return result > 0;
   }
 
-  async getAll(
-    page: number,
-    limit: number,
-  ): Promise<IDataPaginator<ICarrera>> {
+  async getAll(page: number, limit: number): Promise<IDataPaginator<ICarrera>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("carreras").select("*");
@@ -63,9 +60,6 @@ export class CarrerasDAO implements IBaseDAO<ICarrera> {
   }
 
   async getByUserId(uuid: string): Promise<ICarrera | undefined> {
-    return this._knex<ICarrera>("carreras")
-      .select("*")
-      .where({ uuid })
-      .first();
+    return this._knex<ICarrera>("carreras").select("*").where({ uuid }).first();
   }
 }

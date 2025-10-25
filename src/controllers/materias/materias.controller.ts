@@ -4,7 +4,6 @@ import { MateriasService } from "../../service/materias.service";
 import { NotFoundError } from "../../common/utils/errors";
 
 export class MateriasController implements IBaseController {
-
   materiasService: MateriasService;
   constructor() {
     this.materiasService = new MateriasService();
@@ -22,7 +21,7 @@ export class MateriasController implements IBaseController {
       };
 
       const result = await this.materiasService.getAll({
-        page: page ? + page : 1,
+        page: page ? +page : 1,
         limit: limit ? +limit : 20,
       });
 

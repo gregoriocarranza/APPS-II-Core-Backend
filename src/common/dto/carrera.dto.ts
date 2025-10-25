@@ -53,7 +53,6 @@ export class CarreraCreateDTO {
   @IsBoolean()
   is_active?: boolean = true;
 
-
   @IsOptional()
   @IsObject()
   metadata?: Record<string, any>;

@@ -35,10 +35,7 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
     return result > 0;
   }
 
-  async getAll(
-    page: number,
-    limit: number,
-  ): Promise<IDataPaginator<IMateria>> {
+  async getAll(page: number, limit: number): Promise<IDataPaginator<IMateria>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("materias").select("*");
@@ -63,9 +60,6 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
   }
 
   async getByUserId(uuid: string): Promise<IMateria | undefined> {
-    return this._knex<IMateria>("materias")
-      .select("*")
-      .where({ uuid })
-      .first();
+    return this._knex<IMateria>("materias").select("*").where({ uuid }).first();
   }
 }
