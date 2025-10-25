@@ -25,8 +25,8 @@ export class WalletsService {
     return wallet;
   }
 
-  async getByUserId(user_id: number): Promise<IWallet[]> {
-    return this.dao.getByUserId(user_id);
+  async getByUserUuid(user_uuid: string): Promise<IWallet[]> {
+    return this.dao.getByUserUuid(user_uuid);
   }
 
   async create(payload: IWallet): Promise<IWallet> {

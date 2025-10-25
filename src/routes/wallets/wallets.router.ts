@@ -1,5 +1,9 @@
 import { Router } from "express";
 import { WalletsController } from "../../controllers/wallets/wallets.controller";
+import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
+import { WalletCreatedDTO } from "../../common/dto/wallet.dto";
+import { authMiddleware } from "../../middlewares/auth.middleware";
+import { administratorMiddleware } from "../../middlewares/administrator.middleware";
 
 export class WalletsRouter {
   private _router: Router;
@@ -9,8 +13,11 @@ export class WalletsRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
+    this._router.use(authMiddleware);
+
     this._router.get(
       "/",
+      administratorMiddleware,
       this._walletsController.getAll.bind(this._walletsController),
     );
     this._router.get(
@@ -19,14 +26,18 @@ export class WalletsRouter {
     );
     this._router.put(
       "/:uuid",
+      administratorMiddleware,
       this._walletsController.update.bind(this._walletsController),
     );
     this._router.post(
       "/",
+      administratorMiddleware,
+      bodyValidationMiddleware(WalletCreatedDTO),
       this._walletsController.create.bind(this._walletsController),
     );
     this._router.delete(
       "/:uuid",
+      administratorMiddleware,
       this._walletsController.delete.bind(this._walletsController),
     );
   }

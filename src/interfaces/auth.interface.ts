@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type UserLike = {
   uuid: string;
   email: string;
@@ -11,6 +13,7 @@ export type UserLike = {
 
 export type JwtPayload = {
   sub: string;
+  uuid: string;
   email: string;
   name: string;
   role: string;
@@ -28,3 +31,11 @@ export type RefreshRecord = {
   expiresAt: number;
   parentJti?: string;
 };
+
+export interface ExtendedRequest extends Request {
+  user: {
+    uuid: string;
+    email: string;
+    role: string;
+  };
+}

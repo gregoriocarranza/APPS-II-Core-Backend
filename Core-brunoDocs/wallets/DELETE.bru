@@ -11,13 +11,14 @@ delete {
 }
 
 params:path {
-  uuid: <uuid>
+  uuid: ad2fb281-0474-4b55-aed8-73308292e3d5
 }
 
 auth:bearer {
-  token: {{core-BackendBearerToken}}
+  token: {{JWT}}
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

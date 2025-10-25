@@ -5,15 +5,22 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/wallets
+  url: {{core-BackendBackendHost}}/api/wallets?page=1&limit=2
   body: none
   auth: bearer
 }
 
+params:query {
+  page: 1
+  limit: 2
+  ~user_uuid: 
+}
+
 auth:bearer {
-  token: {{core-BackendBearerToken}}
+  token: {{JWT}}
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

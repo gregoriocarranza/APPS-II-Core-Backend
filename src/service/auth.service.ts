@@ -21,7 +21,7 @@ export class AuthService {
 
   private constructor(
     userService?: UserService,
-    carreraService?: CarrerasService
+    carreraService?: CarrerasService,
   ) {
     this.userService = userService ?? new UserService();
     this.carreraService = carreraService ?? new CarrerasService();
@@ -58,7 +58,7 @@ export class AuthService {
 
   async validateCredentials(
     email: string,
-    password: string
+    password: string,
   ): Promise<UserLike> {
     // TODO: llamar al microservicio (HTTP/RPC). Por ahora mock local:
     if (!email || !password) throw new Error("Credenciales inválidas");
@@ -83,7 +83,7 @@ export class AuthService {
         career: user.career,
       },
       authConfig.access.secret,
-      { expiresIn: authConfig.access.ttl }
+      { expiresIn: authConfig.access.ttl },
     );
 
     const refreshToken = jwt.sign(
@@ -95,7 +95,7 @@ export class AuthService {
         career: user.career,
       } as JwtPayload,
       authConfig.refresh.secret,
-      { expiresIn: authConfig.refresh.ttl, jwtid: jti }
+      { expiresIn: authConfig.refresh.ttl, jwtid: jti },
     );
 
     const decoded = jwt.decode(refreshToken) as any;

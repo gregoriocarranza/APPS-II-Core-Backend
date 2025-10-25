@@ -81,9 +81,7 @@ export class NotificationsController implements IBaseController {
         notificationDto.uuid,
       );
       if (!user)
-        throw new NotFoundError(
-          `User ${notificationDto.uuid} no encontrado`,
-        );
+        throw new NotFoundError(`User ${notificationDto.uuid} no encontrado`);
       const payload = { ...req.body, uuid: uuidv4(), user };
       const created = await this.notificationService.create(payload);
 

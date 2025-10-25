@@ -57,10 +57,10 @@ export class WalletDAO implements IBaseDAO<IWallet> {
     };
   }
 
-  async getByUserId(user_id: number): Promise<IWallet[]> {
+  async getByUserUuid(user_uuid: string): Promise<IWallet[]> {
     return this._knex<IWallet>("wallets")
       .select("*")
-      .where({ user_id })
+      .where({ user_uuid })
       .orderBy("created_at", "desc");
   }
 }

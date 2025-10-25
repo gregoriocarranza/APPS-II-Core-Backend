@@ -16,21 +16,21 @@ export class AuthRouter {
     this._router.post(
       "/login",
       bodyValidationMiddleware(LoginDTO),
-      this._authController.login.bind(this._authController)
+      this._authController.login.bind(this._authController),
     );
     this._router.post(
       "/refresh",
-      this._authController.refresh.bind(this._authController)
+      this._authController.refresh.bind(this._authController),
     );
     this._router.post(
       "/logout",
-      this._authController.logout.bind(this._authController)
+      this._authController.logout.bind(this._authController),
     );
     this._router.get("/me", this._authController.me.bind(this._authController));
     this._router.post(
       "/verify-jwt",
       bodyValidationMiddleware(VerifyJwtDTO),
-      this._authController.verify.bind(this._authController)
+      this._authController.verify.bind(this._authController),
     );
   }
 

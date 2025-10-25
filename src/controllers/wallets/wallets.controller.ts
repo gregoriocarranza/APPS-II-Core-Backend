@@ -1,8 +1,10 @@
-// src/controllers/wallets.controller.ts
 import { Request, Response, NextFunction } from "express";
 import { IBaseController } from "../../types";
 import walletsService, { WalletsService } from "../../service/wallets.service";
-import { IWallet } from "../../database/interfaces/wallet/wallet.interfaces";
+import {
+  IWallet,
+  WalletStatus,
+} from "../../database/interfaces/wallet/wallet.interfaces";
 import { NotFoundError } from "../../common/utils/errors";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,14 +17,14 @@ export class WalletsController implements IBaseController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const { page, limit, user_id } = req.query as {
+      const { page, limit, user_uuid } = req.query as {
         page?: string;
         limit?: string;
-        user_id?: number;
+        user_uuid?: string;
       };
 
-      if (user_id) {
-        const data = await this.service.getByUserId(user_id);
+      if (user_uuid) {
+        const data = await this.service.getByUserUuid(user_uuid);
         res.status(200).json({ success: true, data });
         return;
       }
@@ -62,7 +64,12 @@ export class WalletsController implements IBaseController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const payload = { ...req.body, uuid: uuidv4() };
+      const payload = {
+        ...req.body,
+        uuid: uuidv4(),
+        balance: 1000,
+        status: WalletStatus.ACTIVE,
+      };
       const created = await this.service.create(payload);
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
