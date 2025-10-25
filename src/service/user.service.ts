@@ -25,10 +25,9 @@ export class UserService {
     return user;
   }
 
-  async getByUserId(user_id: number): Promise<IUser | undefined> {
-    return this.dao.getByUserId(user_id);
+  async getByEmail(email: string): Promise<IUser | undefined> {
+    return this.dao.getByEmail(email);
   }
-
   async create(payload: IUser): Promise<IUser> {
     return this.dao.create(payload);
   }

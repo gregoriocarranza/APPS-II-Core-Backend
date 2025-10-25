@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "build:asyncapi": "asyncapi generate fromTemplate .docs/async-documentation.yaml @asyncapi/html-template@3.0.0 --use-new-generator -o .docs/.build/async --force-write -p singleFile=true sidebarOrganization=byTagsNoRoot",
     "migrate:create": "knex migrate:make migration -x ts",
-    "migrate:deploy": "knex migrate:latest"
+    "migrate:deploy": "knex migrate:latest",
+    "migrate:rollback:all": "knex migrate:rollback --all"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",

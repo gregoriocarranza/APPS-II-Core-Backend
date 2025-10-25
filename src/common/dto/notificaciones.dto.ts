@@ -1,9 +1,9 @@
 import {
   IsArray,
   IsEnum,
-  IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from "class-validator";
 
@@ -22,8 +22,8 @@ export class attachmentClass {
 }
 
 export class NotificationCreatedDTO {
-  @IsInt()
-  user_id!: number;
+  @IsUUID()
+  uuid!: string;
 
   @IsString()
   title!: string;

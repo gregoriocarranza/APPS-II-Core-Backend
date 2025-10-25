@@ -6,12 +6,26 @@ import {
   RefreshRecord,
   UserLike,
 } from "../interfaces/auth.interface";
-// import { UserService } from "./user.service";
+import { UserService } from "./user.service";
 import { authConfig } from "../common/config/auth/auth.config";
+import { getServiceEnvironment } from "../common/utils/environment.resolver";
+import { IUser } from "../database/interfaces/user/user.interfaces";
+import { CarrerasService } from "./carreras.service";
+import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
 
 export class AuthService {
   private static _instance: AuthService;
   private refreshStore = new Map<string, RefreshRecord>();
+  private userService: UserService;
+  private carreraService: CarrerasService;
+
+  private constructor(
+    userService?: UserService,
+    carreraService?: CarrerasService
+  ) {
+    this.userService = userService ?? new UserService();
+    this.carreraService = carreraService ?? new CarrerasService();
+  }
 
   static get instance(): AuthService {
     if (!this._instance) this._instance = new AuthService();
@@ -22,20 +36,39 @@ export class AuthService {
     return authConfig.access.ttl;
   }
 
+  private async mapToUserLike(u: IUser): Promise<UserLike> {
+    let career: ICarrera | null = null;
+    if (u.carrera_uuid) {
+      career = await this.carreraService.getByUuid(u.carrera_uuid);
+    }
+    return {
+      uuid: u.uuid,
+      email: u.email,
+      name: u.nombre,
+      role: u.rol,
+      career:
+        u.carrera_uuid && career
+          ? {
+              uuid: u.carrera_uuid,
+              name: career.name,
+            }
+          : null,
+    };
+  }
+
   async validateCredentials(
     email: string,
     password: string
   ): Promise<UserLike> {
     // TODO: llamar al microservicio (HTTP/RPC). Por ahora mock local:
     if (!email || !password) throw new Error("Credenciales inválidas");
+    let user: IUser | undefined = undefined;
+    if (getServiceEnvironment() !== "production") {
+      user = await this.userService.getByEmail(email);
+    }
+    if (!user) throw new Error("Usuario o contraseña inválidos");
 
-    return {
-      id: "u_123",
-      email,
-      name: "Usuario Demo",
-      role: "student",
-      career: "IT",
-    };
+    return this.mapToUserLike(user);
   }
 
   async issueTokenPair(user: UserLike) {
@@ -43,7 +76,7 @@ export class AuthService {
 
     const accessToken = jwt.sign(
       {
-        sub: String(user.id),
+        sub: String(user.uuid),
         email: user.email,
         name: user.name,
         role: user.role,
@@ -55,7 +88,7 @@ export class AuthService {
 
     const refreshToken = jwt.sign(
       {
-        sub: String(user.id),
+        sub: String(user.uuid),
         email: user.email,
         name: user.name,
         role: user.role,
@@ -69,7 +102,7 @@ export class AuthService {
     const exp = decoded?.exp as number | undefined;
     this.refreshStore.set(jti, {
       jti,
-      userId: String(user.id),
+      userId: String(user.uuid),
       revoked: false,
       expiresAt: exp ?? Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     });
@@ -93,7 +126,7 @@ export class AuthService {
     this.refreshStore.set(rec.jti, rec);
 
     const user: UserLike = {
-      id: payload.sub,
+      uuid: payload.sub,
       email: payload.email,
       name: payload.name,
       role: payload.role,

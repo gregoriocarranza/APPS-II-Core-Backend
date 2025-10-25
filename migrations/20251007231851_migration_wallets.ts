@@ -12,11 +12,11 @@ import type { Knex } from "knex";
  */
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("wallets", (table) => {
-    table.string("uuid").primary();
+    table.uuid("uuid").primary();
     table
-      .integer("user_id")
+      .uuid("user_uuid")
       .notNullable()
-      .references("user_id")
+      .references("uuid")
       .inTable("users")
       .onDelete("CASCADE") // elimina wallets si se borra el user
       .onUpdate("CASCADE");

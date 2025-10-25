@@ -1,17 +1,23 @@
 export type UserLike = {
-  id: number | string;
+  uuid: string;
   email: string;
-  name?: string;
+  name: string;
   role: string;
-  career: string;
+  career: {
+    uuid: string;
+    name: string;
+  } | null;
 };
 
 export type JwtPayload = {
-  sub: string; // user id
+  sub: string;
   email: string;
-  name?: string;
+  name: string;
   role: string;
-  career: string;
+  career: {
+    uuid: string;
+    name: string;
+  } | null;
   jti: string;
 };
 

@@ -77,12 +77,12 @@ export class NotificationsController implements IBaseController {
     try {
       const notificationDto = req.body;
 
-      const user: IUser | undefined = await this.userService.getByUserId(
-        notificationDto.user_id,
+      const user: IUser | undefined = await this.userService.getByUuid(
+        notificationDto.uuid,
       );
       if (!user)
         throw new NotFoundError(
-          `User ${notificationDto.user_id} no encontrado`,
+          `User ${notificationDto.uuid} no encontrado`,
         );
       const payload = { ...req.body, uuid: uuidv4(), user };
       const created = await this.notificationService.create(payload);

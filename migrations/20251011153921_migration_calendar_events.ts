@@ -19,18 +19,18 @@ import type { Knex } from "knex";
  */
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("calendar_events", (table) => {
-    table.string("uuid").primary();
+    table.uuid("uuid").primary();
     table.string("title").notNullable();
     table.string("description");
     table.string("type");
-    table.jsonb("metadata"); // 👈 JSONB permite insertar objetos nativos sin stringify
+    table.jsonb("metadata");
     table.string("status").notNullable().defaultTo("inscripto");
     table.timestamp("start_at").notNullable();
     table.timestamp("end_at").notNullable();
     table
-      .integer("user_id")
+      .uuid("user_uuid")
       .notNullable()
-      .references("user_id")
+      .references("uuid")
       .inTable("users")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");

@@ -57,7 +57,7 @@ export class UserDAO implements IBaseDAO<IUser> {
     };
   }
 
-  async getByUserId(user_id: number): Promise<IUser | undefined> {
-    return this._knex<IUser>("users").select("*").where({ user_id }).first();
+  async getByEmail(email: string): Promise<IUser | undefined> {
+    return this._knex<IUser>("users").select("*").where({ email }).first();
   }
 }
