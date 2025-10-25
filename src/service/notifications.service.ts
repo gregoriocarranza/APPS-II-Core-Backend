@@ -1,5 +1,5 @@
 import { NotFoundError } from "../common/utils/errors";
-import { notificacionesDAO } from "../database/dao/notifications/notificacionesDAO";
+import { notificacionesDAO } from "../database/dao/notification/notificacionesDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { INotificacion } from "../database/interfaces/notification/notification.interfaces";
 
@@ -20,8 +20,8 @@ export class NotificationsService {
   }
 
   async getByUuid(uuid: string): Promise<INotificacion> {
-    const wallet = await this.dao.getById(uuid);
-    if (!wallet) throw new NotFoundError(`Wallet ${uuid} no encontrada`);
+    const wallet = await this.dao.getByUuid(uuid);
+    if (!wallet) throw new NotFoundError(`Notificacion ${uuid} no encontrada`);
     return wallet;
   }
 
@@ -46,7 +46,7 @@ export class NotificationsService {
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
-    if (!ok) throw new NotFoundError(`Wallet ${uuid} no encontrada`);
+    if (!ok) throw new NotFoundError(`Notificacion ${uuid} no encontrada`);
     return { ok };
   }
 }

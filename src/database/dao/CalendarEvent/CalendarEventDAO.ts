@@ -14,7 +14,7 @@ export class CalendarEventDAO implements IBaseDAO<ICalendarEvent> {
     return created;
   }
 
-  async getById(uuid: string): Promise<ICalendarEvent | null> {
+  async getByUuid(uuid: string): Promise<ICalendarEvent | null> {
     const result = await this._knex("calendar_events")
       .select("*")
       .where("uuid", uuid)

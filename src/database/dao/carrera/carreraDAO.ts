@@ -1,27 +1,29 @@
-// src/dao/WalletDAO.ts
 import { Knex } from "knex";
 import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
-import { IWallet } from "../../interfaces/wallet/wallet.interfaces";
+import { ICarrera } from "../../interfaces/carrera/carreras.interfaces";
 
-export class WalletDAO implements IBaseDAO<IWallet> {
+export class CarrerasDAO implements IBaseDAO<ICarrera> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
 
-  async create(item: IWallet): Promise<IWallet> {
-    const [created] = await this._knex("wallets").insert(item).returning("*");
+  async create(item: ICarrera): Promise<ICarrera> {
+    const [created] = await this._knex("carreras").insert(item).returning("*");
     return created;
   }
 
-  async getByUuid(uuid: string): Promise<IWallet | null> {
-    const result = await this._knex("wallets")
+  async getByUuid(uuid: string): Promise<ICarrera | null> {
+    const result = await this._knex("carreras")
       .select("*")
       .where("uuid", uuid)
       .first();
     return result || null;
   }
 
-  async update(uuid: string, item: Partial<IWallet>): Promise<IWallet | null> {
-    const [updated] = await this._knex("wallets")
+  async update(
+    uuid: string,
+    item: Partial<ICarrera>,
+  ): Promise<ICarrera | null> {
+    const [updated] = await this._knex("carreras")
       .where({ uuid })
       .update(item)
       .returning("*");
@@ -29,14 +31,17 @@ export class WalletDAO implements IBaseDAO<IWallet> {
   }
 
   async delete(uuid: string): Promise<boolean> {
-    const result = await this._knex("wallets").where({ uuid }).del();
+    const result = await this._knex("carreras").where({ uuid }).del();
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<IWallet>> {
+  async getAll(
+    page: number,
+    limit: number,
+  ): Promise<IDataPaginator<ICarrera>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("wallets").select("*");
+    const query = this._knex("carreras").select("*");
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
@@ -57,10 +62,10 @@ export class WalletDAO implements IBaseDAO<IWallet> {
     };
   }
 
-  async getByUserId(user_id: number): Promise<IWallet[]> {
-    return this._knex<IWallet>("wallets")
+  async getByUserId(uuid: string): Promise<ICarrera | undefined> {
+    return this._knex<ICarrera>("carreras")
       .select("*")
-      .where({ user_id })
-      .orderBy("created_at", "desc");
+      .where({ uuid })
+      .first();
   }
 }

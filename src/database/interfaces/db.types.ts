@@ -1,6 +1,6 @@
 export interface IBaseDAO<T> {
   create(item: T): Promise<T>;
-  getById(uuid: string): Promise<T | null>;
+  getByUuid(uuid: string): Promise<T | null>;
   update(uuid: string, item: Partial<T>): Promise<T | null>;
   delete(uuid: string): Promise<boolean>;
   getAll(page: number, limit: number): Promise<IDataPaginator<T>>;

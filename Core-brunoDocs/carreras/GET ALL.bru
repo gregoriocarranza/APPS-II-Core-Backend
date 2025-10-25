@@ -5,13 +5,9 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/notifications?user_id=1
+  url: {{core-BackendBackendHost}}/api/carreras
   body: none
   auth: bearer
-}
-
-params:query {
-  user_id: 1
 }
 
 auth:bearer {
@@ -20,5 +16,4 @@ auth:bearer {
 
 settings {
   encodeUrl: true
-  timeout: 0
 }

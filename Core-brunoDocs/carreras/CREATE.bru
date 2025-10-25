@@ -1,0 +1,42 @@
+meta {
+  name: CREATE
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/carreras
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "name": "Licenciatura en Sistemas de Información",
+    "description": "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas.",
+    "degree_title": "Licenciado en Sistemas de Información",
+    "code": "LSI",
+    "faculty": "Facultad de Ingeniería y Ciencias Aplicadas",
+    "modality": "presencial",
+    "duration_hours": 3200,
+    "duration_years": 5,
+    "is_active": true,
+    "metadata": {
+      "plan_version": "2024",
+      "coordinator": "Dra. Ana Pérez",
+      "contact_email": "info.sistemas@universidad.edu",
+      "campus": ["Sede Central", "Campus Norte"],
+      "observations": "Incluye prácticas profesionales y proyecto final obligatorio."
+    }
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

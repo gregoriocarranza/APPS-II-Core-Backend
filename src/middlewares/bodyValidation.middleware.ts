@@ -3,12 +3,12 @@ import { validate, ValidationError } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 
 export function bodyValidationMiddleware<T extends object>(
-  type: new () => T
+  type: new () => T,
 ): (req: Request, res: Response, next: NextFunction) => Promise<void> {
   return async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     const errors = await validate(plainToInstance(type, req.body));
 
@@ -25,7 +25,7 @@ export function bodyValidationMiddleware<T extends object>(
 
 function flattenValidationErrors(
   errors: ValidationError[],
-  parentPath = ""
+  parentPath = "",
 ): string[] {
   const msgs: string[] = [];
 

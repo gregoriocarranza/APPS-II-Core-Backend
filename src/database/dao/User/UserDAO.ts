@@ -12,7 +12,7 @@ export class UserDAO implements IBaseDAO<IUser> {
     return created;
   }
 
-  async getById(uuid: string): Promise<IUser | null> {
+  async getByUuid(uuid: string): Promise<IUser | null> {
     const result = await this._knex("users")
       .select("*")
       .where("uuid", uuid)
@@ -44,7 +44,7 @@ export class UserDAO implements IBaseDAO<IUser> {
       .clone()
       .limit(limit)
       .offset(offset)
-      .orderBy("id", "desc");
+      .orderBy("created_at", "desc");
 
     return {
       success: true,

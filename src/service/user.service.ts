@@ -20,7 +20,7 @@ export class UserService {
   }
 
   async getByUuid(uuid: string): Promise<IUser> {
-    const user = await this.dao.getById(uuid);
+    const user = await this.dao.getByUuid(uuid);
     if (!user) throw new NotFoundError(`User ${uuid} no encontrada`);
     return user;
   }

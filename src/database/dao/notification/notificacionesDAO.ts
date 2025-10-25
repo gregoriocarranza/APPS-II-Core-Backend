@@ -21,7 +21,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     return created;
   }
 
-  async getById(uuid: string): Promise<INotificacion | null> {
+  async getByUuid(uuid: string): Promise<INotificacion | null> {
     const result = await this._knex("notificaciones")
       .select("*")
       .where("uuid", uuid)

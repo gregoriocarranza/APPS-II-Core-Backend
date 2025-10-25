@@ -21,7 +21,7 @@ export class NotificationsController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { page, limit, user_id } = req.query as {
@@ -54,12 +54,12 @@ export class NotificationsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
-      const wallet = await this.notificationService.getByUuid(uuid);
-      res.status(200).json({ success: true, data: wallet });
+      const notifications = await this.notificationService.getByUuid(uuid);
+      res.status(200).json({ success: true, data: notifications });
     } catch (err: any) {
       if (err instanceof NotFoundError) {
         res.status(404).json({ success: false, message: err.message });
@@ -72,17 +72,17 @@ export class NotificationsController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<any> {
     try {
       const notificationDto = req.body;
 
       const user: IUser | undefined = await this.userService.getByUserId(
-        notificationDto.user_id
+        notificationDto.user_id,
       );
       if (!user)
         throw new NotFoundError(
-          `User ${notificationDto.user_id} no encontrado`
+          `User ${notificationDto.user_id} no encontrado`,
         );
       const payload = { ...req.body, uuid: uuidv4(), user };
       const created = await this.notificationService.create(payload);
@@ -103,7 +103,7 @@ export class NotificationsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -122,7 +122,7 @@ export class NotificationsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;

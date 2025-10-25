@@ -24,7 +24,7 @@ export class CalendarEventsService {
   }
 
   async getByUuid(uuid: string): Promise<ICalendarEvent> {
-    const event = await this.dao.getById(uuid);
+    const event = await this.dao.getByUuid(uuid);
     if (!event) throw new NotFoundError(`Calendar event ${uuid} no encontrado`);
     return event;
   }

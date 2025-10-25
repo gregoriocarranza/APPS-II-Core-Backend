@@ -1,17 +1,13 @@
 meta {
-  name: GET BY UUID
+  name: GET ALL
   type: http
-  seq: 2
+  seq: 1
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/calendar-events/:uuid
+  url: {{core-BackendBackendHost}}/api/materias
   body: none
   auth: bearer
-}
-
-params:path {
-  uuid: fcfa9cde-75bd-4b4e-a4e1-8183d50257b6
 }
 
 auth:bearer {

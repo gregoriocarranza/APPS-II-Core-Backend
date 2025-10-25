@@ -1,0 +1,39 @@
+meta {
+  name: CREATE
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/materias
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "nombre": "Bases de Datos I",
+    "uuid_carrera": "2249255f-cbb3-4f43-b564-f37dd10a694c",
+    "description": "Introducción al modelado de datos, SQL y normalización.",
+    "approval_method": "final",
+    "is_elective": false,
+    "metadata": {
+      "profesor": "Mg. Juan Martínez",
+      "horario": "Martes y Jueves 18:00–20:30",
+      "modalidad": "presencial",
+      "aula": "Laboratorio 2",
+      "requisitos": ["Programación I"],
+      "observaciones": "Incluye prácticas con PostgreSQL y modelado ER."
+    }
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -840,6 +840,474 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "carreras",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/carreras",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "carreras"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/carreras/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "carreras", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/carreras/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "carreras", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/carreras",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "carreras"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/carreras/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "carreras", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "materias",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/materias",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "materias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/materias/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "materias", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/materias/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "materias", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/materias",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "materias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/materias/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "materias", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "cursos",
+      "item": [
+        {
+          "name": "GET ALL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/cursos",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "cursos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY UUID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/cursos/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "cursos", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/cursos/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "cursos", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/cursos",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "cursos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{core-BackendBearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{core-BackendBackendHost}}/api/cursos/:uuid",
+              "host": ["{{core-BackendBackendHost}}"],
+              "path": ["api", "cursos", ":uuid"],
+              "variable": [
+                {
+                  "key": "uuid",
+                  "value": "<uuid>"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [

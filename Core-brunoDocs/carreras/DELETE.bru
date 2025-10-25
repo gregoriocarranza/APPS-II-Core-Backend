@@ -1,17 +1,17 @@
 meta {
-  name: GET BY UUID
+  name: DELETE
   type: http
-  seq: 2
+  seq: 5
 }
 
-get {
-  url: {{core-BackendBackendHost}}/api/calendar-events/:uuid
+delete {
+  url: {{core-BackendBackendHost}}/api/carreras/:uuid
   body: none
   auth: bearer
 }
 
 params:path {
-  uuid: fcfa9cde-75bd-4b4e-a4e1-8183d50257b6
+  uuid: <uuid>
 }
 
 auth:bearer {
@@ -20,5 +20,4 @@ auth:bearer {
 
 settings {
   encodeUrl: true
-  timeout: 0
 }
