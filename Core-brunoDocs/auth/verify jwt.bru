@@ -1,0 +1,31 @@
+meta {
+  name: verify jwt
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/auth/verify-jwt
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{JWT}}
+}
+
+body:json {
+  {
+    "kind": "refresh",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1XzEyMyIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJVc3VhcmlvIERlbW8iLCJyb2xlIjoic3R1ZGVudCIsImNhcmVlciI6IklUIiwiaWF0IjoxNzYxNDIwOTAzLCJleHAiOjE3NjQwMTI5MDMsImp0aSI6ImI5ZTI5ZTFlLWUyMDgtNGE3Ny1hZmVjLWM3NGFhZTg1NjE1MSJ9.YfNoXflbEiijWdv2NJG11t_z3vDtyVvFT7r6ZiDIVo8"
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

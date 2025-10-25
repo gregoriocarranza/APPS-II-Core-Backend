@@ -1,0 +1,30 @@
+meta {
+  name: Me
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/auth/me
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{JWT}}
+}
+
+body:json {
+  {
+    "refreshToken": "a@b.com"
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

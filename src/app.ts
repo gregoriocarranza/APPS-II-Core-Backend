@@ -5,16 +5,16 @@ import cors from "cors";
 import { IndexRouter } from "./routes/index";
 import { errorMiddleware } from "./middlewares/error/error.middleware";
 import { getAllowedOrigins } from "./common/config/origins/origins.config";
-
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app: Express = express();
-
+app.use(cookieParser());
 const swaggerDocument = yaml.load(
   fs.readFileSync(".docs/swagger-documentation.yaml", "utf8"),
 ) as object;

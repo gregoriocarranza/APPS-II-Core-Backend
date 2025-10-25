@@ -1,0 +1,26 @@
+meta {
+  name: Refresh
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/auth/refresh
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refreshToken": "a@b.com"
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
