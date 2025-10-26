@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: Core API
-  version: "0.1.2"
+  version: "0.1.3"
   description: >
     OpenAPI specification draft for the Applications Development II project.
-    Resources: courses, subjects, teacher-subjects, enrollments, prerequisites, wallets, users, transactions and notifications.
+    Resources: courses, subjects, correlativas, teacher-subjects, enrollments, prerequisites, wallets, users, transactions and notifications.
     Endpoints: GET/POST/GET {id}/PUT/DELETE for each resource.
 servers:
   - url: http://localhost:3030
@@ -13,6 +13,7 @@ tags:
   - name: Auth
   - name: Courses
   - name: Subjects
+  - name: Correlativas
   - name: Teacher-Subjects
   - name: Enrollments
   - name: Prerequisites
@@ -358,6 +359,29 @@ components:
           description: "Initial status (default: inscripto)"
           default: "inscripto"
       required: [event_uuid, user_uuid]
+    Correlativa:
+      type: object
+      description: Prerequisite relationship between subjects (materias).
+      properties:
+        uuid_materia:
+          type: string
+          format: uuid
+          description: "Subject UUID that requires the prerequisite (FK to materias.uuid)"
+        uuid_materia_correlativa:
+          type: string
+          format: uuid
+          description: "Prerequisite subject UUID (FK to materias.uuid)"
+        created_at: { type: string, format: date-time }
+      required: [uuid_materia, uuid_materia_correlativa]
+    CorrelativaCreate:
+      type: object
+      description: Payload to create a correlativa relationship.
+      properties:
+        uuid_materia_correlativa:
+          type: string
+          format: uuid
+          description: "UUID of the subject that is the prerequisite"
+      required: [uuid_materia_correlativa]
 paths:
   /auth/login:
     post:
@@ -706,6 +730,161 @@ paths:
       responses:
         "204":
           description: Deleted
+  /subjects/{uuid}/correlativas:
+    get:
+      tags: [Correlativas]
+      summary: Get correlativas for a subject
+      description: Returns all prerequisite subjects (correlativas) required for the specified subject.
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+          description: Subject UUID
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Correlativa"
+                required: [success, data]
+              example:
+                success: true
+                data:
+                  - uuid_materia: "m_10"
+                    uuid_materia_correlativa: "m_2"
+                    created_at: "2025-10-26T10:00:00Z"
+                  - uuid_materia: "m_10"
+                    uuid_materia_correlativa: "m_5"
+                    created_at: "2025-10-26T10:05:00Z"
+        "404":
+          description: Subject not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "Materia m_999 no encontrada"
+    post:
+      tags: [Correlativas]
+      summary: Add a correlativa to a subject
+      description: |
+        Establishes a prerequisite relationship. The subject in the path will require
+        the subject in the request body as a prerequisite.
+
+        Validations:
+        - Both subjects must exist
+        - A subject cannot be its own prerequisite
+        - Cannot create duplicate relationships
+        - Cannot create circular dependencies
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+          description: Subject UUID that will have the prerequisite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CorrelativaCreate" }
+            example:
+              uuid_materia_correlativa: "m_2"
+      responses:
+        "201":
+          description: Correlativa created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    $ref: "#/components/schemas/Correlativa"
+              example:
+                success: true
+                data:
+                  uuid_materia: "m_10"
+                  uuid_materia_correlativa: "m_2"
+                  created_at: "2025-10-26T10:00:00Z"
+        "400":
+          description: Validation error (self-reference or circular dependency)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "No se puede crear la correlativa: generaría una dependencia circular"
+        "404":
+          description: Subject or prerequisite subject not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "Materia correlativa m_999 no encontrada"
+        "409":
+          description: Correlativa already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "La correlativa ya existe"
+  /subjects/{uuid}/correlativas/{uuidCorrelativa}:
+    delete:
+      tags: [Correlativas]
+      summary: Remove a correlativa from a subject
+      description: Removes the prerequisite relationship between two subjects.
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+          description: Subject UUID
+        - name: uuidCorrelativa
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+          description: Prerequisite subject UUID to remove
+      responses:
+        "204":
+          description: Correlativa removed successfully
+        "404":
+          description: Correlativa not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "Correlativa no encontrada"
   /teacher-subjects:
     get:
       tags: [Teacher-Subjects]
