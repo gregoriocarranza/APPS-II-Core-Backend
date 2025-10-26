@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { IBaseController } from "../../types";
 import { MateriasService } from "../../service/materias.service";
+import { CorrelativasService } from "../../service/correlativas.service";
 import { NotFoundError } from "../../common/utils/errors";
 
 export class MateriasController implements IBaseController {
   materiasService: MateriasService;
+  correlativasService: CorrelativasService;
   constructor() {
     this.materiasService = new MateriasService();
+    this.correlativasService = new CorrelativasService();
   }
 
   public async getAll(
@@ -84,6 +87,74 @@ export class MateriasController implements IBaseController {
     try {
       const { uuid } = req.params;
       await this.materiasService.delete(uuid);
+      res.status(204).end();
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
+  // ========== CORRELATIVAS ==========
+
+  public async getCorrelativas(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { uuid } = req.params;
+      const data = await this.correlativasService.getByMateria(uuid);
+      res.status(200).json({ success: true, data });
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
+  public async addCorrelativa(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { uuid } = req.params;
+      const { uuid_materia_correlativa } = req.body;
+      const data = await this.correlativasService.addCorrelativa(
+        uuid,
+        uuid_materia_correlativa,
+      );
+      res.status(201).json({ success: true, data });
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      if (err.message.includes("circular") || err.message.includes("misma")) {
+        res.status(400).json({ success: false, message: err.message });
+        return;
+      }
+      if (err.message.includes("ya existe")) {
+        res.status(409).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
+  public async removeCorrelativa(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { uuid, uuidCorrelativa } = req.params;
+      await this.correlativasService.removeCorrelativa(uuid, uuidCorrelativa);
       res.status(204).end();
     } catch (err: any) {
       if (err instanceof NotFoundError) {
