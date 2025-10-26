@@ -6,7 +6,7 @@ import type { Knex } from "knex";
  * Columns:
  *  - uuid: UUID (PK)
  *  - uuid_curso: FK que referencia a 'cursos.uuid'
- *  - uuid_alumno: FK que referencia a 'usuarios.uuid'
+ *  - user_uuid: FK que referencia a 'usuarios.uuid'
  *  - estado: estado de la inscripción ('pendiente', 'confirmada', 'baja')
  *  - rol: rol de la persona dentro del curso ('ALUMNO', 'TITULAR', 'AUXILIAR')
  *  - razon: motivo de baja o cancelación (vacío si no aplica)
@@ -15,11 +15,11 @@ import type { Knex } from "knex";
  *  - updated_at: fecha de última actualización
  *
  * Constraints:
- *  - UNIQUE (uuid_curso, uuid_alumno): evita inscripciones duplicadas del mismo alumno en un curso
+ *  - UNIQUE (uuid_curso, user_uuid): evita inscripciones duplicadas del mismo alumno en un curso
  *
  * Indexes:
  *  - (uuid_curso): optimiza búsquedas por curso
- *  - (uuid_alumno): optimiza búsquedas por alumno
+ *  - (user_uuid): optimiza búsquedas por alumno
  */
 
 export async function up(knex: Knex): Promise<void> {
@@ -33,10 +33,10 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
     table
-      .uuid("uuid_alumno")
+      .uuid("user_uuid")
       .notNullable()
       .references("uuid")
-      .inTable("usuarios")
+      .inTable("users")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
     table.string("estado").notNullable().defaultTo("pendiente");
@@ -47,11 +47,11 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
 
-    table.unique(["uuid_curso", "uuid_alumno"], {
+    table.unique(["uuid_curso", "user_uuid"], {
       indexName: "uq_inscripciones_curso_alumno",
     });
     table.index(["uuid_curso"], "idx_inscripciones_uuid_curso");
-    table.index(["uuid_alumno"], "idx_inscripciones_uuid_alumno");
+    table.index(["user_uuid"], "idx_inscripciones_uuid_alumno");
   });
 }
 
