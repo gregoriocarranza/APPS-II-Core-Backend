@@ -9,8 +9,10 @@ import {
   validateSync,
   IsDateString,
 } from "class-validator";
-import { IMateria } from "../../../database/interfaces/materia/materia.interfaces";
+import { IMateriaDTO } from "../../../database/interfaces/materia/materia.interfaces";
 import { plainToInstance, Transform } from "class-transformer";
+import { ICarrera } from "../../../database/interfaces/carrera/carreras.interfaces";
+import { CarreraDTO } from "../carrera/carrera.dto";
 
 export enum MateriaApprovalMethodEnum {
   FINAL = "final",
@@ -28,7 +30,7 @@ export class MateriaDTO {
 
   @IsUUID()
   uuid_carrera!: string;
-
+  carrera!: ICarrera;
   @IsOptional()
   @IsString()
   description?: string;
@@ -51,12 +53,14 @@ export class MateriaDTO {
   @IsDateString()
   updated_at!: string;
 
-  static build(data: IMateria): MateriaDTO {
+  static build(data: IMateriaDTO): MateriaDTO {
     const dto = plainToInstance(MateriaDTO, data, {
       enableImplicitConversion: true,
     });
     const errors = validateSync(dto);
     if (errors.length > 0) throw new Error(JSON.stringify(errors));
+
+    if (data.carrera) dto.carrera = CarreraDTO.build(data.carrera);
     return dto;
   }
 }

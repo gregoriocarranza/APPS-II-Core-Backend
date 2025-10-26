@@ -1,5 +1,5 @@
 import { ICarrera } from "../carrera/carreras.interfaces";
-import { IMateria } from "../materia/materia.interfaces";
+import { IMateriaDTO } from "../materia/materia.interfaces";
 
 export interface ICurso {
   uuid: string;
@@ -23,7 +23,7 @@ export interface ICurso {
 export interface ICursoDTO {
   uuid: string;
   uuid_materia: string;
-  materia: IMateria;
+  materia: IMateriaDTO;
   examen: string;
   comision: string;
   modalidad: string;
