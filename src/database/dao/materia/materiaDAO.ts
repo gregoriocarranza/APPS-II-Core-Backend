@@ -2,6 +2,7 @@ import { Knex } from "knex";
 import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
 import { IMateria } from "../../interfaces/materia/materia.interfaces";
+import { MateriaDTO } from "../../../common/dto/materia/materia.dto";
 
 export class MateriasDAO implements IBaseDAO<IMateria> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
@@ -11,17 +12,25 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
     return created;
   }
 
-  async getByUuid(uuid: string): Promise<IMateria | null> {
+  async getByUuid(uuid: string): Promise<MateriaDTO | null> {
     const result = await this._knex("materias")
-      .select("*")
-      .where("uuid", uuid)
+      .select([
+        "materias.*",
+        this._knex.raw(`row_to_json(carreras.*) as carrera`),
+      ])
+      .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera")
+      .where("materias.uuid", uuid)
       .first();
-    return result || null;
+    if (!result) return null;
+
+    const dto = MateriaDTO.build(result);
+
+    return dto;
   }
 
   async update(
     uuid: string,
-    item: Partial<IMateria>,
+    item: Partial<IMateria>
   ): Promise<IMateria | null> {
     const [updated] = await this._knex("materias")
       .where({ uuid })
@@ -35,18 +44,25 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<IMateria>> {
+  async getAll(page: number, limit: number): Promise<IDataPaginator<MateriaDTO>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("materias").select("*");
+    const query = this._knex("materias")
+      .select([
+        "materias.*",
+        this._knex.raw(`row_to_json(carreras.*) as carrera`),
+      ])
+      .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera");
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
-    const data = await query
+    const rows = await query
       .clone()
       .limit(limit)
       .offset(offset)
       .orderBy("created_at", "desc");
+
+    const data = rows.map((r) => MateriaDTO.build(r));
 
     return {
       success: true,

@@ -43,7 +43,7 @@ export class CursosDao implements IBaseDAO<ICurso> {
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<ICurso>> {
+  async getAll(page: number, limit: number): Promise<IDataPaginator<CursoDTO>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("cursos")

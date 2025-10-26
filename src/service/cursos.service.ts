@@ -1,3 +1,4 @@
+import { CursoDTO } from "../common/dto/curso/curso.dto";
 import { NotFoundError } from "../common/utils/errors";
 import { CursosDao } from "../database/dao/cursos/cursosDAO";
 import { ICurso } from "../database/interfaces/cursos/cursos.interfaces";
@@ -14,13 +15,13 @@ export class CursosService {
   async getAll(params?: {
     page?: number;
     limit?: number;
-  }): Promise<IDataPaginator<ICurso>> {
+  }): Promise<IDataPaginator<CursoDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
     return this.dao.getAll(page, limit);
   }
 
-  async getByUuid(uuid: string): Promise<ICurso> {
+  async getByUuid(uuid: string): Promise<CursoDTO> {
     const event = await this.dao.getByUuid(uuid);
     if (!event) throw new NotFoundError(`Curso ${uuid} no encontrado`);
     return event;
