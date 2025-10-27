@@ -1,0 +1,20 @@
+meta {
+  name: DELETE correlativa
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{core-BackendBackendHost}}/api/materias/:materia/correlativas/:materia_correlativa
+  body: none
+  auth: none
+}
+
+params:path {
+  materia_correlativa: a4e49bdc-cf7b-4fea-ae1c-15f456958140
+  materia: afa80fd1-71e2-4ff0-b595-4ce0c7bb2f9c
+}
+
+headers {
+  Content-Type: application/json
+}
