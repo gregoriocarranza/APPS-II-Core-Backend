@@ -84,6 +84,40 @@ components:
         id: { type: string, format: uuid }
         name: { type: string, minLength: 1 }
       required: [id, name]
+    SubjectCreate:
+      type: object
+      description: Payload to create a subject (materia) with optional correlativas.
+      properties:
+        nombre: { type: string, minLength: 1, description: "Subject name" }
+        uuid_carrera:
+          {
+            type: string,
+            format: uuid,
+            description: "Career UUID (FK to carreras.uuid)",
+          }
+        description:
+          { type: string, description: "Optional subject description" }
+        approval_method:
+          type: string
+          enum: [final, promocion, trabajo_practico]
+          description: "Approval method for the subject"
+        is_elective:
+          {
+            type: boolean,
+            default: false,
+            description: "Whether the subject is elective",
+          }
+        metadata:
+          {
+            type: object,
+            additionalProperties: true,
+            description: "Additional metadata (professor, schedule, modality, etc.)",
+          }
+        correlativas:
+          type: array
+          items: { type: string, format: uuid }
+          description: "Optional array of prerequisite subject UUIDs to be created automatically"
+      required: [nombre, uuid_carrera, approval_method]
     TeacherSubject:
       type: object
       description: N:N relationship between teachers and subjects.
@@ -669,17 +703,49 @@ paths:
     post:
       tags: [Subjects]
       summary: Create subject
+      description: |
+        Creates a new subject (materia) and optionally establishes prerequisite relationships (correlativas).
+        If correlativas are provided, they will be created automatically after the subject is successfully created.
+        If any correlativa UUID is invalid, the subject creation will be rolled back.
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/Subject" }
+            schema: { $ref: "#/components/schemas/SubjectCreate" }
+            example:
+              nombre: "Matemática II"
+              uuid_carrera: "carrera_uuid_123"
+              description: "Cálculo y álgebra lineal"
+              approval_method: "final"
+              is_elective: false
+              correlativas: ["materia_uuid_456", "materia_uuid_789"]
       responses:
         "201":
-          description: Created
+          description: Created successfully
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/Subject" }
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: "#/components/schemas/Subject" }
+              example:
+                success: true
+                data:
+                  id: "m_10"
+                  name: "Matemática II"
+        "404":
+          description: Prerequisite subject not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: false
+                message: "Materia correlativa materia_uuid_456 no encontrada"
   /subjects/{id}:
     get:
       tags: [Subjects]

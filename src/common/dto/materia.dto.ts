@@ -6,6 +6,7 @@ import {
   IsString,
   IsUUID,
   IsObject,
+  IsArray,
 } from "class-validator";
 
 export enum ApprovalMethodEnum {
@@ -36,4 +37,9 @@ export class MateriaCreateDTO {
   @IsOptional()
   @IsObject()
   metadata?: Record<string, any>;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID("4", { each: true })
+  correlativas?: string[];
 }

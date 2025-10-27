@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/materias/0448220e-eeda-412c-9781-85c14344ffc3/correlativas
+  url: {{core-BackendBackendHost}}/api/materias/:materia/correlativas
   body: none
   auth: none
+}
+
+params:path {
+  materia: 7d68a3d8-2c67-486a-b06a-51c8781a2da7
 }
 
 headers {
