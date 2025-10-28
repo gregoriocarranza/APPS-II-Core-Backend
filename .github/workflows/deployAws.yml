@@ -36,6 +36,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             echo '--- Starting deployment on server ---'
 
+            sudo su
             cd ~
             if [ ! -d APPS-II-Core-Backend ]; then
               echo "trying to clon from: ${BRANCH} https://github.com/${GITHUB_REPO}.git"
@@ -57,8 +58,8 @@ jobs:
             fi
             echo "✅ Archivo .env encontrado. Continuando con docker-compose..."
 
-            docker compose build --no-cache
-            docker compose up -d --remove-orphans
+            sudo docker compose build --no-cache
+            sudo docker compose up -d --remove-orphans
 
             echo 'Deployment completed successfully!'
           "
