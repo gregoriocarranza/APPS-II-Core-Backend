@@ -49,7 +49,9 @@ jobs:
 
             cd ~/APPS-II-Core-Backend
 
-            echo "${ENV_FILE_CONTENT}" > .env
+            echo "${ENV_FILE_CONTENT}"
+            printf '%s\n' "$ENV_FILE_CONTENT" > .env
+
 
             docker compose build --no-cache
             docker compose up -d --remove-orphans
