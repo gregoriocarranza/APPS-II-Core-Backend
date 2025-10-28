@@ -49,8 +49,13 @@ jobs:
 
             cd ~/APPS-II-Core-Backend
 
-            echo "${ENV_FILE_CONTENT}"
-            printf '%s\n' "$ENV_FILE_CONTENT" > .env
+            cat > .env <<EOT
+            ${ENV_FILE_CONTENT}
+            EOT
+
+            echo '✅ .env file created successfully!'
+            ls -l .env
+            head -n 5 .env
 
 
             docker compose build --no-cache
