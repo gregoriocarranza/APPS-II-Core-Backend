@@ -1,0 +1,79 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Info
+        run: |
+          echo "Deployed by: ${{ github.actor }}"
+          echo "Target branch: ${{ github.ref_name }}"
+          echo "Repository: ${{ github.repository }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Add SSH key with passphrase
+        run: |
+          echo "${{ secrets.DO_SSH_KEY }}" > private_key
+          chmod 600 private_key
+          eval "$(ssh-agent -s)"
+          ssh-add private_key
+
+      - name: Deploy to AWS server via SSH
+        env:
+          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+          BRANCH: ${{ github.ref_name }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
+            echo '--- Starting deployment on server ---'
+
+            sudo su
+            cd ~
+            if [ ! -d APPS-II-Core-Backend ]; then
+              echo "trying to clon from: ${BRANCH} https://github.com/${GITHUB_REPO}.git"
+              git clone -b ${BRANCH} https://github.com/${GITHUB_REPO}.git
+            else
+              cd APPS-II-Core-Backend
+              git fetch origin ${BRANCH}
+              git checkout ${BRANCH}
+              git pull origin ${BRANCH}
+            fi
+
+            cd ~/APPS-II-Core-Backend
+
+            echo 'pull completed successfully!'
+            
+            if [ ! -f .env ]; then
+              echo "Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
+              exit 1
+            fi
+            echo "Archivo .env encontrado. Continuando con docker-compose..."
+
+            sudo docker compose build --no-cache
+            sudo docker compose up -d --remove-orphans
+
+            echo 'Deployment completed successfully!'
+          "
+
+      - name: Clean up Docker resources
+        run: |
+          echo 'Cleaning up unused Docker resources...'
+          sudo docker system prune -af --volumes
+          echo 'Cleanup completed!'
+
+
+      - name: Clean up SSH key
+        if: always()
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add -D
+          rm -f private_key
