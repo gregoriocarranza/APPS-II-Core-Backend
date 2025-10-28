@@ -42,14 +42,14 @@ jobs:
               git clone -b ${BRANCH} https://github.com/${GITHUB_REPO}.git
             else
               cd APPS-II-Core-Backend
-              git fetch origin \${BRANCH}
-              git checkout \${BRANCH}
-              git pull origin \${BRANCH}
+              git fetch origin ${BRANCH}
+              git checkout ${BRANCH}
+              git pull origin ${BRANCH}
             fi
 
             cd ~/APPS-II-Core-Backend
 
-            echo \"${ENV_FILE_CONTENT}\" > .env
+            echo "${ENV_FILE_CONTENT}" > .env
 
             docker compose build --no-cache
             docker compose up -d --remove-orphans
