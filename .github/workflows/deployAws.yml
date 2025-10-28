@@ -27,6 +27,9 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add private_key
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Build project
         run: npm run build
 
@@ -60,6 +63,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "mkdir -p ~/APPS-II-Core-Backend/dist && rm -rf ~/APPS-II-Core-Backend/dist/*"
           scp -o StrictHostKeyChecking=no -i private_key -r dist/* ${{ secrets.DO_CONNECTION_URI }}:/home/ubuntu/APPS-II-Core-Backend/dist/
+
+          ssh -i private_key -o StrictHostKeyChecking=no $USERNAME@$HOST "mkdir -p ~/APPS-II-Core-Backend && rm -rf ~/APPS-II-Core-Backend/node_modules"
+          scp -i private_key -o StrictHostKeyChecking=no -r node_modules $USERNAME@$HOST:/home/ubuntu/APPS-II-Core-Backend/
 
       - name: Deploy to AWS server via SSH
         env:
