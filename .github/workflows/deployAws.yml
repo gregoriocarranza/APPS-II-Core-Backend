@@ -97,6 +97,8 @@ jobs:
             sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
 
+            pm2 reload core-backend --update-env  || pm2 start dist/server.js --name core-backend --update-env
+
             echo 'Deployment completed successfully!'
           "
 
