@@ -21,7 +21,7 @@ const mailerConfig: MailerConfig = {
     pass: process.env.SMTP_PASS || "jn7jnAPss4f63QBp6D",
   },
   defaultFrom:
-    `Edu App <${process.env.SMTP_FROM}>` || '"Maddison Foo Koch" <maddison53@ethereal.email>',
+    process.env.SMTP_FROM || '"Maddison Foo Koch" <maddison53@ethereal.email>',
 };
 
 export default mailerConfig;

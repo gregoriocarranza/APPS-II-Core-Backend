@@ -49,7 +49,13 @@ jobs:
 
             cd ~/APPS-II-Core-Backend
 
-            echo "${ENV_FILE_CONTENT}" > .env
+            echo 'pull completed successfully!'
+            
+            if [ ! -f .env ]; then
+              echo "❌ Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
+              exit 1
+            fi
+            echo "✅ Archivo .env encontrado. Continuando con docker-compose..."
 
             docker compose build --no-cache
             docker compose up -d --remove-orphans
