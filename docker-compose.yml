@@ -37,6 +37,8 @@ services:
     restart: unless-stopped
 
   app:
+    build:
+      context: .
     image: core-backend:latest
     env_file: ".env"
     container_name: CoreTeam-app
