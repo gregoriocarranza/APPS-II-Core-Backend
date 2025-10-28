@@ -39,7 +39,7 @@ jobs:
             cd ~
             if [ ! -d APPS-II-Core-Backend ]; then
               echo "trying to clon from: ${BRANCH} https://github.com/${GITHUB_REPO}.git"
-              git clone -b \${BRANCH} https://github.com/${GITHUB_REPO}.git
+              git clone -b ${BRANCH} https://github.com/${GITHUB_REPO}.git
             else
               cd APPS-II-Core-Backend
               git fetch origin \${BRANCH}
