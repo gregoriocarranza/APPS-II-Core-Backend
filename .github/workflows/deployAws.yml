@@ -57,11 +57,11 @@ jobs:
             ls -l .env
             head -n 5 .env
 
-
             docker compose build --no-cache
             docker compose up -d --remove-orphans
 
-            echo 'Deployment completed successfully!'
+            echo '✅ Deployment completed successfully!'
+          EOF
           "
 
       - name: Clean up SSH key
