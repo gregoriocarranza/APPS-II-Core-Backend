@@ -13,7 +13,7 @@ FROM node:22-alpine
 WORKDIR /var/api
 
 COPY package*.json ./
-RUN npm ci --omit=dev --no-optional --prefer-offline --loglevel=warn --jobs=2
+RUN npm ci --omit=dev --no-optional --prefer-offline --loglevel=warn --jobs=1
 
 COPY --from=build /app/dist ./dist
 
