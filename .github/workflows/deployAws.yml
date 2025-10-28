@@ -50,8 +50,8 @@ jobs:
             cd ~/APPS-II-Core-Backend
 
             cat > .env <<EOT
-            ${ENV_FILE_CONTENT}
-            EOT
+${ENV_FILE_CONTENT}
+EOT
 
             echo '✅ .env file created successfully!'
             ls -l .env
