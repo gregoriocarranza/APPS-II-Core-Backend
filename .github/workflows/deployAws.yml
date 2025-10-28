@@ -27,7 +27,13 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add private_key
 
-      - name: Deploy to AWS server via SSH
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Pull/Clone repository on EC2
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
           BRANCH: ${{ github.ref_name }}
@@ -36,7 +42,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             echo '--- Starting deployment on server ---'
 
-            sudo su
             cd ~
             if [ ! -d APPS-II-Core-Backend ]; then
               echo "trying to clon from: ${BRANCH} https://github.com/${GITHUB_REPO}.git"
@@ -51,6 +56,35 @@ jobs:
             cd ~/APPS-II-Core-Backend
 
             echo 'pull completed successfully!'
+          "
+
+      - name: Copy dist to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "mkdir -p ~/APPS-II-Core-Backend/dist && rm -rf ~/APPS-II-Core-Backend/dist/*"
+          scp -o StrictHostKeyChecking=no -i private_key -r dist/* ${{ secrets.DO_CONNECTION_URI }}:/home/ubuntu/APPS-II-Core-Backend/dist/
+
+      - name: Copy node_modules to EC2 (fast & low-space)
+        run: |
+          echo "📦 Streaming node_modules to EC2..."
+
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "rm -rf ~/APPS-II-Core-Backend/node_modules && mkdir -p ~/APPS-II-Core-Backend/node_modules"
+
+          tar -C node_modules -czf - . \
+            | ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} \
+              "tar -C ~/APPS-II-Core-Backend/node_modules -xzf -"
+          echo "✅ node_modules copied successfully!"
+
+
+      - name: Deploy to AWS server via SSH
+        env:
+          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+          BRANCH: ${{ github.ref_name }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
+            echo '--- Starting deployment on server ---'
+
+            cd ~/APPS-II-Core-Backend
             
             if [ ! -f .env ]; then
               echo "Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
@@ -61,6 +95,19 @@ jobs:
             sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
 
+            echo '--- Restarting PM2 process ---'
+
+            export NVM_DIR=\$HOME/.nvm
+            [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+            [ -s \"\$NVM_DIR/bash_completion\" ] && . \"\$NVM_DIR/bash_completion\"
+
+            # Usar la versión de Node correcta
+            nvm use 22.13.1 || nvm use --lts
+
+            export PATH=\$PATH:\$HOME/.nvm/versions/node/\$(nvm current)/bin
+
+            pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env
+
             echo 'Deployment completed successfully!'
           "
 
@@ -69,7 +116,6 @@ jobs:
           echo 'Cleaning up unused Docker resources...'
           sudo docker system prune -af --volumes
           echo 'Cleanup completed!'
-
 
       - name: Clean up SSH key
         if: always()
