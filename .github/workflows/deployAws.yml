@@ -53,16 +53,23 @@ jobs:
             echo 'pull completed successfully!'
             
             if [ ! -f .env ]; then
-              echo "❌ Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
+              echo "Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
               exit 1
             fi
-            echo "✅ Archivo .env encontrado. Continuando con docker-compose..."
+            echo "Archivo .env encontrado. Continuando con docker-compose..."
 
             sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
 
             echo 'Deployment completed successfully!'
           "
+
+      - name: Clean up Docker resources
+        run: |
+          echo 'Cleaning up unused Docker resources...'
+          sudo docker system prune -af --volumes
+          echo 'Cleanup completed!'
+
 
       - name: Clean up SSH key
         if: always()
