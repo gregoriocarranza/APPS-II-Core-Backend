@@ -1,9 +1,9 @@
 name: Deploy to AWS
 
 on:
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+  #     - master
   workflow_dispatch:
 
 jobs:
@@ -42,26 +42,19 @@ jobs:
               git clone -b ${BRANCH} https://github.com/${GITHUB_REPO}.git
             else
               cd APPS-II-Core-Backend
-              git fetch origin ${BRANCH}
-              git checkout ${BRANCH}
-              git pull origin ${BRANCH}
+              git fetch origin \${BRANCH}
+              git checkout \${BRANCH}
+              git pull origin \${BRANCH}
             fi
 
             cd ~/APPS-II-Core-Backend
 
-            cat > .env <<EOT
-${ENV_FILE_CONTENT}
-EOT
-
-            echo '✅ .env file created successfully!'
-            ls -l .env
-            head -n 5 .env
+            echo \"${ENV_FILE_CONTENT}\" > .env
 
             docker compose build --no-cache
             docker compose up -d --remove-orphans
 
-            echo '✅ Deployment completed successfully!'
-          EOF
+            echo 'Deployment completed successfully!'
           "
 
       - name: Clean up SSH key
