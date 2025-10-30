@@ -1,6 +1,6 @@
 export const getAllowedOrigins = (): string[] => {
   let origins: string = process.env.CORS_ALLOWED_ORIGINS || "localhost";
-  if (origin === "localhost" || origin === "") {
+  if (origins === "localhost" || origins === "") {
     return ["*"]
   }
   origins = origins
