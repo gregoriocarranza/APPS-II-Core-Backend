@@ -1,38 +1,37 @@
 import { Knex } from "knex";
 import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
-import { IMateria } from "../../interfaces/materia/materia.interfaces";
-import { MateriaDTO } from "../../../common/dto/materia/materia.dto";
+import { ICurso } from "../../interfaces/cursos/cursos.interfaces";
+import { CursoDTO } from "../../../common/dto/curso/curso.dto";
 
-export class MateriasDAO implements IBaseDAO<IMateria> {
+export class CursosDao implements IBaseDAO<ICurso> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
 
-  async create(item: IMateria): Promise<IMateria> {
-    const [created] = await this._knex("materias").insert(item).returning("*");
+  async create(item: ICurso): Promise<ICurso> {
+    const [created] = await this._knex("cursos").insert(item).returning("*");
     return created;
   }
 
-  async getByUuid(uuid: string): Promise<MateriaDTO | null> {
-    const result = await this._knex("materias")
+  async getByUuid(uuid: string): Promise<CursoDTO | null> {
+    const result = await this._knex("cursos")
       .select([
-        "materias.*",
+        "cursos.*",
+        this._knex.raw(`row_to_json(materias.*) as materia`),
         this._knex.raw(`row_to_json(carreras.*) as carrera`),
       ])
+      .leftJoin("materias", "materias.uuid", "cursos.uuid_materia")
       .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera")
-      .where("materias.uuid", uuid)
+      .where("cursos.uuid", uuid)
       .first();
     if (!result) return null;
 
-    const dto = MateriaDTO.build(result);
+    const dto = CursoDTO.build(result);
 
     return dto;
   }
 
-  async update(
-    uuid: string,
-    item: Partial<IMateria>
-  ): Promise<IMateria | null> {
-    const [updated] = await this._knex("materias")
+  async update(uuid: string, item: Partial<ICurso>): Promise<ICurso | null> {
+    const [updated] = await this._knex("cursos")
       .where({ uuid })
       .update(item)
       .returning("*");
@@ -40,18 +39,20 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
   }
 
   async delete(uuid: string): Promise<boolean> {
-    const result = await this._knex("materias").where({ uuid }).del();
+    const result = await this._knex("cursos").where({ uuid }).del();
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<MateriaDTO>> {
+  async getAll(page: number, limit: number): Promise<IDataPaginator<CursoDTO>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("materias")
+    const query = this._knex("cursos")
       .select([
-        "materias.*",
+        "cursos.*",
+        this._knex.raw(`row_to_json(materias.*) as materia`),
         this._knex.raw(`row_to_json(carreras.*) as carrera`),
       ])
+      .leftJoin("materias", "materias.uuid", "cursos.uuid_materia")
       .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera");
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
@@ -62,8 +63,7 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
       .offset(offset)
       .orderBy("created_at", "desc");
 
-    const data = rows.map((r) => MateriaDTO.build(r));
-
+    const data = rows.map((r) => CursoDTO.build(r));
     return {
       success: true,
       data,
@@ -73,9 +73,5 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
     };
-  }
-
-  async getByUserId(uuid: string): Promise<IMateria | undefined> {
-    return this._knex<IMateria>("materias").select("*").where({ uuid }).first();
   }
 }

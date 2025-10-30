@@ -97,16 +97,7 @@ jobs:
 
             echo '--- Restarting PM2 process ---'
 
-            export NVM_DIR=\$HOME/.nvm
-            [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
-            [ -s \"\$NVM_DIR/bash_completion\" ] && . \"\$NVM_DIR/bash_completion\"
-
-            # Usar la versión de Node correcta
-            nvm use 22.13.1 || nvm use --lts
-
-            export PATH=\$PATH:\$HOME/.nvm/versions/node/\$(nvm current)/bin
-
-            pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env
+            npm run pm2:restart
 
             echo 'Deployment completed successfully!'
           "

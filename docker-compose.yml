@@ -2,15 +2,20 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    env_file: ".env"
+    environment:
+      RABBITMQ_LOAD_DEFINITIONS: "true"
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: >
+        -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
     ports:
-      - "5672:5672" # AMQP apps
-      - "15672:15672" # UI admin
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbit-definitions.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - CoreTeam-network
     restart: unless-stopped
+
 
   mi-postgres:
     image: postgres:16

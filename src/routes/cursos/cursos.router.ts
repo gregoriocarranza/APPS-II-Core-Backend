@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { CursosController } from "../../controllers/cursos/cursos.controller";
 
+import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
+import { CursoCreateDTO } from "../../common/dto/curso/create.curso.dto";
+
 export class CursosRouter {
   private _router: Router;
   private _cursosController = new CursosController();
@@ -11,23 +14,24 @@ export class CursosRouter {
   private initRoutes(): void {
     this._router.get(
       "/",
-      this._cursosController.getAll.bind(this._cursosController),
+      this._cursosController.getAll.bind(this._cursosController)
     );
     this._router.get(
       "/:uuid",
-      this._cursosController.getByUuid.bind(this._cursosController),
+      this._cursosController.getByUuid.bind(this._cursosController)
     );
     this._router.put(
       "/:uuid",
-      this._cursosController.update.bind(this._cursosController),
+      this._cursosController.update.bind(this._cursosController)
     );
     this._router.post(
       "/",
-      this._cursosController.create.bind(this._cursosController),
+      bodyValidationMiddleware(CursoCreateDTO),
+      this._cursosController.create.bind(this._cursosController)
     );
     this._router.delete(
       "/:uuid",
-      this._cursosController.delete.bind(this._cursosController),
+      this._cursosController.delete.bind(this._cursosController)
     );
   }
   public get router(): Router {

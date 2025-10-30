@@ -3,6 +3,7 @@ import { MateriasDAO } from "../database/dao/materia/materiaDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { v4 as uuidv4 } from "uuid";
 import { IMateria } from "../database/interfaces/materia/materia.interfaces";
+import { MateriaDTO } from "../common/dto/materia/materia.dto";
 
 export class MateriasService {
   private dao: MateriasDAO;
@@ -14,13 +15,13 @@ export class MateriasService {
   async getAll(params?: {
     page?: number;
     limit?: number;
-  }): Promise<IDataPaginator<IMateria>> {
+  }): Promise<IDataPaginator<MateriaDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
     return this.dao.getAll(page, limit);
   }
 
-  async getByUuid(uuid: string): Promise<IMateria> {
+  async getByUuid(uuid: string): Promise<MateriaDTO> {
     const materia = await this.dao.getByUuid(uuid);
     if (!materia) throw new NotFoundError(`materia ${uuid} no encontrada`);
     return materia;
