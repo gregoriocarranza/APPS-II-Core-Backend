@@ -5,6 +5,7 @@ import { EmailerService } from "../../service/mailer.service";
 import { healthBodyText, HealthEmailData } from "./template";
 import dotenv from "dotenv";
 import { bodyTypes } from "../../common/dto/notificaciones.dto";
+import { getAllowedOrigins } from "../../common/config/origins/origins.config";
 dotenv.config();
 export class HealthController {
   constructor(private emailService: EmailerService = EmailerService.instance) {
@@ -15,13 +16,14 @@ export class HealthController {
   public async getHealthStatus(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       let info = null;
       const { sendEmail } = req.query;
       const version: string = await getServiceVersion();
       const environment: string = await getServiceEnvironment();
+      const origins: string[] = getAllowedOrigins();
       const timestamp: number = new Date().getTime();
       const serviceName: string = process.env.APP_NAME || "Edu App";
 
@@ -52,6 +54,7 @@ export class HealthController {
         health: "Up!",
         version,
         environment,
+        origins,
         timestamp,
         email_info: info,
       });
