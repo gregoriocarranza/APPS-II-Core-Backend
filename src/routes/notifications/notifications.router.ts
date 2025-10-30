@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { NotificationsController } from "../../controllers/notifications/notifications.controller";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
-import { NotificationCreatedDTO } from "../../common/dto/notificaciones.dto";
+import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/create.notificaciones.dto";
 
 export class NotificationsRouter {
   private _router: Router;
@@ -23,7 +23,7 @@ export class NotificationsRouter {
     );
     this._router.post(
       "/",
-      bodyValidationMiddleware(NotificationCreatedDTO),
+      bodyValidationMiddleware(NotificationCreatedByTypeDTO),
       this._notificationsController.create.bind(this._notificationsController),
     );
     this._router.delete(

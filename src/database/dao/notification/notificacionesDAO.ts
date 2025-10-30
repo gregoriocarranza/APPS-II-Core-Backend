@@ -9,7 +9,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   async create(item: INotificacion): Promise<INotificacion> {
     const insert = {
       uuid: item.uuid,
-      user_id: item.user_id,
+      user_uuid: item.user_uuid,
       title: item.title,
       body: item.body,
       from: process.env.SMTP_USER || "placehoder@gmail.com",

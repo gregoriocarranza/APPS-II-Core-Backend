@@ -4,8 +4,8 @@ import { getServiceEnvironment } from "../../common/utils/environment.resolver";
 import { EmailerService } from "../../service/mailer.service";
 import { healthBodyText, HealthEmailData } from "./template";
 import dotenv from "dotenv";
-import { bodyTypes } from "../../common/dto/notificaciones.dto";
 import { getAllowedOrigins } from "../../common/config/origins/origins.config";
+import { bodyTypes } from "../../common/dto/notificaciones/notificaciones.dto";
 dotenv.config();
 export class HealthController {
   constructor(private emailService: EmailerService = EmailerService.instance) {
@@ -16,7 +16,7 @@ export class HealthController {
   public async getHealthStatus(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       let info = null;

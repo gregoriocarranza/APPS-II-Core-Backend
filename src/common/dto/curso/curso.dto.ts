@@ -88,7 +88,9 @@ export class CursoDTO {
   updated_at!: string;
 
   static build(data: ICursoDTO): CursoDTO {
-  const dto = plainToInstance(CursoDTO, data, { enableImplicitConversion: true });
+    const dto = plainToInstance(CursoDTO, data, {
+      enableImplicitConversion: true,
+    });
     const errors = validateSync(dto);
     if (errors.length > 0) throw new Error(JSON.stringify(errors));
 

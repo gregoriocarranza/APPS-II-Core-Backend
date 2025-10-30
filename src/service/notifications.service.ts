@@ -1,3 +1,4 @@
+import { TemplateFunction, TemplateKey, templates } from "../common/templates";
 import { NotFoundError } from "../common/utils/errors";
 import { notificacionesDAO } from "../database/dao/notification/notificacionesDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
@@ -37,6 +38,11 @@ export class NotificationsService {
 
   async create(payload: INotificacion): Promise<INotificacion> {
     return this.dao.create(payload);
+  }
+
+  getTemplateById(key: TemplateKey): TemplateFunction | null {
+    const template: TemplateFunction = templates[key] ?? null;
+    return template;
   }
 
   async update(uuid: string, partial: Partial<INotificacion>): Promise<any> {

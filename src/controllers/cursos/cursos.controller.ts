@@ -11,7 +11,7 @@ export class CursosController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { page, limit } = req.query as {
@@ -33,7 +33,7 @@ export class CursosController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -51,7 +51,7 @@ export class CursosController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -65,7 +65,7 @@ export class CursosController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<any> {
     try {
       const created = await this.cursosService.create(req.body);
@@ -78,7 +78,7 @@ export class CursosController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;

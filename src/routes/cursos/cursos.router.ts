@@ -14,24 +14,24 @@ export class CursosRouter {
   private initRoutes(): void {
     this._router.get(
       "/",
-      this._cursosController.getAll.bind(this._cursosController)
+      this._cursosController.getAll.bind(this._cursosController),
     );
     this._router.get(
       "/:uuid",
-      this._cursosController.getByUuid.bind(this._cursosController)
+      this._cursosController.getByUuid.bind(this._cursosController),
     );
     this._router.put(
       "/:uuid",
-      this._cursosController.update.bind(this._cursosController)
+      this._cursosController.update.bind(this._cursosController),
     );
     this._router.post(
       "/",
       bodyValidationMiddleware(CursoCreateDTO),
-      this._cursosController.create.bind(this._cursosController)
+      this._cursosController.create.bind(this._cursosController),
     );
     this._router.delete(
       "/:uuid",
-      this._cursosController.delete.bind(this._cursosController)
+      this._cursosController.delete.bind(this._cursosController),
     );
   }
   public get router(): Router {

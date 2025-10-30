@@ -1,4 +1,3 @@
-
 export interface IInscripcion {
   uuid: string;
   uuid_curso: string;

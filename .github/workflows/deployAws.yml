@@ -74,7 +74,6 @@ jobs:
               "tar -C ~/APPS-II-Core-Backend/node_modules -xzf -"
           echo "✅ node_modules copied successfully!"
 
-
       - name: Deploy to AWS server via SSH
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}

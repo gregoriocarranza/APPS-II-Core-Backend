@@ -39,15 +39,60 @@
     }
   ],
   "queues": [
-    { "name": "estudiante.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "docente.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "biblioteca.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "comedor.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "tienda.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "eventos-academicos.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "analitica.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "backoffice.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
-    { "name": "core.queue", "vhost": "/", "durable": true,"arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" } },
+    {
+      "name": "estudiante.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "docente.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "biblioteca.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "comedor.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "tienda.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "eventos-academicos.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "analitica.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "backoffice.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "core.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
     { "name": "dead-letter.queue", "vhost": "/", "durable": true }
   ],
   "bindings": [

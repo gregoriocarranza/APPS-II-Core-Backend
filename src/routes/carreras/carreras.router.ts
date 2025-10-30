@@ -3,7 +3,6 @@ import { CarrerasController } from "../../controllers/carreras/carreras.controll
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
 import { CarreraCreateDTO } from "../../common/dto/carrera/carrera.materia.dto";
 
-
 export class CarrerasRouter {
   private _router: Router;
   private _carrerasController = new CarrerasController();

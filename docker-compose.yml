@@ -16,7 +16,6 @@ services:
       - CoreTeam-network
     restart: unless-stopped
 
-
   mi-postgres:
     image: postgres:16
     container_name: CoreTeam-postgres

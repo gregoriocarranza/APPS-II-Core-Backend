@@ -8,7 +8,7 @@ class KnexManager {
    */
   static async connect(
     config?: Knex.Config,
-    connections?: number
+    connections?: number,
   ): Promise<Knex<any, unknown[]>> {
     if (!KnexManager.knexInstance) {
       const isLocalhost =
@@ -58,7 +58,7 @@ class KnexManager {
   static getConnection(): Knex<any, unknown[]> {
     if (!KnexManager.knexInstance) {
       throw new Error(
-        "Knex connection has not been established. Call connect() first."
+        "Knex connection has not been established. Call connect() first.",
       );
     }
     return KnexManager.knexInstance;
