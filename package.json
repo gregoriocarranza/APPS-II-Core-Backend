@@ -8,6 +8,8 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "start:dev": "nodemon src/server.ts",
+    "start:worker": "node dist/worker.js",
+    "dev:worker": "nodemon src/worker.ts",
     "format": "prettier --write .",
     "build:asyncapi": "asyncapi generate fromTemplate .docs/async-documentation.yaml @asyncapi/html-template@3.0.0 --use-new-generator -o .docs/.build/async --force-write -p singleFile=true sidebarOrganization=byTagsNoRoot",
     "migrate:create": "knex migrate:make migration -x ts",
@@ -16,6 +18,7 @@
     "pm2:restart": "pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env"
   },
   "dependencies": {
+    "amqplib": "^0.10.4",
     "@types/js-yaml": "^4.0.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -35,6 +38,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@asyncapi/cli": "^3.5.2",
     "@asyncapi/generator": "^2.8.3",
     "@asyncapi/html-template": "^3.3.1",

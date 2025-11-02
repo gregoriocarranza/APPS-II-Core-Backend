@@ -1,10 +1,11 @@
-import { Knex } from "knex";
 import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
 import { INotificacion } from "../../interfaces/notification/notification.interfaces";
 
 export class notificacionesDAO implements IBaseDAO<INotificacion> {
-  private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
+  private get knex() {
+    return KnexManager.getConnection();
+  }
 
   async create(item: INotificacion): Promise<INotificacion> {
     const insert = {
@@ -15,14 +16,14 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
       from: process.env.SMTP_USER || "placehoder@gmail.com",
     };
 
-    const [created] = await this._knex("notificaciones")
+    const [created] = await this.knex("notificaciones")
       .insert(insert)
       .returning("*");
     return created;
   }
 
   async getByUuid(uuid: string): Promise<INotificacion | null> {
-    const result = await this._knex("notificaciones")
+    const result = await this.knex("notificaciones")
       .select("*")
       .where("uuid", uuid)
       .first();
@@ -38,7 +39,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   }
 
   async delete(uuid: string): Promise<boolean> {
-    const result = await this._knex("notificaciones").where({ uuid }).del();
+    const result = await this.knex("notificaciones").where({ uuid }).del();
     return result > 0;
   }
 
@@ -48,7 +49,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("notificaciones").select("*");
+    const query = this.knex("notificaciones").select("*");
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
@@ -76,7 +77,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("notificaciones").select("*").where({ user_id });
+    const query = this.knex("notificaciones").select("*").where({ user_id });
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
