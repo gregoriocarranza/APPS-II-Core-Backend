@@ -110,7 +110,7 @@ jobs:
             sudo docker compose up -d --remove-orphans
 
             echo '--- Restarting PM2 process ---'
-            pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env
+            pm2 reload core-backend --update-env || pm2 start ecosystem.config.js --only core-backend --update-env
 
             pm2 save
             pm2 ls
