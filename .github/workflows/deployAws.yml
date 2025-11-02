@@ -96,7 +96,7 @@ jobs:
 
             echo '--- Restarting PM2 process ---'
 
-            npm run pm2:restart
+            pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env
 
             echo 'Deployment completed successfully!'
           "
