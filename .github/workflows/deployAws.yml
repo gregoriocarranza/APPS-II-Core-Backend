@@ -81,25 +81,43 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
+            set -euo pipefail
             echo '--- Starting deployment on server ---'
+
+            export NVM_DIR=\$HOME/.nvm
+            [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+            [ -s \"\$NVM_DIR/bash_completion\" ] && . \"\$NVM_DIR/bash_completion\"
+
+            NODE_VERSION=24.11.0
+            nvm install \$NODE_VERSION >/dev/null
+            nvm use \$NODE_VERSION
+
+            if ! command -v pm2 >/dev/null 2>&1; then
+              npm i -g pm2
+            fi
+            echo 'pm2 en: ' \$(command -v pm2)
+            echo 'node: ' \$(node -v) ' | npm: ' \$(npm -v)
 
             cd ~/APPS-II-Core-Backend
             
             if [ ! -f .env ]; then
-              echo "Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno."
+              echo 'Archivo .env no encontrado. Terminado sin docker-compose por falta de variables de entorno.'
               exit 1
             fi
-            echo "Archivo .env encontrado. Continuando con docker-compose..."
+            echo 'Archivo .env encontrado. Continuando con docker-compose...'
 
             sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
 
             echo '--- Restarting PM2 process ---'
-
             pm2 reload core-backend --update-env || pm2 start dist/server.js --name core-backend --update-env
+
+            pm2 save
+            pm2 ls
 
             echo 'Deployment completed successfully!'
           "
+
 
       - name: Clean up Docker resources
         run: |
