@@ -36,8 +36,44 @@
       "vhost": "/",
       "type": "topic",
       "durable": true
+    },
+    {
+      "name": "user.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    },
+    {
+      "name": "cursos.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    },
+    {
+      "name": "materias.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    },
+    {
+      "name": "inscripciones.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    },
+    {
+      "name": "transactions.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    },
+    {
+      "name": "notificaciones.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
     }
-  ],
+  ],   
   "queues": [
     {
       "name": "estudiante.queue",
