@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { MateriasController } from "../../controllers/materias/materias.controller";
-import { MateriaCreateDTO } from "../../common/dto/materia.dto";
 import { CorrelativaCreateDTO } from "../../common/dto/correlativa.dto";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
+import { MateriaCreateDTO } from "../../common/dto/materia/create.materia.dto";
 
 export class MateriasRouter {
   private _router: Router;

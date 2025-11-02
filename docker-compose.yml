@@ -2,12 +2,16 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    env_file: ".env"
+    environment:
+      RABBITMQ_LOAD_DEFINITIONS: "true"
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: >
+        -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
     ports:
-      - "5672:5672" # AMQP apps
-      - "15672:15672" # UI admin
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbit-definitions.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - CoreTeam-network
     restart: unless-stopped
@@ -31,23 +35,10 @@ services:
     networks:
       - CoreTeam-network
     ports:
-      - "127.0.0.1:8080:80"
+      - "8080:80"
     depends_on:
       - mi-postgres
     restart: unless-stopped
-
-  # app:
-  #   image: core-backend:latest
-  #   env_file: ".env"
-  #   container_name: CoreTeam-app
-  #   networks:
-  #     - CoreTeam-network
-  #   ports:
-  #     - "3030:3030"
-  #   depends_on:
-  #     - rabbitmq
-  #     - mi-postgres
-  #   restart: unless-stopped
 
 volumes:
   postgres_data:

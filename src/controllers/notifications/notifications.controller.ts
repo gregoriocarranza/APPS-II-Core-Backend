@@ -7,6 +7,12 @@ import { INotificacion } from "../../database/interfaces/notification/notificati
 import { EmailerService } from "../../service/mailer.service";
 import { UserService } from "../../service/user.service";
 import { IUser } from "../../database/interfaces/user/user.interfaces";
+import { INotificacionDTO } from "../../common/dto/notificaciones/Inotificaciones.dto";
+import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/create.notificaciones.dto";
+import {
+  bodyTypes,
+  NotificationCreatedDTO,
+} from "../../common/dto/notificaciones/notificaciones.dto";
 // import { inputValidator } from "../../common/helpers/validate.dto";
 export class NotificationsController implements IBaseController {
   notificationService: NotificationsService;
@@ -75,24 +81,45 @@ export class NotificationsController implements IBaseController {
     next: NextFunction,
   ): Promise<any> {
     try {
-      const notificationDto = req.body;
+      const notificationDto: NotificationCreatedByTypeDTO = req.body;
 
       const user: IUser | undefined = await this.userService.getByUuid(
-        notificationDto.uuid,
+        notificationDto.userUuid,
       );
       if (!user)
-        throw new NotFoundError(`User ${notificationDto.uuid} no encontrado`);
-      const payload = { ...req.body, uuid: uuidv4(), user };
+        throw new NotFoundError(
+          `User ${notificationDto.userUuid} no encontrado`,
+        );
+
+      const templateFunction = await this.notificationService.getTemplateById(
+        notificationDto.EmailType,
+      );
+      if (!templateFunction)
+        throw new NotFoundError(
+          `template no encontrado con key  ${notificationDto.EmailType} `,
+        );
+      const { body, title } = await templateFunction(req.body);
+
+      const payload: INotificacionDTO = INotificacionDTO.build({
+        ...req.body,
+        uuid: uuidv4(),
+        body,
+        title,
+      });
+
       const created = await this.notificationService.create(payload);
+
+      const response: NotificationCreatedDTO =
+        NotificationCreatedDTO.build(created);
 
       const info = await this.emailerService.sendMail({
         to: user.email,
-        subject: notificationDto.title,
-        bodyType: notificationDto.bodyType,
-        body: notificationDto.body,
-        attachments: notificationDto.attachments || undefined,
+        subject: title,
+        bodyType: bodyTypes.html,
+        body: body,
+        attachments: undefined,
       });
-      res.status(201).json({ success: true, data: created, info });
+      res.status(201).json({ success: true, data: response, info });
     } catch (err: any) {
       next(err);
     }

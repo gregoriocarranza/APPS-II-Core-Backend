@@ -34,6 +34,9 @@ class KnexManager {
         migrations: {
           tableName: "knex_migrations",
         },
+        options: {
+          nestTables: true,
+        },
       };
       KnexManager.knexInstance = knex(config || defaultConfig);
       try {

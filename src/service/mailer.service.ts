@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import mailerConfig from "../config/mailer.config";
 import { Attachment } from "nodemailer/lib/mailer";
-import { bodyTypes } from "../common/dto/notificaciones.dto";
+import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 
 export class EmailerService {
   private static _instance: EmailerService;

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { CarrerasController } from "../../controllers/carreras/carreras.controller";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
-import { CarreraCreateDTO } from "../../common/dto/carrera.dto";
+import { CarreraCreateDTO } from "../../common/dto/carrera/carrera.materia.dto";
 
 export class CarrerasRouter {
   private _router: Router;

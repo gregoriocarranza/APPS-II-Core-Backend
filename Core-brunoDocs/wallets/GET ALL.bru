@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/wallets?page=1&limit=2
+  url: {{core-BackendBackendHost}}/api/wallets
   body: none
   auth: bearer
 }
 
 params:query {
-  page: 1
-  limit: 2
+  ~page: 1
+  ~limit: 2
   ~user_uuid: 
 }
 

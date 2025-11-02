@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { CursosController } from "../../controllers/cursos/cursos.controller";
 
+import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
+import { CursoCreateDTO } from "../../common/dto/curso/create.curso.dto";
+
 export class CursosRouter {
   private _router: Router;
   private _cursosController = new CursosController();
@@ -23,6 +26,7 @@ export class CursosRouter {
     );
     this._router.post(
       "/",
+      bodyValidationMiddleware(CursoCreateDTO),
       this._cursosController.create.bind(this._cursosController),
     );
     this._router.delete(

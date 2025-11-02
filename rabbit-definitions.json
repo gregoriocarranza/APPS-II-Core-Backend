@@ -1,0 +1,107 @@
+{
+  "vhosts": [{ "name": "/" }],
+  "users": [
+    {
+      "name": "core-user",
+      "password_hash": "nVVtMZNxZd1bIpdIkfKiT2+czUY1comK/Y3cvI67NWmwZQ3n",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    },
+    {
+      "name": "RabbitMQ_user",
+      "password_hash": "8TlCHhidbiIlRvFiMvHInAoyYyA7W+zI8xddndtvRJZ5eQWi",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    }
+  ],
+  "permissions": [
+    {
+      "user": "core-user",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "RabbitMQ_user",
+      "vhost": "/",
+      "configure": "^$",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "dead-letter.exchanger",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true
+    }
+  ],
+  "queues": [
+    {
+      "name": "estudiante.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "docente.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "biblioteca.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "comedor.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "tienda.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "eventos-academicos.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "analitica.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "backoffice.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    {
+      "name": "core.queue",
+      "vhost": "/",
+      "durable": true,
+      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+    },
+    { "name": "dead-letter.queue", "vhost": "/", "durable": true }
+  ],
+  "bindings": [
+    {
+      "source": "dead-letter.exchanger",
+      "vhost": "/",
+      "destination": "dead-letter.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import {
   IsArray,
   IsEnum,
@@ -7,12 +8,11 @@ import {
   ValidateNested,
 } from "class-validator";
 
-import { Type } from "class-transformer";
-
-export enum bodyTypes {
-  html = "html",
-  text = "text",
+export enum EmailType {
+  HEALTH = "HEALTH",
+  INSCRIPCIONES = "INSCRIPCIONES",
 }
+
 export class attachmentClass {
   @IsString()
   filename!: string;
@@ -21,18 +21,12 @@ export class attachmentClass {
   href!: string;
 }
 
-export class NotificationCreatedDTO {
+export class NotificationCreatedByTypeDTO {
   @IsUUID()
-  uuid!: string;
+  userUuid!: string;
 
-  @IsString()
-  title!: string;
-
-  @IsEnum(bodyTypes)
-  bodyType!: bodyTypes;
-
-  @IsString()
-  body!: string;
+  @IsEnum(EmailType)
+  EmailType!: EmailType;
 
   @IsOptional()
   @IsArray()
