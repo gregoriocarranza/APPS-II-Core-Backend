@@ -11,6 +11,46 @@ export class CarrerasRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
+  /**
+   * @openapi
+   * /api/carreras:
+   *   get:
+   *     summary: Obtener todas las carreras
+   *     tags:
+   *       - Carreras
+   *     parameters:
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *         description: Numero de pagina
+   *       - in: query
+   *         name: page_size
+   *         schema:
+   *           type: integer
+   *           default: 25
+   *         description: Tamaño de pagina
+   *     responses:
+   *       "200":
+   *         description: Lista paginada de carreras
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 page:
+   *                   type: integer
+   *                 page_size:
+   *                   type: integer
+   *                 total:
+   *                   type: integer
+   *                 items:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/CarreraResponseDTO'
+   *               required: [page, page_size, total, items]
+   */
     this._router.get(
       "/",
       this._carrerasController.getAll.bind(this._carrerasController),
