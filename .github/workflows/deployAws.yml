@@ -106,6 +106,9 @@ jobs:
             fi
             echo 'Archivo .env encontrado. Continuando con docker-compose...'
 
+            echo "🧹 Cleaning RabbitMQ..."
+            sudo docker compose rm -sfv rabbitmq || true
+
             sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
 
@@ -118,13 +121,6 @@ jobs:
             echo 'Deployment completed successfully!'
           "
 
-      - name: Apply RabbitMQ definitions
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
-            set -e
-            sudo docker exec rabbitmq rabbitmqctl import_definitions /etc/rabbitmq/definitions.json
-            echo 'RabbitMQ definitions imported ✅'
-          "
 
       - name: Clean up Docker resources
         run: |
