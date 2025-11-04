@@ -118,6 +118,13 @@ jobs:
             echo 'Deployment completed successfully!'
           "
 
+      - name: Apply RabbitMQ definitions
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
+            set -e
+            sudo docker exec rabbitmq rabbitmqctl import_definitions /etc/rabbitmq/definitions.json
+            echo 'RabbitMQ definitions imported ✅'
+          "
 
       - name: Clean up Docker resources
         run: |

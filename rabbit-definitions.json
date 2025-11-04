@@ -152,6 +152,20 @@
       "destination": "backoffice.queue",
       "destination_type": "queue",
       "routing_key": "#"
+    },
+    {
+      "source": "notificaciones.event",
+      "vhost": "/",
+      "destination": "docente.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "notificaciones.event",
+      "vhost": "/",
+      "destination": "estudiante.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
     }
   ]
 }
