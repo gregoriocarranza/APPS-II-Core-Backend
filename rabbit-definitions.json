@@ -140,9 +140,16 @@
       "routing_key": "#"
     },
     {
-      "source": "user.events",
+      "source": "user.event",
       "vhost": "/",
       "destination": "core.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "cursos.event",
+      "vhost": "/",
+      "destination": "backoffice.queue",
       "destination_type": "queue",
       "routing_key": "#"
     }
