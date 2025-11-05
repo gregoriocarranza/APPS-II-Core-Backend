@@ -85,3 +85,9 @@ Steps
 - Entrypoint: `server.ts`
 - Docker compose: `docker-compose.yml`
 - CI/CD: `deploy.yml`
+
+#
+
+INSERT INTO public.users(
+	uuid, nombre, apellido, legajo, dni, email, telefono_personal, status, rol, carrera_uuid)
+	VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'John', 'Doe', 111111, 39999999, 'miemail@gmail.com',  100 ,'activo', 'rol', 'db887165-94e4-4543-9e6e-69d2f2907a6d')

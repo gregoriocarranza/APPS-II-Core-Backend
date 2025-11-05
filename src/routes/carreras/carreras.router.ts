@@ -55,19 +55,154 @@ export class CarrerasRouter {
       "/",
       this._carrerasController.getAll.bind(this._carrerasController),
     );
+    /**
+     * @openapi
+     * /api/carreras/{uuid}:
+     *   get:
+     *     summary: Obtener carrera por UUID
+     *     tags:
+     *       - Carreras
+     *     parameters:
+     *       - in: path
+     *         name: uuid
+     *         required: true
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *     responses:
+     *       "200":
+     *         description: Carrera encontrada
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/CarreraResponseDTO'
+     *       "404":
+     *         description: Carrera no encontrada
+     */
     this._router.get(
       "/:uuid",
       this._carrerasController.getByUuid.bind(this._carrerasController),
     );
+    /**
+     * @openapi
+     * /api/carreras/{uuid}:
+     *   put:
+     *     summary: Actualizar una carrera
+     *     tags:
+     *       - Carreras
+     *     parameters:
+     *       - in: path
+     *         name: uuid
+     *         required: true
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/CarreraCreateDTO'
+  *           example:
+  *             name: "Licenciatura en Sistemas de Información"
+  *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
+  *             degree_title: "Licenciado en Sistemas de Información"
+  *             code: "LSI"
+  *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
+  *             modality: "presencial"
+  *             duration_hours: 3200
+  *             duration_years: 5
+  *             is_active: true
+  *             metadata:
+  *               plan_version: "2024"
+  *               coordinator: "Dra. Ana Pérez"
+  *               contact_email: "info.sistemas@universidad.edu"
+  *               campus:
+  *                 - "Sede Central"
+  *                 - "Campus Norte"
+  *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
+     *     responses:
+     *       "200":
+     *         description: Carrera actualizada
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/CarreraResponseDTO'
+     *       "400":
+     *         description: Datos inválidos
+     *       "404":
+     *         description: Carrera no encontrada
+     */
     this._router.put(
       "/:uuid",
       this._carrerasController.update.bind(this._carrerasController),
     );
+    /**
+     * @openapi
+     * /api/carreras:
+     *   post:
+     *     summary: Crear una nueva carrera
+     *     tags:
+     *       - Carreras
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/CarreraCreateDTO'
+      *           example:
+      *             name: "Licenciatura en Sistemas de Información"
+      *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
+      *             degree_title: "Licenciado en Sistemas de Información"
+      *             code: "LSI"
+      *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
+      *             modality: "presencial"
+      *             duration_hours: 3200
+      *             duration_years: 5
+      *             is_active: true
+      *             metadata:
+      *               plan_version: "2024"
+      *               coordinator: "Dra. Ana Pérez"
+      *               contact_email: "info.sistemas@universidad.edu"
+      *               campus:
+      *                 - "Sede Central"
+      *                 - "Campus Norte"
+      *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
+     *     responses:
+     *       "201":
+     *         description: Carrera creada
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/CarreraResponseDTO'
+     *       "400":
+     *         description: Datos inválidos
+     */
     this._router.post(
       "/",
       bodyValidationMiddleware(CarreraCreateDTO),
       this._carrerasController.create.bind(this._carrerasController),
     );
+    /**
+     * @openapi
+     * /api/carreras/{uuid}:
+     *   delete:
+     *     summary: Eliminar una carrera
+     *     tags:
+     *       - Carreras
+     *     parameters:
+     *       - in: path
+     *         name: uuid
+     *         required: true
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *     responses:
+     *       "204":
+     *         description: Carrera eliminada
+     *       "404":
+     *         description: Carrera no encontrada
+     */
     this._router.delete(
       "/:uuid",
       this._carrerasController.delete.bind(this._carrerasController),

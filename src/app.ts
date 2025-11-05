@@ -73,9 +73,6 @@ if (process.env.ENVIRONMENT !== "production") {
         title: process.env.APP_NAME || "Core Backend API",
         version: "1.0.0",
       },
-      // The server URL should NOT include the '/api' mount path — routes are mounted under '/api'
-      // in the Express app. Keep server URL to the host+port only so paths like '/api/carreras'
-      // resolve to 'http://localhost:3030/api/carreras' (avoids duplicated /api/api).
       servers: [
         { url: process.env.SWAGGER_SERVER_URL || "http://localhost:3030" },
       ],
