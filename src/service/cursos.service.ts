@@ -1,15 +1,16 @@
+import { CursoCreateDTO } from "../common/dto/curso/create.curso.dto";
 import { CursoDTO } from "../common/dto/curso/curso.dto";
 import { NotFoundError } from "../common/utils/errors";
-import { CursosDao } from "../database/dao/cursos/cursosDAO";
+import { CursosDAO } from "../database/dao/cursos/cursosDAO";
 import { ICurso } from "../database/interfaces/cursos/cursos.interfaces";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { v4 as uuidv4 } from "uuid";
 
 export class CursosService {
-  private dao: CursosDao;
+  private dao: CursosDAO;
 
-  constructor(dao?: CursosDao) {
-    this.dao = dao ?? new CursosDao();
+  constructor(dao?: CursosDAO) {
+    this.dao = dao ?? new CursosDAO();
   }
 
   async getAll(params?: {
@@ -27,7 +28,7 @@ export class CursosService {
     return event;
   }
 
-  async create(body: ICurso): Promise<ICurso> {
+  async create(body: CursoCreateDTO): Promise<ICurso> {
     const payload = { ...body, uuid: uuidv4() };
     return this.dao.create(payload);
   }

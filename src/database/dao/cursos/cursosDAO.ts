@@ -3,11 +3,12 @@ import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
 import { ICurso } from "../../interfaces/cursos/cursos.interfaces";
 import { CursoDTO } from "../../../common/dto/curso/curso.dto";
+import { CursoCreateDTO } from "../../../common/dto/curso/create.curso.dto";
 
-export class CursosDao implements IBaseDAO<ICurso> {
+export class CursosDAO implements IBaseDAO<CursoCreateDTO> {
   private _knex: Knex<any, unknown[]> = KnexManager.getConnection();
 
-  async create(item: ICurso): Promise<ICurso> {
+  async create(item: CursoCreateDTO): Promise<ICurso> {
     const [created] = await this._knex("cursos").insert(item).returning("*");
     return created;
   }

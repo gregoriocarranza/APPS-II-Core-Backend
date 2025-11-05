@@ -1,0 +1,24 @@
+meta {
+  name: GET BY UUID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/inscripciones/:uuid
+  body: none
+  auth: bearer
+}
+
+params:path {
+  uuid: 32d4596c-797c-4cb5-b627-b6e1f96d2f2c
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

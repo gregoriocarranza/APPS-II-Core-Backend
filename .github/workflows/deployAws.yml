@@ -121,7 +121,6 @@ jobs:
             echo 'Deployment completed successfully!'
           "
 
-
       - name: Clean up Docker resources
         run: |
           echo 'Cleaning up unused Docker resources...'

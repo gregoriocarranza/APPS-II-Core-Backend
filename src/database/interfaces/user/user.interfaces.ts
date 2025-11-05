@@ -11,3 +11,19 @@ export interface IUser {
   carrera_uuid: string | null;
   fecha_alta: string;
 }
+
+export interface IUserDTO {
+  uuid: string;
+  nombre: string;
+  apellido: string;
+  legajo: string;
+  dni: number;
+  email: string;
+  telefono_personal?: string;
+  status: string;
+  rol: string;
+  carrera_uuid?: string | null;
+  fecha_alta: string;
+  created_at?: string;
+  updated_at?: string;
+}

@@ -1,3 +1,4 @@
+import { plainToInstance } from "class-transformer";
 import {
   IsUUID,
   IsString,
@@ -6,6 +7,7 @@ import {
   IsInt,
   IsEnum,
   IsDateString,
+  validateSync,
 } from "class-validator";
 
 export enum CursoModalidadEnum {
@@ -27,10 +29,6 @@ export enum CursoEstadoEnum {
 }
 
 export class CursoCreateDTO {
-  @IsOptional()
-  @IsUUID()
-  uuid?: string;
-
   @IsUUID()
   @IsNotEmpty()
   uuid_materia!: string;
@@ -75,4 +73,14 @@ export class CursoCreateDTO {
 
   @IsDateString()
   hasta!: string;
+
+  static build(data: any): CursoCreateDTO {
+    const dto = plainToInstance(CursoCreateDTO, data, {
+      enableImplicitConversion: true,
+    });
+
+    const errors = validateSync(dto, { whitelist: true });
+    if (errors.length > 0) throw new Error(JSON.stringify(errors));
+    return dto;
+  }
 }

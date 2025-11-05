@@ -23,7 +23,7 @@ export interface ICurso {
 export interface ICursoDTO {
   uuid: string;
   uuid_materia: string;
-  materia: IMateriaDTO;
+  materia?: IMateriaDTO;
   examen: string;
   comision: string;
   modalidad: string;

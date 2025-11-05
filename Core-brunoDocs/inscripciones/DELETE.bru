@@ -1,0 +1,24 @@
+meta {
+  name: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{core-BackendBackendHost}}/api/inscripciones/:uuid
+  body: none
+  auth: bearer
+}
+
+params:path {
+  uuid: f9aef4bd-ff1f-426e-bf84-08bab446850a
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -5,11 +5,12 @@ import {
   IsInt,
   IsDateString,
   validateSync,
+  IsOptional,
 } from "class-validator";
 import { ICursoDTO } from "../../../database/interfaces/cursos/cursos.interfaces";
 import { MateriaDTO } from "../materia/materia.dto";
 import { CarreraDTO } from "../carrera/carrera.dto";
-import { IMateria } from "../../../database/interfaces/materia/materia.interfaces";
+import { IMateriaDTO } from "../../../database/interfaces/materia/materia.interfaces";
 import { ICarrera } from "../../../database/interfaces/carrera/carreras.interfaces";
 import { plainToInstance, Transform } from "class-transformer";
 
@@ -38,7 +39,10 @@ export class CursoDTO {
   @IsUUID()
   uuid_materia!: string;
 
-  materia!: IMateria;
+  @IsOptional()
+  materia!: IMateriaDTO;
+
+  @IsOptional()
   carrera!: ICarrera;
 
   @IsString()

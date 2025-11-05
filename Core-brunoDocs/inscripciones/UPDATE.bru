@@ -1,0 +1,36 @@
+meta {
+  name: UPDATE
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{core-BackendBackendHost}}/api/inscripciones/:uuid
+  body: json
+  auth: bearer
+}
+
+params:path {
+  uuid: 32d4596c-797c-4cb5-b627-b6e1f96d2f2c
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "uuid_curso": "c050c197-266d-4e61-881e-a5a5cd388758",
+    "user_uuid": "9f5c953b-1ab4-46b7-8b3e-26cf59101471",
+    "estado": "confirmada",
+    "rol": "ALUMNO",
+    "razon": "",
+    "fecha_baja": null
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

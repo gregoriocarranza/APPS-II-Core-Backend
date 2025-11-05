@@ -1,17 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import { IBaseController } from "../../types";
 import { CursosService } from "../../service/cursos.service";
-import { NotFoundError } from "../../common/utils/errors";
+import { BadRequestError, NotFoundError } from "../../common/utils/errors";
+import { CursoInscripcionInicialDTO } from "../../common/dto/curso/CursoInscripcionInicialDTO";
+import { InscripcionesService } from "../../service/inscripciones.service";
+import { CursoCreateDTO } from "../../common/dto/curso/create.curso.dto";
+import { v4 as uuidv4 } from "uuid";
+import { ToIInscripcionesDTO } from "../../common/dto/inscripciones/inscriopciones.interface.dto";
 
 export class CursosController implements IBaseController {
   cursosService: CursosService;
+  inscripcionesService: InscripcionesService;
+
   constructor() {
     this.cursosService = new CursosService();
+    this.inscripcionesService = new InscripcionesService();
   }
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { page, limit } = req.query as {
@@ -33,7 +41,7 @@ export class CursosController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -51,7 +59,7 @@ export class CursosController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -65,10 +73,39 @@ export class CursosController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<any> {
     try {
-      const created = await this.cursosService.create(req.body);
+      if (
+        !req.body.inscripciones_iniciales ||
+        req.body.inscripciones_iniciales.length === 0
+      ) {
+        throw new BadRequestError(
+          "Debe incluir al menos un docente o auxiliar en 'inscripciones_iniciales'."
+        );
+      }
+      const dto: CursoCreateDTO = await CursoCreateDTO.build({
+        ...req.body,
+        uuid: uuidv4(),
+      });
+      const created = await this.cursosService.create(dto);
+
+      const inscripcionesIniciales = CursoInscripcionInicialDTO.build(
+        req.body.inscripciones_iniciales
+      );
+      for (const inscripcion of inscripcionesIniciales) {
+        const inscripcionDto: ToIInscripcionesDTO =
+          await ToIInscripcionesDTO.build({
+            uuid_curso: created.uuid,
+            user_uuid: inscripcion.user_uuid,
+            estado: inscripcion.estado,
+            rol: inscripcion.rol,
+            uuid: uuidv4(),
+          });
+        const result = await this.inscripcionesService.create(inscripcionDto);
+        console.log(result);
+      }
+
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
       next(err);
@@ -78,7 +115,7 @@ export class CursosController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;

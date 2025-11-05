@@ -34,7 +34,7 @@ export class CorrelativasService {
    */
   async addCorrelativa(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<ICorrelativa> {
     const [materia, materiaCorrelativa] = await Promise.all([
       this.materiasDAO.getByUuid(uuidMateria),
@@ -47,7 +47,7 @@ export class CorrelativasService {
 
     if (!materiaCorrelativa) {
       throw new NotFoundError(
-        `Materia correlativa ${uuidMateriaCorrelativa} no encontrada`
+        `Materia correlativa ${uuidMateriaCorrelativa} no encontrada`,
       );
     }
 
@@ -57,7 +57,7 @@ export class CorrelativasService {
 
     const exists = await this.correlativaDAO.exists(
       uuidMateria,
-      uuidMateriaCorrelativa
+      uuidMateriaCorrelativa,
     );
     if (exists) {
       throw new Error("La correlativa ya existe");
@@ -65,11 +65,11 @@ export class CorrelativasService {
 
     const wouldCreateCircular = await this.checkCircularDependency(
       uuidMateria,
-      uuidMateriaCorrelativa
+      uuidMateriaCorrelativa,
     );
     if (wouldCreateCircular) {
       throw new Error(
-        "No se puede crear la correlativa: generaría una dependencia circular"
+        "No se puede crear la correlativa: generaría una dependencia circular",
       );
     }
 
@@ -90,11 +90,11 @@ export class CorrelativasService {
    */
   async removeCorrelativa(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<{ ok: boolean }> {
     const deleted = await this.correlativaDAO.delete(
       uuidMateria,
-      uuidMateriaCorrelativa
+      uuidMateriaCorrelativa,
     );
     if (!deleted) {
       throw new NotFoundError("Correlativa no encontrada");
@@ -110,7 +110,7 @@ export class CorrelativasService {
    */
   private async checkCircularDependency(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<boolean> {
     const visited = new Set<string>();
     const queue: string[] = [uuidMateriaCorrelativa];

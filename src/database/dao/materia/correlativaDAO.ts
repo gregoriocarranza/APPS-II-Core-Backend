@@ -26,7 +26,7 @@ export class CorrelativaDAO implements Pick<IBaseDAO<ICorrelativa>, "create"> {
    */
   async getByUuid(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<ICorrelativa | null> {
     const result = await this._knex("correlativas")
       .select("*")
@@ -46,7 +46,7 @@ export class CorrelativaDAO implements Pick<IBaseDAO<ICorrelativa>, "create"> {
    */
   async delete(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<boolean> {
     const result = await this._knex("correlativas")
       .where({
@@ -76,7 +76,7 @@ export class CorrelativaDAO implements Pick<IBaseDAO<ICorrelativa>, "create"> {
    * @returns Array de correlativas
    */
   async getMateriasQueRequieren(
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<ICorrelativa[]> {
     return this._knex("correlativas")
       .select("*")
@@ -92,7 +92,7 @@ export class CorrelativaDAO implements Pick<IBaseDAO<ICorrelativa>, "create"> {
    */
   async exists(
     uuidMateria: string,
-    uuidMateriaCorrelativa: string
+    uuidMateriaCorrelativa: string,
   ): Promise<boolean> {
     const result = await this._knex("correlativas")
       .where({

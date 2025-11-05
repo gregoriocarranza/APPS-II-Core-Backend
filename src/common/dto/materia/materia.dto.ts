@@ -30,6 +30,7 @@ export class MateriaDTO {
 
   @IsUUID()
   uuid_carrera!: string;
+  @IsOptional()
   carrera!: ICarrera;
   @IsOptional()
   @IsString()

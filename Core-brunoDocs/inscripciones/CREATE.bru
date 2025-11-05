@@ -1,0 +1,30 @@
+meta {
+  name: CREATE
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{core-BackendBackendHost}}/api/inscripciones
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+body:json {
+  {
+    "uuid_curso": "c050c197-266d-4e61-881e-a5a5cd388758",
+    "user_uuid": "9f5c953b-1ab4-46b7-8b3e-26cf59101471",
+    "estado": "pendiente",
+    "rol": "ALUMNO"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

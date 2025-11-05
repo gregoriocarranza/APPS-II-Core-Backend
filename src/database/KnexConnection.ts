@@ -14,7 +14,11 @@ class KnexManager {
       const isLocalhost =
         process.env.SQL_HOST === "localhost" ||
         process.env.SQL_HOST === "127.0.0.1";
-      console.info("[DB] SQL_HOST=%s SQL_PORT=%s", process.env.SQL_HOST, process.env.SQL_PORT);
+      console.info(
+        "[DB] SQL_HOST=%s SQL_PORT=%s",
+        process.env.SQL_HOST,
+        process.env.SQL_PORT,
+      );
       const defaultConfig = {
         client: "pg",
         connection: {

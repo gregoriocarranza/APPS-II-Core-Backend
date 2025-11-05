@@ -15,7 +15,7 @@ export class MateriasController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { page, limit } = req.query as {
@@ -37,7 +37,7 @@ export class MateriasController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -55,7 +55,7 @@ export class MateriasController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -69,7 +69,7 @@ export class MateriasController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<any> {
     try {
       const created = await this.materiasService.create(req.body);
@@ -82,7 +82,7 @@ export class MateriasController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -102,7 +102,7 @@ export class MateriasController implements IBaseController {
   public async getCorrelativas(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -120,14 +120,14 @@ export class MateriasController implements IBaseController {
   public async addCorrelativa(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid } = req.params;
       const { uuid_materia_correlativa } = req.body;
       const data = await this.correlativasService.addCorrelativa(
         uuid,
-        uuid_materia_correlativa
+        uuid_materia_correlativa,
       );
       res.status(201).json({ success: true, data });
     } catch (err: any) {
@@ -150,7 +150,7 @@ export class MateriasController implements IBaseController {
   public async removeCorrelativa(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { uuid, uuidCorrelativa } = req.params;

@@ -1,0 +1,25 @@
+meta {
+  name: GET ALL
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/inscripciones
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ~uuid_curso: 
+  ~user_uuid: 
+}
+
+auth:bearer {
+  token: {{core-BackendBearerToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
