@@ -87,6 +87,9 @@ if (process.env.ENVIRONMENT !== "production") {
       path.join(__dirname, "routes/**/*.ts"),
       path.join(__dirname, "controllers/**/*.ts"),
       path.join(__dirname, "docs/**/*.ts"),
+      path.join(__dirname, "routes/**/*.js"),
+      path.join(__dirname, "controllers/**/*.js"),
+      path.join(__dirname, "docs/**/*.js"),
     ],
   };
   const swaggerSpec = swaggerJSDoc(options);
