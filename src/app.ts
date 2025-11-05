@@ -99,12 +99,13 @@ if (process.env.ENVIRONMENT !== "production") {
   app.use("/docs/async", express.static(asyncOutDir));
 }
 
+const allowed = getAllowedOrigins();
 app.use(
   cors({
-    origin: getAllowedOrigins(),
+    origin: allowed === true ? true : allowed,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
 
 app.use(express.urlencoded({ extended: true }));

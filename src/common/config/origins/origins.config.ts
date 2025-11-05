@@ -1,8 +1,8 @@
-export const getAllowedOrigins = (): string[] => {
+export const getAllowedOrigins = (): string[] | true => {
   let origins: string = process.env.CORS_ALLOWED_ORIGINS || "localhost";
   if (origins === "localhost" || origins === "") {
     console.info("No origin in configuration");
-    return ["*"];
+    return true;
   }
   origins = origins
     .split("\n")
