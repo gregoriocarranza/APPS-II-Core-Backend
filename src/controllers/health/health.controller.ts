@@ -16,14 +16,14 @@ export class HealthController {
   public async getHealthStatus(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       let info = null;
       const { sendEmail } = req.query;
       const version: string = await getServiceVersion();
       const environment: string = await getServiceEnvironment();
-      const origins: string[] = getAllowedOrigins();
+      const origins: string[] | boolean = getAllowedOrigins();
       const timestamp: number = new Date().getTime();
       const serviceName: string = process.env.APP_NAME || "Edu App";
 
@@ -54,7 +54,7 @@ export class HealthController {
         health: "Up!",
         version,
         environment,
-        origins,
+        origins: origins === true ? "All origins" : origins,
         timestamp,
         email_info: info,
       });
