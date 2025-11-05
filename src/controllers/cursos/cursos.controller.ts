@@ -93,20 +93,44 @@ export class CursosController implements IBaseController {
       const inscripcionesIniciales = CursoInscripcionInicialDTO.build(
         req.body.inscripciones_iniciales
       );
-      for (const inscripcion of inscripcionesIniciales) {
-        const inscripcionDto: ToIInscripcionesDTO =
-          await ToIInscripcionesDTO.build({
+      let inscripcionesCreadas: any[] = [];
+
+      for (const [i, insc] of inscripcionesIniciales.entries()) {
+        try {
+          const dto = await ToIInscripcionesDTO.build({
             uuid_curso: created.uuid,
-            user_uuid: inscripcion.user_uuid,
-            estado: inscripcion.estado,
-            rol: inscripcion.rol,
+            user_uuid: insc.user_uuid,
+            estado: insc.estado,
+            rol: insc.rol,
             uuid: uuidv4(),
           });
-        const result = await this.inscripcionesService.create(inscripcionDto);
-        console.log(result);
+
+          const { curso, ...inscripcionLimpia } =
+            await this.inscripcionesService.create(dto);
+
+          inscripcionesCreadas.push(inscripcionLimpia);
+
+          console.log(
+            `✅ [${i + 1}/${inscripcionesIniciales.length}] Inscripción creada ->`,
+            `user: ${insc.user_uuid}, rol: ${insc.rol}`
+          );
+        } catch (err: any) {
+          console.error(
+            `❌ [${i + 1}/${inscripcionesIniciales.length}] Error al crear inscripción ->`,
+            `user: ${insc.user_uuid}, rol: ${insc.rol}, error: ${err.message}`
+          );
+        }
       }
 
-      res.status(201).json({ success: true, data: created });
+      console.log(
+        `📋 Total inscripciones creadas: ${inscripcionesCreadas.length}/${inscripcionesIniciales.length}`
+      );
+
+      res.status(201).json({
+        success: true,
+        data: created,
+        inscripciones: inscripcionesCreadas,
+      });
     } catch (err: any) {
       next(err);
     }

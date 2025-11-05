@@ -56,7 +56,7 @@ export class ToInscripcionDTO {
       enableImplicitConversion: true,
     });
 
-    const errors = validateSync(dto);
+    const errors = validateSync(dto, { whitelist: true });
     if (errors.length > 0) throw new Error(JSON.stringify(errors));
 
     if (data.curso) dto.curso = CursoDTO.build(data.curso);

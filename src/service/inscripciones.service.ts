@@ -61,9 +61,7 @@ export class InscripcionesService {
       );
     }
     const created = await this.dao.create(body);
-
-    const result = await this.getByUuid(created.uuid);
-    return result;
+    return created;
   }
 
   async update(

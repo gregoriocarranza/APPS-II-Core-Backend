@@ -25,7 +25,7 @@ export class InscripcionesDAO implements IBaseDAO<IInscripcion> {
       .select([
         "inscripciones.*",
         this._knex.raw(`row_to_json(users.*) as user`),
-        this._knex.raw(`row_to_json(cursos.*) as cursos`),
+        this._knex.raw(`row_to_json(cursos.*) as curso`),
       ])
       .leftJoin("users", "users.uuid", "inscripciones.user_uuid")
       .leftJoin("cursos", "cursos.uuid", "inscripciones.uuid_curso")
