@@ -74,7 +74,7 @@ if (process.env.ENVIRONMENT !== "production") {
         version: "1.0.0",
       },
       servers: [
-        { url: process.env.SWAGGER_SERVER_URL || "http://localhost:3030" },
+        { url: "https://jtseq9puk0.execute-api.us-east-1.amazonaws.com" },
       ],
       components: {
         schemas: {
