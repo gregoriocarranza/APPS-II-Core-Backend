@@ -3,19 +3,21 @@ import { ICorrelativa } from "../database/interfaces/materia/correlativa.interfa
 import { buildDomainEvent, publishDomainEvent } from "../lib/rabbitmq";
 
 const EVENT_VERSION = 1;
+const MATERIAS_EXCHANGE =
+  process.env.MATERIAS_EXCHANGE?.trim() || "materias.event";
 
 export async function emitMateriaCreated(materia: IMateria): Promise<void> {
   const event = buildDomainEvent("materia.created", materia, {
     version: EVENT_VERSION,
   });
-  await publishDomainEvent("materia.created", event);
+  await publishDomainEvent(MATERIAS_EXCHANGE, "materia.created", event);
 }
 
 export async function emitMateriaUpdated(materia: IMateria): Promise<void> {
   const event = buildDomainEvent("materia.updated", materia, {
     version: EVENT_VERSION,
   });
-  await publishDomainEvent("materia.updated", event);
+  await publishDomainEvent(MATERIAS_EXCHANGE, "materia.updated", event);
 }
 
 export async function emitMateriaDeleted(uuid: string): Promise<void> {
@@ -26,7 +28,7 @@ export async function emitMateriaDeleted(uuid: string): Promise<void> {
     },
     { version: EVENT_VERSION },
   );
-  await publishDomainEvent("materia.deleted", event);
+  await publishDomainEvent(MATERIAS_EXCHANGE, "materia.deleted", event);
 }
 
 export async function emitCorrelativaCreated(
@@ -35,7 +37,11 @@ export async function emitCorrelativaCreated(
   const event = buildDomainEvent("correlativa.created", correlativa, {
     version: EVENT_VERSION,
   });
-  await publishDomainEvent("correlativa.created", event);
+  await publishDomainEvent(
+    MATERIAS_EXCHANGE,
+    "correlativa.created",
+    event,
+  );
 }
 
 export async function emitCorrelativaDeleted(
@@ -50,5 +56,9 @@ export async function emitCorrelativaDeleted(
     },
     { version: EVENT_VERSION },
   );
-  await publishDomainEvent("correlativa.deleted", event);
+  await publishDomainEvent(
+    MATERIAS_EXCHANGE,
+    "correlativa.deleted",
+    event,
+  );
 }
