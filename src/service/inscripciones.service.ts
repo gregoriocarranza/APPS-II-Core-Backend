@@ -5,6 +5,11 @@ import { InscripcionesDAO } from "../database/dao/Inscripciones/inscripcionesDAO
 import { ToInscripcionDTO } from "../common/dto/inscripciones/inscriopciones.dto";
 import { CursosDAO } from "../database/dao/cursos/cursosDAO";
 import { ToIInscripcionesDTO } from "../common/dto/inscripciones/inscriopciones.interface.dto";
+import {
+  emitInscripcionCreated,
+  emitInscripcionDeleted,
+  emitInscripcionUpdated,
+} from "../events/inscripciones.publisher";
 
 export class InscripcionesService {
   private dao: InscripcionesDAO;
@@ -61,6 +66,7 @@ export class InscripcionesService {
       );
     }
     const created = await this.dao.create(body);
+    await emitInscripcionCreated(created);
     return created;
   }
 
@@ -70,12 +76,14 @@ export class InscripcionesService {
   ): Promise<ToInscripcionDTO> {
     const updated = await this.dao.update(uuid, partial);
     if (!updated) throw new NotFoundError(`inscripción ${uuid} no encontrada`);
+    await emitInscripcionUpdated(updated);
     return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`inscripción ${uuid} no encontrada`);
+    await emitInscripcionDeleted(uuid);
     return { ok };
   }
 
@@ -92,6 +100,7 @@ export class InscripcionesService {
       updated_at: new Date().toISOString(),
     });
     if (!updated) throw new NotFoundError(`inscripción ${uuid} no encontrada`);
+    await emitInscripcionUpdated(updated);
     return updated;
   }
 
@@ -106,6 +115,7 @@ export class InscripcionesService {
       updated_at: new Date().toISOString(),
     });
     if (!updated) throw new NotFoundError(`inscripción ${uuid} no encontrada`);
+    await emitInscripcionUpdated(updated);
     return updated;
   }
 }

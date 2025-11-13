@@ -2,6 +2,11 @@ import { NotFoundError } from "../common/utils/errors";
 import { CalendarEventDAO } from "../database/dao/CalendarEvent/CalendarEventDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { ICalendarEvent } from "../database/interfaces/calendar-event/calendar-event.interfaces";
+import {
+  emitCalendarEventCreated,
+  emitCalendarEventDeleted,
+  emitCalendarEventUpdated,
+} from "../events/calendar-events.publisher";
 
 export class CalendarEventsService {
   private dao: CalendarEventDAO;
@@ -30,7 +35,9 @@ export class CalendarEventsService {
   }
 
   async create(payload: ICalendarEvent): Promise<ICalendarEvent> {
-    return this.dao.create(payload);
+    const created = await this.dao.create(payload);
+    await emitCalendarEventCreated(created);
+    return created;
   }
 
   async update(
@@ -40,12 +47,14 @@ export class CalendarEventsService {
     const updated = await this.dao.update(uuid, partial);
     if (!updated)
       throw new NotFoundError(`Calendar event ${uuid} no encontrado`);
+    await emitCalendarEventUpdated(updated);
     return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`Calendar event ${uuid} no encontrado`);
+    await emitCalendarEventDeleted(uuid);
     return { ok };
   }
 }

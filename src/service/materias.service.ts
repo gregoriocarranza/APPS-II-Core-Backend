@@ -6,6 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 import { IMateria } from "../database/interfaces/materia/materia.interfaces";
 import { ICorrelativa } from "../database/interfaces/materia/correlativa.interface";
 import { MateriaDTO } from "../common/dto/materia/materia.dto";
+import {
+  emitMateriaCreated,
+  emitMateriaDeleted,
+  emitMateriaUpdated,
+} from "../events/materias.publisher";
 
 export class MateriasService {
   private dao: MateriasDAO;
@@ -59,18 +64,22 @@ export class MateriasService {
       }
     }
 
+    await emitMateriaCreated(createdMateria);
+
     return createdMateria;
   }
 
   async update(uuid: string, partial: Partial<IMateria>): Promise<IMateria> {
     const updated = await this.dao.update(uuid, partial);
     if (!updated) throw new NotFoundError(`materia ${uuid} no encontrada`);
+    await emitMateriaUpdated(updated);
     return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`materia ${uuid} no encontrada`);
+    await emitMateriaDeleted(uuid);
     return { ok };
   }
 }

@@ -2,6 +2,10 @@ import { NotFoundError } from "../common/utils/errors";
 import { CorrelativaDAO } from "../database/dao/materia/correlativaDAO";
 import { MateriasDAO } from "../database/dao/materia/materiaDAO";
 import { ICorrelativa } from "../database/interfaces/materia/correlativa.interface";
+import {
+  emitCorrelativaCreated,
+  emitCorrelativaDeleted,
+} from "../events/materias.publisher";
 
 export class CorrelativasService {
   private correlativaDAO: CorrelativaDAO;
@@ -79,7 +83,10 @@ export class CorrelativasService {
       created_at: new Date(),
     };
 
-    return this.correlativaDAO.create(correlativa);
+    const created = await this.correlativaDAO.create(correlativa);
+    await emitCorrelativaCreated(created);
+
+    return created;
   }
 
   /**
@@ -99,6 +106,7 @@ export class CorrelativasService {
     if (!deleted) {
       throw new NotFoundError("Correlativa no encontrada");
     }
+    await emitCorrelativaDeleted(uuidMateria, uuidMateriaCorrelativa);
     return { ok: true };
   }
 

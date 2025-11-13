@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
+    "amqplib": "^0.10.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "class-validator-jsonschema": "^5.1.0",
@@ -42,6 +43,7 @@
     "@asyncapi/html-template": "^3.3.1",
     "@eslint/js": "^9.23.0",
     "@sundaysf/cli": "^0.2.9",
+    "@types/amqplib": "^0.10.8",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",

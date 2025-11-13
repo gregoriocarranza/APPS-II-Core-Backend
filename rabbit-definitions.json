@@ -35,43 +35,71 @@
       "name": "dead-letter.exchanger",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "user.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "cursos.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "carreras.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "eventos-calendario.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "materias.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "inscripciones.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "wallets.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "transactions.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
     },
     {
       "name": "notificaciones.event",
       "vhost": "/",
       "type": "topic",
-      "durable": true
+      "durable": true,
+      "auto_delete": false
     }
   ],
   "queues": [
