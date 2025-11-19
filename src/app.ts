@@ -66,6 +66,12 @@ if (process.env.ENVIRONMENT !== "production") {
   }
   // app.use("/docs", swaggerUi.serve);
   // app.get("/docs", swaggerUi.setup(swaggerDocument));
+  const swaggerServers = [
+    { url: "https://jtseq9puk0.execute-api.us-east-1.amazonaws.com" },
+  ];
+  if ((process.env.ENVIRONMENT || "").toUpperCase() === "DEVELOPMENT") {
+    swaggerServers.unshift({ url: "http://localhost:3030" });
+  }
   const options = {
     definition: {
       openapi: "3.0.0",
@@ -73,9 +79,7 @@ if (process.env.ENVIRONMENT !== "production") {
         title: process.env.APP_NAME || "Core Backend API",
         version: "1.0.0",
       },
-      servers: [
-        { url: process.env.SWAGGER_SERVER_URL || "http://localhost:3030" },
-      ],
+      servers: swaggerServers,
       components: {
         schemas: {
           // Merge auto-generated schemas (if any). If generation fails, this will be empty.
