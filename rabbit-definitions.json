@@ -46,56 +46,119 @@
       "auto_delete": false
     },
     {
-      "name": "cursos.event",
+      "name": "parameter.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "carreras.event",
+      "name": "curso.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "eventos-calendario.event",
+      "name": "carrera.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "materias.event",
+      "name": "calendar-event.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "inscripciones.event",
+      "name": "materia.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "wallets.event",
+      "name": "enrollment.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "transactions.event",
+      "name": "transaction.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
       "auto_delete": false
     },
     {
-      "name": "notificaciones.event",
+      "name": "notification.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "item.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "stock.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "purchase.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "academic-event.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "survey.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "attendance.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "grade.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "proposal.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "act.event",
       "vhost": "/",
       "type": "topic",
       "durable": true,
@@ -175,21 +238,21 @@
       "routing_key": "#"
     },
     {
-      "source": "cursos.event",
+      "source": "curso.event",
       "vhost": "/",
       "destination": "backoffice.queue",
       "destination_type": "queue",
       "routing_key": "#"
     },
     {
-      "source": "notificaciones.event",
+      "source": "notification.event",
       "vhost": "/",
       "destination": "docente.queue",
       "destination_type": "queue",
       "routing_key": "#"
     },
     {
-      "source": "notificaciones.event",
+      "source": "notification.event",
       "vhost": "/",
       "destination": "estudiante.queue",
       "destination_type": "queue",
