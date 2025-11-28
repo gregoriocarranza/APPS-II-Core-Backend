@@ -230,6 +230,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // core bindings
     {
       "source": "user.event",
       "vhost": "/",
@@ -272,6 +273,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // Backofice bindings
     {
       "source": "curso.event",
       "vhost": "/",
@@ -279,6 +281,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // Docentes bindings
     {
       "source": "notification.event",
       "vhost": "/",
@@ -300,6 +303,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // Estudiantes bindings
     {
       "source": "notification.event",
       "vhost": "/",
@@ -384,6 +388,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // Tienda bindings
     {
       "source": "user.event",
       "vhost": "/",
@@ -398,6 +403,7 @@
       "destination_type": "queue",
       "routing_key": "#"
     },
+    // Analitica bindings
     {
       "source": "user.event",
       "vhost": "/",
