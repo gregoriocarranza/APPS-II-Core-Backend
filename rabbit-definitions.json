@@ -11,7 +11,7 @@
       "name": "RabbitMQ_user",
       "password_hash": "8TlCHhidbiIlRvFiMvHInAoyYyA7W+zI8xddndtvRJZ5eQWi",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
-      "tags": ""
+      "tags": "monitoring"
     }
   ],
   "permissions": [
