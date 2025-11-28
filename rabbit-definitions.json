@@ -301,7 +301,7 @@
       "routing_key": "#"
     },
     {
-      "source": "cursos.event",
+      "source": "curso.event",
       "vhost": "/",
       "destination": "docente.queue",
       "destination_type": "queue",
@@ -364,7 +364,7 @@
       "routing_key": "#"
     },
     {
-      "source": "cursos.event",
+      "source": "curso.event",
       "vhost": "/",
       "destination": "estudiante.queue",
       "destination_type": "queue",
