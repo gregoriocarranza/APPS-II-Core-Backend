@@ -86,8 +86,10 @@ jobs:
 
             echo '--- Starting deployment on server ---'
 
-            echo "Node: $(node -v) | npm: $(npm -v)"
-            echo "pm2: $(pm2 -v)"
+            echo '--- Starting deployment on server ---'
+            echo 'Node:' \$(node -v) '| npm:' \$(npm -v)
+            echo 'PM2:' \$(pm2 -v)
+
 
             cd ~/APPS-II-Core-Backend
             
