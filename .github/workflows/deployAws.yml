@@ -82,21 +82,12 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "
             set -euo pipefail
+            set -x
+
             echo '--- Starting deployment on server ---'
 
-            export NVM_DIR=\$HOME/.nvm
-            [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
-            [ -s \"\$NVM_DIR/bash_completion\" ] && . \"\$NVM_DIR/bash_completion\"
-
-            NODE_VERSION=24.11.0
-            nvm install \$NODE_VERSION >/dev/null
-            nvm use \$NODE_VERSION
-
-            if ! command -v pm2 >/dev/null 2>&1; then
-              npm i -g pm2
-            fi
-            echo 'pm2 en: ' \$(command -v pm2)
-            echo 'node: ' \$(node -v) ' | npm: ' \$(npm -v)
+            echo "Node: $(node -v) | npm: $(npm -v)"
+            echo "pm2: $(pm2 -v)"
 
             cd ~/APPS-II-Core-Backend
             
