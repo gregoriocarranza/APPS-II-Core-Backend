@@ -67,13 +67,6 @@
       "auto_delete": false
     },
     {
-      "name": "calendar-event.event",
-      "vhost": "/",
-      "type": "topic",
-      "durable": true,
-      "auto_delete": false
-    },
-    {
       "name": "materia.event",
       "vhost": "/",
       "type": "topic",
@@ -163,6 +156,20 @@
       "type": "topic",
       "durable": true,
       "auto_delete": false
+    },
+    {
+      "name": "bill.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "reservation.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
     }
   ],
   "queues": [
@@ -246,6 +253,13 @@
     },
     {
       "source": "academic-event.event",
+      "vhost": "/",
+      "destination": "core.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "bill.event",
       "vhost": "/",
       "destination": "core.queue",
       "destination_type": "queue",
@@ -421,13 +435,6 @@
     },
     {
       "source": "carrera.event",
-      "vhost": "/",
-      "destination": "analitica.queue",
-      "destination_type": "queue",
-      "routing_key": "#"
-    },
-    {
-      "source": "calendar-event.event",
       "vhost": "/",
       "destination": "analitica.queue",
       "destination_type": "queue",
