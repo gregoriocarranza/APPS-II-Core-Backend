@@ -537,6 +537,20 @@
       "destination": "analitica.queue",
       "destination_type": "queue",
       "routing_key": "#"
+    },
+    {
+      "source": "bill.event",
+      "vhost": "/",
+      "destination": "analitica.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "reservation.event",
+      "vhost": "/",
+      "destination": "analitica.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
     }
   ]
 }

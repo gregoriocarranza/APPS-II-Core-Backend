@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/health?sendEmail=true
+  url: {{core-BackendBackendHost}}/api/health
   body: none
   auth: inherit
 }
 
 params:query {
-  sendEmail: true
+  ~sendEmail: true
 }
 
 settings {
