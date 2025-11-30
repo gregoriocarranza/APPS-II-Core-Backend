@@ -30,15 +30,15 @@ export class NotificationsController implements IBaseController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const { page, limit, user_id } = req.query as {
+      const { page, limit, user_uuid } = req.query as {
         page?: string;
         limit?: string;
-        user_id?: number;
+        user_uuid?: string;
       };
 
-      if (user_id) {
-        const data = await this.notificationService.getByUserId({
-          user_id,
+      if (user_uuid) {
+        const data = await this.notificationService.getByuserUuid({
+          user_uuid,
           page: page ? +page : 1,
           limit: limit ? +limit : 20,
         });

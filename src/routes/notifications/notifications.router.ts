@@ -13,8 +13,8 @@ import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/cr
  *         uuid:
  *           type: string
  *           format: uuid
- *         user_id:
- *           type: integer
+ *         user_uuid:
+ *           type: string
  *         userUuid:
  *           type: string
  *           format: uuid
@@ -42,7 +42,7 @@ import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/cr
  *           format: date-time
  *       example:
  *         uuid: "88ef822d-1feb-47ce-9c6e-5db9558e6d13"
- *         user_id: 1
+ *         user_uuid: 88ef822d-1feb-47ce-9c6e-5db9558easdasd
  *         userUuid: "9f5c953b-1ab4-46b7-8b3e-26cf59101471"
  *         title: "Nueva notificación del sistema"
  *         bodyType: "html"

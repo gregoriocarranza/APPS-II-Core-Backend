@@ -17,12 +17,12 @@ export class CalendarEventsController implements IBaseController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const { page, limit, userId } = req.query;
-      const user_id = Number(userId);
-      if (!user_id || typeof user_id !== "number") {
+      const { page, limit, user_uuid } = req.query;
+      const useruuid = Number(user_uuid);
+      if (!useruuid) {
         throw new Error("userUuid es obligatorio y debe ser una cadena");
       }
-      const result = await this.service.getAllByUserUuid(user_id, {
+      const result = await this.service.getAllByUserUuid(useruuid, {
         page: page ? +page : 1,
         limit: limit ? +limit : 20,
       });

@@ -104,6 +104,10 @@ export class WalletsRouter {
       administratorMiddleware,
       this._walletsController.getAll.bind(this._walletsController),
     );
+    this._router.get(
+      "/mine",
+      this._walletsController.getByJwt.bind(this._walletsController),
+    );
     /**
      * @openapi
      * /api/wallets/{uuid}:
@@ -133,6 +137,7 @@ export class WalletsRouter {
      */
     this._router.get(
       "/:uuid",
+      administratorMiddleware,
       this._walletsController.getByUuid.bind(this._walletsController),
     );
     /**

@@ -10,10 +10,15 @@ get {
   auth: bearer
 }
 
+params:query {
+  ~wallet_uuid: 
+}
+
 auth:bearer {
   token: {{core-BackendBearerToken}}
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

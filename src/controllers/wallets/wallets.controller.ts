@@ -40,6 +40,28 @@ export class WalletsController implements IBaseController {
     }
   }
 
+  public async getByJwt(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const user = (req as any).user;
+      if (!user) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+      const wallet = await this.service.getByUserUuid(user.uuid);
+      res.status(200).json({ success: true, data: wallet });
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
   public async getByUuid(
     req: Request,
     res: Response,

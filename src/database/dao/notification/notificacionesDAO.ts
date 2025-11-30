@@ -69,14 +69,14 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     };
   }
 
-  async getByUserId(
-    user_id: number,
+  async getByUserUuid(
+    user_uuid: string,
     page: number,
     limit: number,
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
-    const query = this._knex("notificaciones").select("*").where({ user_id });
+    const query = this._knex("notificaciones").select("*").where({ user_uuid });
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;

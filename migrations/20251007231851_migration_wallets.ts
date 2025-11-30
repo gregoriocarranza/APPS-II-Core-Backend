@@ -21,7 +21,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references("uuid")
       .inTable("users")
-      .onDelete("CASCADE") // elimina wallets si se borra el user
+      .onDelete("CASCADE")
       .onUpdate("CASCADE");
     table.string("currency", 3).notNullable();
     table.decimal("balance", 18, 2).notNullable().defaultTo(0.0);

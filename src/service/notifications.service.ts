@@ -26,14 +26,14 @@ export class NotificationsService {
     return wallet;
   }
 
-  async getByUserId(params: {
-    user_id: number;
+  async getByuserUuid(params: {
+    user_uuid: string;
     page?: number;
     limit?: number;
   }): Promise<IDataPaginator<INotificacion>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
-    return this.dao.getByUserId(params.user_id, page, limit);
+    return this.dao.getByUserUuid(params.user_uuid, page, limit);
   }
 
   async create(payload: INotificacion): Promise<INotificacion> {

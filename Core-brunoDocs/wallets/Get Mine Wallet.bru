@@ -1,19 +1,13 @@
 meta {
-  name: GET ALL
+  name: Get Mine Wallet
   type: http
-  seq: 2
+  seq: 1
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/wallets
+  url: {{core-BackendBackendHost}}/api/wallets/mine
   body: none
   auth: bearer
-}
-
-params:query {
-  ~page: 1
-  ~limit: 2
-  ~user_uuid: 
 }
 
 auth:bearer {

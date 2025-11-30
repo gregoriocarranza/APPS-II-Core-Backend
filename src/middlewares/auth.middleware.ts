@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../service/auth.service";
+import UserService from "../service/user.service";
 
-export function authMiddleware(
+export async function authMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
@@ -13,7 +14,8 @@ export function authMiddleware(
   const token = header.substring("Bearer ".length);
   try {
     const payload = AuthService.instance.verifyAccessToken(token);
-    (req as any).user = payload;
+    const user = await UserService.getByUuid(payload.sub);
+    (req as any).user = user;
     next();
   } catch (err) {
     console.error(err);
