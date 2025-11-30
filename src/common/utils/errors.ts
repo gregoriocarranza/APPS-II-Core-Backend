@@ -18,3 +18,9 @@ export class BadRequestError extends Error {
     this.name = "BadRequestError";
   }
 }
+export class InsufficientFundsError extends Error {
+  constructor(message = "Insufficient funds") {
+    super(message);
+    this.name = "InsufficientFundsError";
+  }
+}

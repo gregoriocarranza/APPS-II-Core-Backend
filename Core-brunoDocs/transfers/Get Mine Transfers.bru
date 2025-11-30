@@ -1,0 +1,20 @@
+meta {
+  name: Get Mine Transfers
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{core-BackendBackendHost}}/api/transfers/mine
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{JWT}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

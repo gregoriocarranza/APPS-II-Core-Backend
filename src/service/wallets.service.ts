@@ -31,7 +31,10 @@ export class WalletsService {
   }
 
   async getByUserUuid(user_uuid: string): Promise<IWallet[]> {
-    return this.dao.getByUserUuid(user_uuid);
+    const wallet = this.dao.getByUserUuid(user_uuid);
+    if (!wallet)
+      throw new NotFoundError(`Wallet con user ${user_uuid} no encontrada`);
+    return wallet;
   }
 
   async create(payload: IWallet): Promise<IWallet> {

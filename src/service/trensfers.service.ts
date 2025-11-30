@@ -1,3 +1,4 @@
+import { ITransferDTO } from "../common/dto/transfer/ITransfer.dto";
 import { NotFoundError } from "../common/utils/errors";
 import { TransferDAO } from "../database/dao/Transfer/TransferDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
@@ -31,7 +32,7 @@ export class TransfersService {
     return this.dao.getByWallet(walletUuid);
   }
 
-  async create(payload: ITransfer): Promise<ITransfer> {
+  async create(payload: ITransferDTO): Promise<ITransfer> {
     const created = await this.dao.create(payload);
     // await emitTransferCreated(created);
     return created;

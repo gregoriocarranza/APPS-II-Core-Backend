@@ -1,0 +1,73 @@
+// src/dto/transfers/transfer.dto.ts
+import {
+  IsUUID,
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+  validateSync,
+} from "class-validator";
+import { Expose, plainToInstance, Transform, Type } from "class-transformer";
+import { v4 as uuidv4 } from "uuid";
+import { ITransfer } from "../../../database/interfaces/transfer/transfer.interface";
+import { TransferCreateDTO } from "./create.transfer.dto";
+
+export class ITransferDTO implements ITransfer {
+  @IsUUID()
+  uuid!: string;
+
+  @Expose({ name: "from" })
+  @IsUUID()
+  from_wallet_uuid!: string | null;
+
+  @Expose({ name: "to" })
+  @IsUUID()
+  to_wallet_uuid!: string | null;
+
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  amount!: number;
+
+  @IsString()
+  currency!: string;
+
+  @IsString()
+  type!: string;
+
+  @IsString()
+  status!: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string | null;
+
+  @IsOptional()
+  @IsString()
+  reference?: string | null;
+
+  @IsOptional()
+  metadata?: Record<string, any> | null;
+
+  @Transform(({ value }) =>
+    value ? new Date(value).toISOString() : new Date().toISOString()
+  )
+  @IsDateString()
+  processed_at!: string;
+
+  static build(data: TransferCreateDTO): ITransferDTO {
+    const dto = plainToInstance(
+      ITransferDTO,
+      {
+        uuid: uuidv4(),
+        ...data,
+        status: "completed",
+        processed_at: new Date().toISOString(),
+      },
+      { enableImplicitConversion: true }
+    );
+
+    const errors = validateSync(dto);
+    if (errors.length > 0) throw new Error(JSON.stringify(errors));
+    return dto;
+  }
+}

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { TransfersController } from "../../controllers/transfers/transfers.controller";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 /**
  * @openapi
@@ -46,6 +47,7 @@ export class TransfersRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
+    this._router.use(authMiddleware);
     /**
      * @openapi
      * /api/transfers:
@@ -73,7 +75,12 @@ export class TransfersRouter {
      */
     this._router.get(
       "/",
-      this._transfersController.getAll.bind(this._transfersController),
+      this._transfersController.getAll.bind(this._transfersController)
+    );
+
+    this._router.get(
+      "/mine",
+      this._transfersController.getAllByJwt.bind(this._transfersController)
     );
     /**
      * @openapi
@@ -109,7 +116,7 @@ export class TransfersRouter {
      */
     this._router.get(
       "/:uuid",
-      this._transfersController.getByUuid.bind(this._transfersController),
+      this._transfersController.getByUuid.bind(this._transfersController)
     );
     /**
      * @openapi
@@ -138,7 +145,7 @@ export class TransfersRouter {
      */
     this._router.put(
       "/:uuid",
-      this._transfersController.update.bind(this._transfersController),
+      this._transfersController.update.bind(this._transfersController)
     );
     /**
      * @openapi
@@ -164,7 +171,7 @@ export class TransfersRouter {
      */
     this._router.post(
       "/",
-      this._transfersController.create.bind(this._transfersController),
+      this._transfersController.create.bind(this._transfersController)
     );
     /**
      * @openapi
@@ -186,7 +193,7 @@ export class TransfersRouter {
      */
     this._router.delete(
       "/:uuid",
-      this._transfersController.delete.bind(this._transfersController),
+      this._transfersController.delete.bind(this._transfersController)
     );
   }
   public get router(): Router {

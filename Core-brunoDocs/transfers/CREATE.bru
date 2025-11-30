@@ -1,7 +1,7 @@
 meta {
   name: CREATE
   type: http
-  seq: 4
+  seq: 5
 }
 
 post {
@@ -11,16 +11,19 @@ post {
 }
 
 auth:bearer {
-  token: {{core-BackendBearerToken}}
+  token: {{JWT}}
 }
 
 body:json {
   {
-    "from":"9f5c953b-1ab4-46b7-8b3e-26cf59101471",
-    "to":"9f5c953b-1ab4-46b7-8b3e-26cf59101471",
+    "from": "5994a15d-c563-4340-80e0-2ba34a926eaf",
+    "to": "33d0da5e-ecec-4bbd-9f02-41468b07ef99",
     "currency": "USD",
-    "balance": ""
+    "amount": 10.5,
+    "type": "credit",
+    "description": "Transferencia recibida"
   }
+  
 }
 
 settings {
