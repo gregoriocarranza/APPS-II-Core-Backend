@@ -10,21 +10,32 @@ import {
   emitCursoDeleted,
   emitCursoUpdated,
 } from "../events/cursos.publisher";
+import { CarrerasDAO } from "../database/dao/carrera/carreraDAO";
 
 export class CursosService {
   private dao: CursosDAO;
+  private carrerasDAO: CarrerasDAO;
 
-  constructor(dao?: CursosDAO) {
+  constructor(dao?: CursosDAO, carrerasDAO?: CarrerasDAO) {
     this.dao = dao ?? new CursosDAO();
+    this.carrerasDAO = carrerasDAO ?? new CarrerasDAO();
   }
 
   async getAll(params?: {
     page?: number;
     limit?: number;
+    uuid_carrera?: string;
   }): Promise<IDataPaginator<CursoDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
-    return this.dao.getAll(page, limit);
+    if (params?.uuid_carrera) {
+      const curso = await this.carrerasDAO.getByUuid(params?.uuid_carrera);
+      if (!curso)
+        throw new NotFoundError(`curso ${params?.uuid_carrera} no encontrado`);
+    }
+    return this.dao.getAll(page, limit, {
+      uuid_carrera: params?.uuid_carrera,
+    });
   }
 
   async getByUuid(uuid: string): Promise<CursoDTO> {

@@ -44,7 +44,11 @@ export class CursosDAO implements IBaseDAO<CursoCreateDTO> {
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<CursoDTO>> {
+  async getAll(
+    page: number,
+    limit: number,
+    where?: { uuid_carrera?: string }
+  ): Promise<IDataPaginator<CursoDTO>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("cursos")
@@ -55,6 +59,10 @@ export class CursosDAO implements IBaseDAO<CursoCreateDTO> {
       ])
       .leftJoin("materias", "materias.uuid", "cursos.uuid_materia")
       .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera");
+
+    if (where?.uuid_carrera) {
+      query.where("carreras.uuid", where.uuid_carrera);
+    }
 
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;

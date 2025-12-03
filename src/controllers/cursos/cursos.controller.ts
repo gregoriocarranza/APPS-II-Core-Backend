@@ -22,14 +22,11 @@ export class CursosController implements IBaseController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { page, limit } = req.query as {
-        page?: string;
-        limit?: string;
-      };
-
+      const { page, limit, uuid_carrera } = req.query;
       const result = await this.cursosService.getAll({
         page: page ? +page : 1,
         limit: limit ? +limit : 20,
+        uuid_carrera: uuid_carrera as string | undefined,
       });
 
       res.status(200).json(result);
