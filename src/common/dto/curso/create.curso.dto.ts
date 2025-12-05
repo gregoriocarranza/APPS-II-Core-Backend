@@ -28,6 +28,16 @@ export enum CursoEstadoEnum {
   CANCELADO = "cancelado",
 }
 
+export enum CursoDiaEnum {
+  LUNES = "LUNES",
+  MARTES = "MARTES",
+  MIERCOLES = "MIERCOLES",
+  JUEVES = "JUEVES",
+  VIERNES = "VIERNES",
+  SABADO = "SABADO",
+  DOMINGO = "DOMINGO",
+}
+
 export class CursoCreateDTO {
   @IsUUID()
   @IsNotEmpty()
@@ -48,9 +58,9 @@ export class CursoCreateDTO {
   @IsNotEmpty()
   sede!: string;
 
-  @IsString()
+  @IsEnum(CursoDiaEnum)
   @IsNotEmpty()
-  dia!: string;
+  dia!: CursoDiaEnum;
 
   @IsString()
   @IsNotEmpty()

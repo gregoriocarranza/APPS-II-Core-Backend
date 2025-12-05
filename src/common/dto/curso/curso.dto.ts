@@ -13,24 +13,7 @@ import { CarreraDTO } from "../carrera/carrera.dto";
 import { IMateriaDTO } from "../../../database/interfaces/materia/materia.interfaces";
 import { ICarrera } from "../../../database/interfaces/carrera/carreras.interfaces";
 import { plainToInstance, Transform } from "class-transformer";
-
-export enum CursoModalidadEnum {
-  PRESENCIAL = "PRESENCIAL",
-  VIRTUAL = "VIRTUAL",
-  HIBRIDA = "HÍBRIDA",
-}
-
-export enum CursoTurnoEnum {
-  MANANA = "Mañana",
-  TARDE = "Tarde",
-  NOCHE = "Noche",
-}
-
-export enum CursoEstadoEnum {
-  ACTIVO = "activo",
-  CERRADO = "cerrado",
-  CANCELADO = "cancelado",
-}
+import { CursoDiaEnum, CursoEstadoEnum, CursoModalidadEnum, CursoTurnoEnum } from "./create.curso.dto";
 
 export class CursoDTO {
   @IsUUID()
@@ -59,6 +42,9 @@ export class CursoDTO {
 
   @IsString()
   aula!: string;
+
+  @IsEnum(CursoDiaEnum)
+  dia!: CursoDiaEnum;
 
   @IsString()
   periodo!: string;
