@@ -1,4 +1,5 @@
 export interface IUser {
+  subrol: any;
   uuid: string;
   nombre: string;
   apellido: string;
@@ -26,4 +27,22 @@ export interface IUserDTO {
   fecha_alta: string;
   created_at?: string;
   updated_at?: string;
+}
+
+
+export interface IBackoficeAuthRole {
+  id_rol: string;
+  descripcion: string;
+  categoria: string;
+  subcategoria: string;
+}
+
+export interface IBackoficeAuthResponse {
+  id_usuario: string;
+  nombre: string;
+  apellido: string;
+  legajo: string;
+  dni: string;
+  email_institucional: string;
+  rol: IBackoficeAuthRole;
 }
