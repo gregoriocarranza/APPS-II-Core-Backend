@@ -50,6 +50,10 @@ export class CursoCreateDTO {
 
   @IsString()
   @IsNotEmpty()
+  dia!: string;
+
+  @IsString()
+  @IsNotEmpty()
   aula!: string;
 
   @IsString()
