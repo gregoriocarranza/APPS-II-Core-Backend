@@ -7,12 +7,16 @@ import {
   UserLike,
 } from "../interfaces/auth.interface";
 import { authConfig } from "../common/config/auth/auth.config";
-import { IBackoficeAuthResponse } from "../database/interfaces/user/user.interfaces";
+import {
+  IBackoficeAuthResponse,
+  IUser,
+} from "../database/interfaces/user/user.interfaces";
 import { CarrerasService } from "./carreras.service";
 // import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
 import dotenv from "dotenv";
 import { IWallet } from "../database/interfaces/wallet/wallet.interfaces";
 import { WalletsService } from "./wallets.service";
+import { UserService } from "./user.service";
 dotenv.config();
 
 export class AuthService {
@@ -20,13 +24,16 @@ export class AuthService {
   private refreshStore = new Map<string, RefreshRecord>();
   // private carreraService: CarrerasService;
   private walletService: WalletsService;
+  private userService: UserService;
 
   private constructor(
     carreraService?: CarrerasService,
-    walletService?: WalletsService
+    walletService?: WalletsService,
+    userService?: UserService
   ) {
     // this.carreraService = carreraService ?? new CarrerasService();
     this.walletService = walletService ?? new WalletsService();
+    this.userService = userService ?? new UserService();
   }
 
   static get instance(): AuthService {
@@ -36,6 +43,11 @@ export class AuthService {
 
   public get accessTokenTtlSeconds(): number {
     return authConfig.access.ttl;
+  }
+
+  async checkUserExist(userLike: UserLike): Promise<boolean> {
+    const user: IUser = await this.userService.getByUuid(userLike.uuid);
+    return !!user;
   }
 
   async mapToUserLike(user: IBackoficeAuthResponse): Promise<UserLike> {

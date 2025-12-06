@@ -8,12 +8,13 @@ export class AuthController {
   public async login(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { email, password } = req.body;
 
       const user = await this.authService.validateCredentials(email, password);
+      await this.authService.checkUserExist(user);
 
       const { accessToken, refreshCookie } =
         await this.authService.issueTokenPair(user);
@@ -22,7 +23,7 @@ export class AuthController {
         .cookie(
           authConfig.cookie.name,
           refreshCookie.value,
-          authConfig.cookie.options,
+          authConfig.cookie.options
         )
         .status(200)
         .json({
@@ -40,7 +41,7 @@ export class AuthController {
   public async refresh(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const cookieToken = req.body.refresh_token || req.cookies?.refresh_token;
@@ -56,7 +57,7 @@ export class AuthController {
         .cookie(
           authConfig.cookie.name,
           refreshCookie.value,
-          authConfig.cookie.options,
+          authConfig.cookie.options
         )
         .status(200)
         .json({
@@ -73,7 +74,7 @@ export class AuthController {
   public async logout(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const cookieName = authConfig.cookie.name;
@@ -93,7 +94,7 @@ export class AuthController {
   public async me(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const auth = req.headers.authorization;
@@ -113,7 +114,7 @@ export class AuthController {
   public async verify(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const authData = req.body;
@@ -133,7 +134,7 @@ export class AuthController {
       res.status(200).json({
         valid: false,
         kind: String(
-          req.body?.kind ?? req.query?.kind ?? "access",
+          req.body?.kind ?? req.query?.kind ?? "access"
         ).toLowerCase(),
         reason: "Token inválido o expirado",
       });
