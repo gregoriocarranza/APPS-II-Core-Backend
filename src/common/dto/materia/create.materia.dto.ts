@@ -8,12 +8,7 @@ import {
   IsObject,
   IsArray,
 } from "class-validator";
-
-export enum ApprovalMethodEnum {
-  final = "final",
-  promocion = "promocion",
-  trabajo_practico = "trabajo_practico",
-}
+import { MateriaApprovalMethodEnum } from "./materia.dto";
 
 export class MateriaCreateDTO {
   @IsString()
@@ -27,8 +22,8 @@ export class MateriaCreateDTO {
   @IsString()
   description?: string;
 
-  @IsEnum(ApprovalMethodEnum)
-  approval_method!: ApprovalMethodEnum;
+  @IsEnum(MateriaApprovalMethodEnum)
+  approval_method!: MateriaApprovalMethodEnum;
 
   @IsOptional()
   @IsBoolean()
