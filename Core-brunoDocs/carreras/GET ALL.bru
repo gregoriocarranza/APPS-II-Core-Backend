@@ -5,17 +5,17 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/carreras?name_carrera
+  url: {{core-BackendBackendHost}}/api/carreras?name_carrera=tecnicatura de  Información
   body: none
   auth: bearer
 }
 
 params:query {
-  name_carrera: 
+  name_carrera: tecnicatura de  Información
 }
 
 auth:bearer {
-  token: {{core-BackendBearerToken}}
+  token: {{JWT}}
 }
 
 settings {

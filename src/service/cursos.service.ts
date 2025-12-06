@@ -11,20 +11,30 @@ import {
   emitCursoUpdated,
 } from "../events/cursos.publisher";
 import { CarrerasDAO } from "../database/dao/carrera/carreraDAO";
+import { MateriasDAO } from "../database/dao/materia/materiaDAO";
 
 export class CursosService {
   private dao: CursosDAO;
   private carrerasDAO: CarrerasDAO;
+  private materiasDAO: MateriasDAO;
 
-  constructor(dao?: CursosDAO, carrerasDAO?: CarrerasDAO) {
+  constructor(
+    dao?: CursosDAO,
+    carrerasDAO?: CarrerasDAO,
+    materiasDAO?: MateriasDAO
+  ) {
     this.dao = dao ?? new CursosDAO();
     this.carrerasDAO = carrerasDAO ?? new CarrerasDAO();
+    this.materiasDAO = materiasDAO ?? new MateriasDAO();
   }
 
   async getAll(params?: {
     page?: number;
     limit?: number;
     uuid_carrera?: string;
+    uuid_materia?: string;
+    sede_curso?: string;
+    turno_curso?: string;
   }): Promise<IDataPaginator<CursoDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
@@ -33,8 +43,19 @@ export class CursosService {
       if (!curso)
         throw new NotFoundError(`curso ${params?.uuid_carrera} no encontrado`);
     }
+
+    if (params?.uuid_materia) {
+      const materia = await this.materiasDAO.getByUuid(params?.uuid_materia);
+      if (!materia)
+        throw new NotFoundError(
+          `materia ${params?.uuid_materia} no encontrado`
+        );
+    }
     return this.dao.getAll(page, limit, {
       uuid_carrera: params?.uuid_carrera,
+      uuid_materia: params?.uuid_materia,
+      sede_curso: params?.sede_curso,
+      turno_curso: params?.turno_curso,
     });
   }
 

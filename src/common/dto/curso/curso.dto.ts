@@ -38,18 +38,21 @@ export class CursoDTO {
   modalidad!: CursoModalidadEnum;
 
   @IsString()
+  @Transform(({ value }) => value?.toUpperCase())
   sede!: string;
 
   @IsString()
   aula!: string;
 
   @IsEnum(CursoDiaEnum)
+  @Transform(({ value }) => value?.toUpperCase())
   dia!: CursoDiaEnum;
 
   @IsString()
   periodo!: string;
 
   @IsEnum(CursoTurnoEnum)
+  @Transform(({ value }) => value?.toUpperCase())
   turno!: CursoTurnoEnum;
 
   @IsEnum(CursoEstadoEnum)

@@ -1,4 +1,4 @@
-import { plainToInstance } from "class-transformer";
+import { plainToInstance, Transform } from "class-transformer";
 import {
   IsUUID,
   IsString,
@@ -17,9 +17,9 @@ export enum CursoModalidadEnum {
 }
 
 export enum CursoTurnoEnum {
-  MANANA = "Mañana",
-  TARDE = "Tarde",
-  NOCHE = "Noche",
+  MANANA = "MAÑANA",
+  TARDE = "TARDE",
+  NOCHE = "NOCHE",
 }
 
 export enum CursoEstadoEnum {
@@ -56,10 +56,12 @@ export class CursoCreateDTO {
 
   @IsString()
   @IsNotEmpty()
+  @Transform(({ value }) => value?.toUpperCase())
   sede!: string;
 
   @IsEnum(CursoDiaEnum)
   @IsNotEmpty()
+  @Transform(({ value }) => value?.toUpperCase())
   dia!: CursoDiaEnum;
 
   @IsString()
@@ -71,6 +73,7 @@ export class CursoCreateDTO {
   periodo!: string;
 
   @IsEnum(CursoTurnoEnum)
+  @Transform(({ value }) => value?.toUpperCase())
   turno!: CursoTurnoEnum;
 
   @IsEnum(CursoEstadoEnum)

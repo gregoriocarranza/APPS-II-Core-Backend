@@ -30,7 +30,7 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
 
   async update(
     uuid: string,
-    item: Partial<IMateria>,
+    item: Partial<IMateria>
   ): Promise<IMateria | null> {
     const [updated] = await this._knex("materias")
       .where({ uuid })
@@ -47,6 +47,7 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
   async getAll(
     page: number,
     limit: number,
+    where?: { uuid_carrera?: string; name_materia?: string }
   ): Promise<IDataPaginator<MateriaDTO>> {
     const offset = (page - 1) * limit;
 
@@ -57,6 +58,12 @@ export class MateriasDAO implements IBaseDAO<IMateria> {
       ])
       .leftJoin("carreras", "carreras.uuid", "materias.uuid_carrera");
 
+    if (where?.uuid_carrera) {
+      query.where("carreras.uuid", where.uuid_carrera);
+    }
+    if (where?.name_materia) {
+      query.where("materias.nombre", where.name_materia);
+    }
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
     const rows = await query

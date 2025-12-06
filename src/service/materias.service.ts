@@ -24,10 +24,15 @@ export class MateriasService {
   async getAll(params?: {
     page?: number;
     limit?: number;
+    uuid_carrera?: string;
+    name_materia?: string;
   }): Promise<IDataPaginator<MateriaDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
-    return this.dao.getAll(page, limit);
+    return this.dao.getAll(page, limit, {
+      uuid_carrera: params?.uuid_carrera,
+      name_materia: params?.name_materia,
+    });
   }
 
   async getByUuid(uuid: string): Promise<MateriaDTO> {
@@ -37,7 +42,7 @@ export class MateriasService {
   }
 
   async create(
-    body: IMateria & { correlativas?: string[] },
+    body: IMateria & { correlativas?: string[] }
   ): Promise<IMateria> {
     const { correlativas, ...materiaData } = body;
     const payload = { ...materiaData, uuid: uuidv4() };
@@ -50,7 +55,7 @@ export class MateriasService {
         if (!correlativaExists) {
           await this.dao.delete(createdMateria.uuid);
           throw new NotFoundError(
-            `Materia correlativa ${uuidCorrelativa} no encontrada`,
+            `Materia correlativa ${uuidCorrelativa} no encontrada`
           );
         }
 
