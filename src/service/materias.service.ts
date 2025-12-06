@@ -11,14 +11,21 @@ import {
   emitMateriaDeleted,
   emitMateriaUpdated,
 } from "../events/materias.publisher";
+import { CarrerasDAO } from "../database/dao/carrera/carreraDAO";
 
 export class MateriasService {
   private dao: MateriasDAO;
   private correlativaDAO: CorrelativaDAO;
+  private carrerasDAO: CarrerasDAO;
 
-  constructor(dao?: MateriasDAO, correlativaDAO?: CorrelativaDAO) {
+  constructor(
+    dao?: MateriasDAO,
+    correlativaDAO?: CorrelativaDAO,
+    carrerasDAO?: CarrerasDAO
+  ) {
     this.dao = dao ?? new MateriasDAO();
     this.correlativaDAO = correlativaDAO ?? new CorrelativaDAO();
+    this.carrerasDAO = carrerasDAO ?? new CarrerasDAO();
   }
 
   async getAll(params?: {
@@ -29,6 +36,15 @@ export class MateriasService {
   }): Promise<IDataPaginator<MateriaDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
+
+    if (params?.uuid_carrera) {
+      const Carrera = await this.carrerasDAO.getByUuid(params?.uuid_carrera);
+      if (!Carrera)
+        throw new NotFoundError(
+          `Carrera ${params?.uuid_carrera} no encontrado`
+        );
+    }
+
     return this.dao.getAll(page, limit, {
       uuid_carrera: params?.uuid_carrera,
       name_materia: params?.name_materia,

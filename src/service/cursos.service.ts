@@ -39,9 +39,9 @@ export class CursosService {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
     if (params?.uuid_carrera) {
-      const curso = await this.carrerasDAO.getByUuid(params?.uuid_carrera);
-      if (!curso)
-        throw new NotFoundError(`curso ${params?.uuid_carrera} no encontrado`);
+      const Carrera = await this.carrerasDAO.getByUuid(params?.uuid_carrera);
+      if (!Carrera)
+        throw new NotFoundError(`Carrera ${params?.uuid_carrera} no encontrado`);
     }
 
     if (params?.uuid_materia) {
