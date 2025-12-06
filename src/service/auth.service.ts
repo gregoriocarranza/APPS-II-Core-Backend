@@ -6,29 +6,27 @@ import {
   RefreshRecord,
   UserLike,
 } from "../interfaces/auth.interface";
-import { UserService } from "./user.service";
 import { authConfig } from "../common/config/auth/auth.config";
-import {
-  IBackoficeAuthResponse,
-  IUser,
-} from "../database/interfaces/user/user.interfaces";
+import { IBackoficeAuthResponse } from "../database/interfaces/user/user.interfaces";
 import { CarrerasService } from "./carreras.service";
-import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
+// import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
 import dotenv from "dotenv";
+import { IWallet } from "../database/interfaces/wallet/wallet.interfaces";
+import { WalletsService } from "./wallets.service";
 dotenv.config();
 
 export class AuthService {
   private static _instance: AuthService;
   private refreshStore = new Map<string, RefreshRecord>();
-  private userService: UserService;
-  private carreraService: CarrerasService;
+  // private carreraService: CarrerasService;
+  private walletService: WalletsService;
 
   private constructor(
-    userService?: UserService,
-    carreraService?: CarrerasService
+    carreraService?: CarrerasService,
+    walletService?: WalletsService
   ) {
-    this.userService = userService ?? new UserService();
-    this.carreraService = carreraService ?? new CarrerasService();
+    // this.carreraService = carreraService ?? new CarrerasService();
+    this.walletService = walletService ?? new WalletsService();
   }
 
   static get instance(): AuthService {
@@ -40,29 +38,28 @@ export class AuthService {
     return authConfig.access.ttl;
   }
 
-  isInternalUser(user: IUser | IBackoficeAuthResponse): user is IUser {
-    return "uuid" in user;
-  }
-
-  async mapToUserLike(user: IUser | IBackoficeAuthResponse): Promise<UserLike> {
-    let career: ICarrera | null = null;
-
-    if (this.isInternalUser(user) && user.carrera_uuid) {
-      career = await this.carreraService.getByUuid(user.carrera_uuid);
+  async mapToUserLike(user: IBackoficeAuthResponse): Promise<UserLike> {
+    // let career: ICarrera | null = null;
+    const wallet: IWallet[] = await this.walletService.getByUserUuid(
+      user.id_usuario
+    );
+    let walletsUuids: string[] = [];
+    // if (user.carrera_uuid) {
+    //   career = await this.carreraService.getByUuid(user.carrera_uuid);
+    // }
+    if (wallet.length > 0) {
+      wallet.forEach((w) => {
+        walletsUuids.push(w.uuid);
+      });
     }
-
     return {
-      uuid: this.isInternalUser(user) ? user.uuid : user.id_usuario,
-      email: this.isInternalUser(user) ? user.email : user.email_institucional,
+      uuid: user.id_usuario,
+      email: user.email_institucional,
       name: user.nombre + (user.apellido ? ` ${user.apellido}` : ""),
-      role: this.isInternalUser(user) ? user.rol : user.rol.categoria,
-      subrol: this.isInternalUser(user)
-        ? user.subrol || null
-        : user.rol.subcategoria || null,
-      career:
-        this.isInternalUser(user) && user.carrera_uuid && career
-          ? { uuid: user.carrera_uuid, name: career.name }
-          : null,
+      role: user.rol.categoria,
+      subrol: user.rol.subcategoria,
+      career: { uuid: "Placeholder", name: "Placeholder" },
+      wallet: walletsUuids,
     };
   }
 
@@ -72,30 +69,24 @@ export class AuthService {
   ): Promise<UserLike> {
     // TODO: llamar al microservicio (HTTP/RPC). Por ahora mock local:
     if (!email || !password) throw new Error("Credenciales inválidas");
-    let user: IUser | IBackoficeAuthResponse | undefined = undefined;
+    let user: IBackoficeAuthResponse;
 
-    user = await this.userService.getByEmail(email);
-
-    if (!user) {
-      const response = await fetch(
-        `${process.env.BO_API_URL}/api/v1/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email_institucional: email,
-            contraseña: password,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Usuario o contraseña inválidos");
+    const response = await fetch(
+      `${process.env.BO_API_URL}/api/v1/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email_institucional: email,
+          contraseña: password,
+        }),
       }
-      user = await response.json();
-    }
+    );
 
-    if (!user) throw new Error("Usuario o contraseña inválidos");
+    if (!response.ok) {
+      throw new Error("Usuario o contraseña inválidos");
+    }
+    user = await response.json();
 
     return this.mapToUserLike(user);
   }
@@ -111,6 +102,7 @@ export class AuthService {
         role: user.role,
         subrol: user.subrol,
         career: user.career,
+        wallet: user.wallet,
       },
       authConfig.access.secret,
       { expiresIn: authConfig.access.ttl }
@@ -124,6 +116,7 @@ export class AuthService {
         role: user.role,
         subrol: user.subrol,
         career: user.career,
+        wallet: user.wallet,
       } as JwtPayload,
       authConfig.refresh.secret,
       { expiresIn: authConfig.refresh.ttl, jwtid: jti }
@@ -163,6 +156,7 @@ export class AuthService {
       role: payload.role,
       subrol: payload.subrol,
       career: payload.career,
+      wallet: payload.wallet,
     };
     const pair = await this.issueTokenPair(user);
 

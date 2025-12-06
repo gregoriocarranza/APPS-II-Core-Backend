@@ -5,7 +5,8 @@ export type UserLike = {
   email: string;
   name: string;
   role: string;
-  subrol: string;
+  subrol: string | null;
+  wallet: string[];
   career: {
     uuid: string;
     name: string;
@@ -19,6 +20,7 @@ export type JwtPayload = {
   name: string;
   role: string;
   subrol: string;
+  wallet: string[];
   career: {
     uuid: string;
     name: string;
