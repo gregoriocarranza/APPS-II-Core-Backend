@@ -21,7 +21,7 @@ export class CarrerasDAO implements IBaseDAO<ICarrera> {
 
   async update(
     uuid: string,
-    item: Partial<ICarrera>,
+    item: Partial<ICarrera>
   ): Promise<ICarrera | null> {
     const [updated] = await this._knex("carreras")
       .where({ uuid })
@@ -35,11 +35,18 @@ export class CarrerasDAO implements IBaseDAO<ICarrera> {
     return result > 0;
   }
 
-  async getAll(page: number, limit: number): Promise<IDataPaginator<ICarrera>> {
+  async getAll(
+    page: number,
+    limit: number,
+    where?: { name_carrera?: string }
+  ): Promise<IDataPaginator<ICarrera>> {
     const offset = (page - 1) * limit;
 
     const query = this._knex("carreras").select("*");
 
+    if (where?.name_carrera) {
+      query.where("carreras.name", where.name_carrera);
+    }
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
     const data = await query

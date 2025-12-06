@@ -12,17 +12,15 @@ export class CarrerasController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
-      const { page, limit } = req.query as {
-        page?: string;
-        limit?: string;
-      };
+      const { page, limit, name_carrera } = req.query;
 
       const result = await this.carrerasService.getAll({
         page: page ? +page : 1,
         limit: limit ? +limit : 20,
+        name_carrera: name_carrera as string | undefined,
       });
 
       res.status(200).json(result);
@@ -34,7 +32,7 @@ export class CarrerasController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -52,7 +50,7 @@ export class CarrerasController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -66,7 +64,7 @@ export class CarrerasController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<any> {
     try {
       const created = await this.carrerasService.create(req.body);
@@ -79,7 +77,7 @@ export class CarrerasController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;

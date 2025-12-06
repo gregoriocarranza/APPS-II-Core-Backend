@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/carreras
+  url: {{core-BackendBackendHost}}/api/carreras?name_carrera
   body: none
   auth: bearer
+}
+
+params:query {
+  name_carrera: 
 }
 
 auth:bearer {
@@ -16,4 +20,5 @@ auth:bearer {
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

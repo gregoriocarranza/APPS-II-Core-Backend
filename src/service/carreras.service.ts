@@ -19,10 +19,11 @@ export class CarrerasService {
   async getAll(params?: {
     page?: number;
     limit?: number;
+    name_carrera?: string;
   }): Promise<IDataPaginator<ICarrera>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
-    return this.dao.getAll(page, limit);
+    return this.dao.getAll(page, limit, { name_carrera: params?.name_carrera });
   }
 
   async getByUuid(uuid: string): Promise<ICarrera> {
