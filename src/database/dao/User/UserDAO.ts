@@ -20,6 +20,14 @@ export class UserDAO implements IBaseDAO<IUser> {
     return result || null;
   }
 
+  async getByRole(role: string): Promise<IUser | null> {
+    const result = await this._knex("users")
+      .select("*")
+      .where("rol", role)
+      .first();
+    return result || null;
+  }
+
   async update(uuid: string, item: Partial<IUser>): Promise<IUser | null> {
     const [updated] = await this._knex("users")
       .where({ uuid })

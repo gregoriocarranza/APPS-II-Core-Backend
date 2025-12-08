@@ -25,6 +25,12 @@ export class UserService {
     return user;
   }
 
+  async getByRole(role: string): Promise<IUser> {
+    const user = await this.dao.getByRole(role);
+    if (!user) throw new NotFoundError(`User with role ${role} not found`);
+    return user;
+  }
+
   async getByEmail(email: string): Promise<IUser | undefined> {
     return this.dao.getByEmail(email);
   }

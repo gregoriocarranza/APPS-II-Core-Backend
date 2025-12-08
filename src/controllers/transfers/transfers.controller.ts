@@ -9,11 +9,15 @@ import { TransferCreateDTO } from "../../common/dto/transfer/create.transfer.dto
 import { WalletsService } from "../../service/wallets.service";
 import { ITransferDTO } from "../../common/dto/transfer/ITransfer.dto";
 import { ITransfer } from "../../database/interfaces/transfer/transfer.interface";
+import { IWallet } from "../../database/interfaces/wallet/wallet.interfaces";
+import { UserService } from "../../service/user.service";
 export class TransfersController implements IBaseController {
   transfersService: TransfersService;
   walletService: WalletsService;
+  userService: UserService;
   constructor() {
     this.transfersService = new TransfersService();
+    this.userService = new UserService();
     this.walletService = new WalletsService();
   }
 
@@ -110,18 +114,36 @@ export class TransfersController implements IBaseController {
     next: NextFunction
   ): Promise<any> {
     try {
-      const transferDto: TransferCreateDTO = req.body;
+      const transferDto = TransferCreateDTO.build(req.body);
 
       if (transferDto.from === transferDto.to)
         throw new Error("No se puede transferir a la misma wallet");
 
-      const [fromWallet, toWallet] = await Promise.all([
-        this.walletService.getByUuid(transferDto.from),
-        this.walletService.getByUuid(transferDto.to),
-      ]);
+      const userSystem = await this.userService.getByRole("SYSTEM");
+      if (!userSystem) throw new NotFoundError(`Usuario SYSTEM no encontrado`);
+
+      let fromWallet: IWallet;
+      let toWallet: IWallet;
+
+      if (transferDto.from === "SYSTEM") {
+        fromWallet = await this.walletService
+          .getByUserUuid(userSystem.uuid)
+          .then((wallets) => wallets[0]);
+      } else {
+        fromWallet = await this.walletService.getByUuid(transferDto.from);
+      }
 
       if (!fromWallet)
         throw new NotFoundError(`Wallet ${transferDto.from} no encontrada`);
+
+      if (transferDto.to === "SYSTEM") {
+        toWallet = await this.walletService
+          .getByUserUuid(userSystem.uuid)
+          .then((wallets) => wallets[0]);
+      } else {
+        toWallet = await this.walletService.getByUuid(transferDto.to);
+      }
+
       if (!toWallet)
         throw new NotFoundError(`Wallet ${transferDto.to} no encontrada`);
 
@@ -146,7 +168,11 @@ export class TransfersController implements IBaseController {
         balance: Number(toWallet.balance) + Number(transferDto.amount),
       });
 
-      const iTransferDTO = ITransferDTO.build(transferDto);
+      const iTransferDTO = ITransferDTO.build({
+        ...transferDto,
+        from: fromWallet.uuid,
+        to: toWallet.uuid,
+      });
 
       const transfers = this.transfersService.create(iTransferDTO);
 
