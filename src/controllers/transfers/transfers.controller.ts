@@ -174,7 +174,7 @@ export class TransfersController implements IBaseController {
         to: toWallet.uuid,
       });
 
-      const transfers = this.transfersService.create(iTransferDTO);
+      const transfers = await this.transfersService.create(iTransferDTO);
 
       res.status(201).json({
         success: true,
