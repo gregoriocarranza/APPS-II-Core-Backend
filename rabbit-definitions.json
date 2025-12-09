@@ -213,7 +213,11 @@
       "name": "analitica.queue",
       "vhost": "/",
       "durable": true,
-      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+      "arguments": {
+        "x-dead-letter-exchange": "dead-letter.exchanger",
+        "x-message-ttl": 600000,
+        "x-max-length": 1000
+      }
     },
     {
       "name": "backoffice.queue",
@@ -225,7 +229,11 @@
       "name": "core.queue",
       "vhost": "/",
       "durable": true,
-      "arguments": { "x-dead-letter-exchange": "dead-letter.exchanger" }
+      "arguments": {
+        "x-dead-letter-exchange": "dead-letter.exchanger",
+        "x-message-ttl": 600000,
+        "x-max-length": 1000
+      }
     },
     { "name": "dead-letter.queue", "vhost": "/", "durable": true }
   ],
