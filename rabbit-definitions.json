@@ -532,13 +532,6 @@
       "routing_key": "#"
     },
     {
-      "source": "dead-letter.exchanger",
-      "vhost": "/",
-      "destination": "analitica.queue",
-      "destination_type": "queue",
-      "routing_key": "#"
-    },
-    {
       "source": "bill.event",
       "vhost": "/",
       "destination": "analitica.queue",
