@@ -1,4 +1,3 @@
-// src/services/auth.service.ts
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import {
@@ -12,7 +11,7 @@ import {
   IUser,
 } from "../database/interfaces/user/user.interfaces";
 import { CarrerasService } from "./carreras.service";
-// import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
+import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
 import dotenv from "dotenv";
 import { IWallet } from "../database/interfaces/wallet/wallet.interfaces";
 import { WalletsService } from "./wallets.service";
@@ -22,7 +21,7 @@ dotenv.config();
 export class AuthService {
   private static _instance: AuthService;
   private refreshStore = new Map<string, RefreshRecord>();
-  // private carreraService: CarrerasService;
+  private carreraService: CarrerasService;
   private walletService: WalletsService;
   private userService: UserService;
 
@@ -31,7 +30,7 @@ export class AuthService {
     walletService?: WalletsService,
     userService?: UserService
   ) {
-    // this.carreraService = carreraService ?? new CarrerasService();
+    this.carreraService = carreraService ?? new CarrerasService();
     this.walletService = walletService ?? new WalletsService();
     this.userService = userService ?? new UserService();
   }
@@ -51,14 +50,14 @@ export class AuthService {
   }
 
   async mapToUserLike(user: IBackoficeAuthResponse): Promise<UserLike> {
-    // let career: ICarrera | null = null;
+    let career: ICarrera | null = null;
     const wallet: IWallet[] = await this.walletService.getByUserUuid(
       user.id_usuario
     );
     let walletsUuids: string[] = [];
-    // if (user.carrera_uuid) {
-    //   career = await this.carreraService.getByUuid(user.carrera_uuid);
-    // }
+    if (user.carrera && user.carrera.id_carrera) {
+      career = await this.carreraService.getByUuid(user.carrera.id_carrera);
+    }
     if (wallet.length > 0) {
       wallet.forEach((w) => {
         walletsUuids.push(w.uuid);
@@ -69,8 +68,8 @@ export class AuthService {
       email: user.email_institucional,
       name: user.nombre + (user.apellido ? ` ${user.apellido}` : ""),
       role: user.rol.categoria,
-      subrol: user.rol.subcategoria,
-      career: { uuid: "Placeholder", name: "Placeholder" },
+      subrol: user.rol.subcategoria || null,
+      career: career ? { uuid: career.uuid, name: career.name } : null,
       wallet: walletsUuids,
     };
   }

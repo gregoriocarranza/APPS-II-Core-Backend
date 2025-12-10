@@ -29,12 +29,16 @@ export interface IUserDTO {
   updated_at?: string;
 }
 
-
 export interface IBackoficeAuthRole {
   id_rol: string;
   descripcion: string;
   categoria: string;
   subcategoria: string;
+}
+
+export interface IBackoficeCarrera {
+  id_carrera: string;
+  status: boolean;
 }
 
 export interface IBackoficeAuthResponse {
@@ -45,4 +49,5 @@ export interface IBackoficeAuthResponse {
   dni: string;
   email_institucional: string;
   rol: IBackoficeAuthRole;
+  carrera: IBackoficeCarrera;
 }
