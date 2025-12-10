@@ -1,5 +1,5 @@
 import { ToInscripcionDTO } from "../common/dto/inscripciones/inscriopciones.dto";
-import { buildDomainEvent, publishDomainEvent } from "../lib/rabbitmq";
+import { buildDomainEvent, publishDomainEvent } from "../rabbitMq/Publisher";
 
 const EVENT_VERSION = 1;
 const INSCRIPCIONES_EXCHANGE =

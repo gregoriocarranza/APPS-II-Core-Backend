@@ -79,7 +79,6 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<UserLike> {
-    // TODO: llamar al microservicio (HTTP/RPC). Por ahora mock local:
     if (!email || !password) throw new Error("Credenciales inválidas");
     let user: IBackoficeAuthResponse;
 

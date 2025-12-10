@@ -2,11 +2,6 @@ import { NotFoundError } from "../common/utils/errors";
 import { WalletDAO } from "../database/dao/Wallet/WalletDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { IWallet } from "../database/interfaces/wallet/wallet.interfaces";
-import {
-  emitWalletCreated,
-  emitWalletDeleted,
-  emitWalletUpdated,
-} from "../events/wallets.publisher";
 
 export class WalletsService {
   private dao: WalletDAO;
@@ -39,21 +34,18 @@ export class WalletsService {
 
   async create(payload: IWallet): Promise<IWallet> {
     const created = await this.dao.create(payload);
-    await emitWalletCreated(created);
     return created;
   }
 
   async update(uuid: string, partial: Partial<IWallet>): Promise<IWallet> {
     const updated = await this.dao.update(uuid, partial);
     if (!updated) throw new NotFoundError(`Wallet ${uuid} no encontrada`);
-    await emitWalletUpdated(updated);
     return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`Wallet ${uuid} no encontrada`);
-    await emitWalletDeleted(uuid);
     return { ok };
   }
 }

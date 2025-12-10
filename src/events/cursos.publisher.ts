@@ -1,5 +1,5 @@
 import { ICurso } from "../database/interfaces/cursos/cursos.interfaces";
-import { buildDomainEvent, publishDomainEvent } from "../lib/rabbitmq";
+import { buildDomainEvent, publishDomainEvent } from "../rabbitMq/Publisher";
 
 const EVENT_VERSION = 1;
 const CURSOS_EXCHANGE =

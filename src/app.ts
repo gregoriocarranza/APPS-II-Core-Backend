@@ -8,7 +8,6 @@ import { getAllowedOrigins } from "./common/config/origins/origins.config";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import fs from "fs";
-// import yaml from "js-yaml";
 import path from "path";
 import cookieParser from "cookie-parser";
 
@@ -16,29 +15,15 @@ dotenv.config();
 
 const app: Express = express();
 app.use(cookieParser());
-// const swaggerDocument = yaml.load(
-//   fs.readFileSync(".docs/swagger-documentation.yaml", "utf8"),
-// ) as object;
-
-// app.use(
-//   logger("tiny", {
-//     skip: (req, _res) => {
-//       return req.originalUrl.startsWith("/api/health");
-//     },
-//   }),
-// );
 
 if (process.env.ENVIRONMENT !== "production") {
-  // Try to auto-generate OpenAPI component schemas from class-validator DTOs.
-  // This is optional: if `class-validator-jsonschema` is not installed the app will continue
-  // and you can still provide manual JSDoc component files.
   let generatedSchemas: Record<string, any> | undefined;
   try {
-    // require here so this stays optional in environments where the package isn't installed
     const { getFromContainer, MetadataStorage } = require("class-validator");
-    const { validationMetadatasToSchemas } = require("class-validator-jsonschema");
+    const {
+      validationMetadatasToSchemas,
+    } = require("class-validator-jsonschema");
 
-    // Require all DTO files so class-validator metadata is registered.
     const dtoDir = path.join(__dirname, "common", "dto");
     const requireDir = (p: string) => {
       if (!fs.existsSync(p)) return;
@@ -50,22 +35,25 @@ if (process.env.ENVIRONMENT !== "production") {
           try {
             require(full);
           } catch (e) {
-            // ignore individual require failures (e.g., TS files when running compiled JS)
+            // Ignore errors
           }
         }
       }
     };
     requireDir(dtoDir);
 
-    const metadatas = (getFromContainer(MetadataStorage) as any).validationMetadatas;
-    generatedSchemas = validationMetadatasToSchemas(metadatas, { refPointerPrefix: "#/components/schemas/" });
+    const metadatas = (getFromContainer(MetadataStorage) as any)
+      .validationMetadatas;
+    generatedSchemas = validationMetadatasToSchemas(metadatas, {
+      refPointerPrefix: "#/components/schemas/",
+    });
   } catch (err) {
-    // Not fatal — warn and continue
-    // eslint-disable-next-line no-console
-    console.warn("OpenAPI schema generation skipped (class-validator-jsonschema not available):", (err as Error).message || err);
+    console.warn(
+      "OpenAPI schema generation skipped (class-validator-jsonschema not available):",
+      (err as Error).message || err
+    );
   }
-  // app.use("/docs", swaggerUi.serve);
-  // app.get("/docs", swaggerUi.setup(swaggerDocument));
+
   const swaggerServers = [
     { url: "https://jtseq9puk0.execute-api.us-east-1.amazonaws.com" },
   ];
@@ -82,7 +70,6 @@ if (process.env.ENVIRONMENT !== "production") {
       servers: swaggerServers,
       components: {
         schemas: {
-          // Merge auto-generated schemas (if any). If generation fails, this will be empty.
           ...(generatedSchemas || {}),
         },
       },

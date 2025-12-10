@@ -1,5 +1,5 @@
 import { ICarrera } from "../database/interfaces/carrera/carreras.interfaces";
-import { buildDomainEvent, publishDomainEvent } from "../lib/rabbitmq";
+import { buildDomainEvent, publishDomainEvent } from "../rabbitMq/Publisher";
 
 const EVENT_VERSION = 1;
 const CARRERAS_EXCHANGE =

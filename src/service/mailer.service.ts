@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import mailerConfig from "../config/mailer.config";
+import mailerConfig from "../common/config/mailer.config";
 import { Attachment } from "nodemailer/lib/mailer";
 import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 

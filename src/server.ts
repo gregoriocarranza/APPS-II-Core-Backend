@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import "reflect-metadata";
 import KnexManager from "./database/KnexConnection";
-import { initRabbit } from "./lib/rabbitmq";
+import { initRabbit } from "./rabbitMq/RabbitMq.utils";
+
 
 dotenv.config();
 
@@ -27,12 +28,13 @@ const PORT: number = parseInt(envPort);
   } catch (err) {
     console.error(
       "[RabbitMQ] Failed to initialize producer. Will keep retrying on demand.",
-      err,
+      err
     );
+    process.exit(1); // Evita levantar el servidor sin RabbitMQ
   }
+  const { startEventConsumers } = await import("./events");
+  await startEventConsumers();
 
   const { default: app } = await import("./app");
-  app.listen(PORT, () =>
-    console.info(`Server up and running on port ${PORT}`),
-  );
+  app.listen(PORT, () => console.info(`Server up and running on port ${PORT}`));
 });

@@ -1,6 +1,6 @@
 import { IMateria } from "../database/interfaces/materia/materia.interfaces";
 import { ICorrelativa } from "../database/interfaces/materia/correlativa.interface";
-import { buildDomainEvent, publishDomainEvent } from "../lib/rabbitmq";
+import { buildDomainEvent, publishDomainEvent } from "../rabbitMq/Publisher";
 
 const EVENT_VERSION = 1;
 const MATERIAS_EXCHANGE =

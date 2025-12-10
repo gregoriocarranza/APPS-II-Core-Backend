@@ -1,7 +1,10 @@
-import { NotFoundError } from "../common/utils/errors";
+import { IUserDTO } from "../common/dto/users/IUser.dto";
+import { BadRequestError, NotFoundError } from "../common/utils/errors";
+import { roles } from "../common/utils/roles";
 import { UserDAO } from "../database/dao/User/UserDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { IUser } from "../database/interfaces/user/user.interfaces";
+import { DomainEvent } from "../rabbitMq/Publisher";
 
 export class UserService {
   private dao: UserDAO;
@@ -48,6 +51,33 @@ export class UserService {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`User ${uuid} no encontrada`);
     return { ok };
+  }
+
+  async handleUserCreated(event: DomainEvent<any>): Promise<void> {
+    const match = roles.find((r) => r.id_rol === event.payload.id_rol);
+
+    if (!match) {
+      throw new BadRequestError(
+        `[UserService] No existe un rol con id_rol=${event.payload.id_rol}`
+      );
+    }
+
+    const userData = IUserDTO.build({
+      ...event.payload,
+      rol: match.categoria,
+      subrol: match.subcategoria ?? null,
+    });
+
+    const existingUser = await this.dao.getByUuid(userData.uuid);
+    if (existingUser) {
+      throw new BadRequestError(
+        `[UserService] Usuario con UUID ${userData.uuid} ya existe. No se crea de nuevo.`
+      );
+    }
+    await this.create(userData);
+    console.log(
+      `[UserService] Usuario con UUID ${userData.uuid} creado exitosamente.`
+    );
   }
 }
 
