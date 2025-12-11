@@ -3,6 +3,7 @@ import { NotFoundError } from "../common/utils/errors";
 import { notificacionesDAO } from "../database/dao/notification/notificacionesDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { INotificacion } from "../database/interfaces/notification/notification.interfaces";
+import { emitnotificationCreated } from "../events/notification.publisher";
 
 export class NotificationsService {
   private dao: notificacionesDAO;
@@ -37,7 +38,9 @@ export class NotificationsService {
   }
 
   async create(payload: INotificacion): Promise<INotificacion> {
-    return this.dao.create(payload);
+    const created = await this.dao.create(payload);
+    await emitnotificationCreated(created);
+    return created;
   }
 
   getTemplateById(key: TemplateKey): TemplateFunction | null {
