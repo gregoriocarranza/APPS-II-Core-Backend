@@ -3,7 +3,10 @@ import { NotFoundError } from "../common/utils/errors";
 import { TransferDAO } from "../database/dao/Transfer/TransferDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { ITransfer } from "../database/interfaces/transfer/transfer.interface";
-
+import {
+  emitTransactionCreated,
+  emitTransactionDeleted,
+} from "../events/transaction.publisher";
 
 export class TransfersService {
   private dao: TransferDAO;
@@ -34,21 +37,14 @@ export class TransfersService {
 
   async create(payload: ITransferDTO): Promise<ITransfer> {
     const created = await this.dao.create(payload);
-    // await emitTransferCreated(created);
+    await emitTransactionCreated(created);
     return created;
-  }
-
-  async update(uuid: string, partial: Partial<ITransfer>): Promise<ITransfer> {
-    const updated = await this.dao.update(uuid, partial);
-    if (!updated) throw new NotFoundError(`Transfer ${uuid} no encontrada`);
-    // await emitTransferUpdated(updated);
-    return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`Transfer ${uuid} no encontrada`);
-    // await emitTransferDeleted(uuid);
+    await emitTransactionDeleted(uuid);
     return { ok };
   }
 }
