@@ -18,7 +18,6 @@ export interface DomainEvent<TPayload> {
 interface BuildDomainEventOptions {
   correlationId?: string;
   occurredAt?: Date;
-  version?: number;
 }
 
 export function buildDomainEvent<TPayload>(
@@ -45,6 +44,10 @@ export async function publishDomainEvent<TPayload>(
   event: DomainEvent<TPayload>
 ): Promise<void> {
   try {
+    console.log(
+      `[RabbitMQ - Publisher.ts] evento ${routingKey} enviado en el exchanger ${exchangeName}.`
+    );
+    console.log(event);
     await ensureExchange(exchangeName);
     const ch = await getChannel();
     const body = Buffer.from(JSON.stringify(event));
