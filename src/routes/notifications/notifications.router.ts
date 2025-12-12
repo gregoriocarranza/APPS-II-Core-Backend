@@ -2,6 +2,7 @@ import { Router } from "express";
 import { NotificationsController } from "../../controllers/notifications/notifications.controller";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
 import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/create.notificaciones.dto";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 /**
  * @openapi
@@ -61,6 +62,7 @@ export class NotificationsRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
+    this._router.use(authMiddleware);
     /**
      * @openapi
      * /api/notifications:
@@ -85,7 +87,7 @@ export class NotificationsRouter {
      */
     this._router.get(
       "/",
-      this._notificationsController.getAll.bind(this._notificationsController),
+      this._notificationsController.getAll.bind(this._notificationsController)
     );
     /**
      * @openapi
@@ -118,8 +120,8 @@ export class NotificationsRouter {
     this._router.get(
       "/:uuid",
       this._notificationsController.getByUuid.bind(
-        this._notificationsController,
-      ),
+        this._notificationsController
+      )
     );
     /**
      * @openapi
@@ -154,7 +156,7 @@ export class NotificationsRouter {
     this._router.post(
       "/",
       bodyValidationMiddleware(NotificationCreatedByTypeDTO),
-      this._notificationsController.create.bind(this._notificationsController),
+      this._notificationsController.create.bind(this._notificationsController)
     );
     /**
      * @openapi
@@ -176,7 +178,7 @@ export class NotificationsRouter {
      */
     this._router.delete(
       "/:uuid",
-      this._notificationsController.delete.bind(this._notificationsController),
+      this._notificationsController.delete.bind(this._notificationsController)
     );
   }
   public get router(): Router {

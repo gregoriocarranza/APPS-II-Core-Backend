@@ -102,11 +102,11 @@ export class WalletsRouter {
     this._router.get(
       "/",
       administratorMiddleware,
-      this._walletsController.getAll.bind(this._walletsController),
+      this._walletsController.getAll.bind(this._walletsController)
     );
     this._router.get(
       "/mine",
-      this._walletsController.getByJwt.bind(this._walletsController),
+      this._walletsController.getByJwt.bind(this._walletsController)
     );
     /**
      * @openapi
@@ -138,7 +138,7 @@ export class WalletsRouter {
     this._router.get(
       "/:uuid",
       administratorMiddleware,
-      this._walletsController.getByUuid.bind(this._walletsController),
+      this._walletsController.getByUuid.bind(this._walletsController)
     );
     /**
      * @openapi
@@ -168,7 +168,7 @@ export class WalletsRouter {
     this._router.put(
       "/:uuid",
       administratorMiddleware,
-      this._walletsController.update.bind(this._walletsController),
+      this._walletsController.update.bind(this._walletsController)
     );
     /**
      * @openapi
@@ -204,7 +204,7 @@ export class WalletsRouter {
       "/",
       administratorMiddleware,
       bodyValidationMiddleware(WalletCreatedDTO),
-      this._walletsController.create.bind(this._walletsController),
+      this._walletsController.create.bind(this._walletsController)
     );
     /**
      * @openapi
@@ -227,7 +227,7 @@ export class WalletsRouter {
     this._router.delete(
       "/:uuid",
       administratorMiddleware,
-      this._walletsController.delete.bind(this._walletsController),
+      this._walletsController.delete.bind(this._walletsController)
     );
   }
   public get router(): Router {

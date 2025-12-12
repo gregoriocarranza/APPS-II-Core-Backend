@@ -3,10 +3,17 @@ import { IBaseController } from "../../types";
 import { InscripcionesService } from "../../service/inscripciones.service";
 import { ToIInscripcionesDTO } from "../../common/dto/inscripciones/inscriopciones.interface.dto";
 import { v4 as uuidv4 } from "uuid";
+import { ExtendedRequest } from "../../interfaces/auth.interface";
+import { UnauthorizedError } from "../../common/utils/errors";
 export class InscripcionesController implements IBaseController {
   inscripcionesService: InscripcionesService;
+  rolesSensibles: string[];
+  rolesPermitidos: string[];
+
   constructor() {
     this.inscripcionesService = new InscripcionesService();
+    this.rolesSensibles = ["TITULAR", "AUXILIAR"];
+    this.rolesPermitidos = ["ADMINISTRADOR", "DOCENTE"];
   }
 
   public async getAll(
@@ -48,10 +55,29 @@ export class InscripcionesController implements IBaseController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const ExtReq = req as ExtendedRequest;
       const dto: ToIInscripcionesDTO = await ToIInscripcionesDTO.build({
         ...req.body,
         uuid: uuidv4(),
       });
+
+      if (
+        this.rolesSensibles.includes(dto.rol) &&
+        !this.rolesPermitidos.includes(ExtReq.user.role)
+      ) {
+        console.warn(
+          `⚠️  Intento de modificación NO autorizado:
+    • Rol del curso: ${dto.rol}
+    • Usuario que intenta modificar: ${ExtReq.user.role}
+    • Usuario UUID: ${ExtReq.user.uuid ?? "N/A"}
+    • Acción: modificación de curso sensible`
+        );
+
+        throw new UnauthorizedError(
+          `No tiene permisos para modificar cursos con rol ${dto.rol}.`
+        );
+      }
+
       const result = await this.inscripcionesService.create(dto);
       res.status(201).json(result);
     } catch (err: any) {

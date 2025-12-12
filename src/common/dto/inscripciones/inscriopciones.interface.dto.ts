@@ -19,6 +19,7 @@ export class ToIInscripcionesDTO {
   estado!: string;
 
   @IsString()
+  @Transform(({ value }) => value?.toUpperCase())
   rol!: string;
 
   @IsOptional()

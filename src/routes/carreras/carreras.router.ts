@@ -2,6 +2,7 @@ import { Router } from "express";
 import { CarrerasController } from "../../controllers/carreras/carreras.controller";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
 import { CarreraCreateDTO } from "../../common/dto/carrera/carrera.materia.dto";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 export class CarrerasRouter {
   private _router: Router;
@@ -11,49 +12,50 @@ export class CarrerasRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
-  /**
-   * @openapi
-   * /api/carreras:
-   *   get:
-   *     summary: Obtener todas las carreras
-   *     tags:
-   *       - Carreras
-   *     parameters:
-   *       - in: query
-   *         name: page
-   *         schema:
-   *           type: integer
-   *           default: 1
-   *         description: Numero de pagina
-   *       - in: query
-   *         name: page_size
-   *         schema:
-   *           type: integer
-   *           default: 25
-   *         description: Tamaño de pagina
-   *     responses:
-   *       "200":
-   *         description: Lista paginada de carreras
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 page:
-   *                   type: integer
-   *                 page_size:
-   *                   type: integer
-   *                 total:
-   *                   type: integer
-   *                 items:
-   *                   type: array
-   *                   items:
-   *                     $ref: '#/components/schemas/CarreraResponseDTO'
-   *               required: [page, page_size, total, items]
-   */
+    this._router.use(authMiddleware);
+    /**
+     * @openapi
+     * /api/carreras:
+     *   get:
+     *     summary: Obtener todas las carreras
+     *     tags:
+     *       - Carreras
+     *     parameters:
+     *       - in: query
+     *         name: page
+     *         schema:
+     *           type: integer
+     *           default: 1
+     *         description: Numero de pagina
+     *       - in: query
+     *         name: page_size
+     *         schema:
+     *           type: integer
+     *           default: 25
+     *         description: Tamaño de pagina
+     *     responses:
+     *       "200":
+     *         description: Lista paginada de carreras
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 page:
+     *                   type: integer
+     *                 page_size:
+     *                   type: integer
+     *                 total:
+     *                   type: integer
+     *                 items:
+     *                   type: array
+     *                   items:
+     *                     $ref: '#/components/schemas/CarreraResponseDTO'
+     *               required: [page, page_size, total, items]
+     */
     this._router.get(
       "/",
-      this._carrerasController.getAll.bind(this._carrerasController),
+      this._carrerasController.getAll.bind(this._carrerasController)
     );
     /**
      * @openapi
@@ -81,7 +83,7 @@ export class CarrerasRouter {
      */
     this._router.get(
       "/:uuid",
-      this._carrerasController.getByUuid.bind(this._carrerasController),
+      this._carrerasController.getByUuid.bind(this._carrerasController)
     );
     /**
      * @openapi
@@ -103,24 +105,24 @@ export class CarrerasRouter {
      *         application/json:
      *           schema:
      *             $ref: '#/components/schemas/CarreraCreateDTO'
-  *           example:
-  *             name: "Licenciatura en Sistemas de Información"
-  *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
-  *             degree_title: "Licenciado en Sistemas de Información"
-  *             code: "LSI"
-  *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
-  *             modality: "presencial"
-  *             duration_hours: 3200
-  *             duration_years: 5
-  *             is_active: true
-  *             metadata:
-  *               plan_version: "2024"
-  *               coordinator: "Dra. Ana Pérez"
-  *               contact_email: "info.sistemas@universidad.edu"
-  *               campus:
-  *                 - "Sede Central"
-  *                 - "Campus Norte"
-  *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
+     *           example:
+     *             name: "Licenciatura en Sistemas de Información"
+     *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
+     *             degree_title: "Licenciado en Sistemas de Información"
+     *             code: "LSI"
+     *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
+     *             modality: "presencial"
+     *             duration_hours: 3200
+     *             duration_years: 5
+     *             is_active: true
+     *             metadata:
+     *               plan_version: "2024"
+     *               coordinator: "Dra. Ana Pérez"
+     *               contact_email: "info.sistemas@universidad.edu"
+     *               campus:
+     *                 - "Sede Central"
+     *                 - "Campus Norte"
+     *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
      *     responses:
      *       "200":
      *         description: Carrera actualizada
@@ -135,7 +137,7 @@ export class CarrerasRouter {
      */
     this._router.put(
       "/:uuid",
-      this._carrerasController.update.bind(this._carrerasController),
+      this._carrerasController.update.bind(this._carrerasController)
     );
     /**
      * @openapi
@@ -150,24 +152,24 @@ export class CarrerasRouter {
      *         application/json:
      *           schema:
      *             $ref: '#/components/schemas/CarreraCreateDTO'
-      *           example:
-      *             name: "Licenciatura en Sistemas de Información"
-      *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
-      *             degree_title: "Licenciado en Sistemas de Información"
-      *             code: "LSI"
-      *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
-      *             modality: "presencial"
-      *             duration_hours: 3200
-      *             duration_years: 5
-      *             is_active: true
-      *             metadata:
-      *               plan_version: "2024"
-      *               coordinator: "Dra. Ana Pérez"
-      *               contact_email: "info.sistemas@universidad.edu"
-      *               campus:
-      *                 - "Sede Central"
-      *                 - "Campus Norte"
-      *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
+     *           example:
+     *             name: "Licenciatura en Sistemas de Información"
+     *             description: "Formación orientada al desarrollo de software, gestión de proyectos y análisis de sistemas."
+     *             degree_title: "Licenciado en Sistemas de Información"
+     *             code: "LSI"
+     *             faculty: "Facultad de Ingeniería y Ciencias Aplicadas"
+     *             modality: "presencial"
+     *             duration_hours: 3200
+     *             duration_years: 5
+     *             is_active: true
+     *             metadata:
+     *               plan_version: "2024"
+     *               coordinator: "Dra. Ana Pérez"
+     *               contact_email: "info.sistemas@universidad.edu"
+     *               campus:
+     *                 - "Sede Central"
+     *                 - "Campus Norte"
+     *               observations: "Incluye prácticas profesionales y proyecto final obligatorio."
      *     responses:
      *       "201":
      *         description: Carrera creada
@@ -181,7 +183,7 @@ export class CarrerasRouter {
     this._router.post(
       "/",
       bodyValidationMiddleware(CarreraCreateDTO),
-      this._carrerasController.create.bind(this._carrerasController),
+      this._carrerasController.create.bind(this._carrerasController)
     );
     /**
      * @openapi
@@ -205,7 +207,7 @@ export class CarrerasRouter {
      */
     this._router.delete(
       "/:uuid",
-      this._carrerasController.delete.bind(this._carrerasController),
+      this._carrerasController.delete.bind(this._carrerasController)
     );
   }
   public get router(): Router {

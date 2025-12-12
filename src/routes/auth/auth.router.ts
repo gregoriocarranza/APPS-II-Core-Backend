@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthController } from "../../controllers/auth/auth.controller";
 import { bodyValidationMiddleware } from "../../middlewares/bodyValidation.middleware";
 import { LoginDTO, VerifyJwtDTO } from "../../common/dto/auth.dto";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 /**
  * @openapi
@@ -113,7 +114,7 @@ export class AuthRouter {
     this._router.post(
       "/login",
       bodyValidationMiddleware(LoginDTO),
-      this._authController.login.bind(this._authController),
+      this._authController.login.bind(this._authController)
     );
     /**
      * @openapi
@@ -138,7 +139,8 @@ export class AuthRouter {
      */
     this._router.post(
       "/refresh",
-      this._authController.refresh.bind(this._authController),
+      authMiddleware,
+      this._authController.refresh.bind(this._authController)
     );
     /**
      * @openapi
@@ -153,34 +155,38 @@ export class AuthRouter {
      */
     this._router.post(
       "/logout",
-      this._authController.logout.bind(this._authController),
+      this._authController.logout.bind(this._authController)
     );
-  /**
-   * @openapi
-   * /api/auth/me:
-   *   get:
-   *     summary: Información del usuario autenticado
-   *     tags:
-   *       - Auth
-   *     security:
-   *       - bearerAuth: []
-   *     responses:
-   *       "200":
-   *         description: Payload del usuario obtenido del token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 user:
-   *                   type: object
-   *             example:
-   *               user:
-   *                 id: 1
-   *                 email: "gregoriocarranza@hotmail.com"
-   *                 name: "Gregorio Carranza"
-   */
-  this._router.get("/me", this._authController.me.bind(this._authController));
+    /**
+     * @openapi
+     * /api/auth/me:
+     *   get:
+     *     summary: Información del usuario autenticado
+     *     tags:
+     *       - Auth
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       "200":
+     *         description: Payload del usuario obtenido del token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 user:
+     *                   type: object
+     *             example:
+     *               user:
+     *                 id: 1
+     *                 email: "gregoriocarranza@hotmail.com"
+     *                 name: "Gregorio Carranza"
+     */
+    this._router.get(
+      "/me",
+      authMiddleware,
+      this._authController.me.bind(this._authController)
+    );
     /**
      * @openapi
      * /api/auth/verify-jwt:
@@ -206,8 +212,9 @@ export class AuthRouter {
      */
     this._router.post(
       "/verify-jwt",
+      authMiddleware,
       bodyValidationMiddleware(VerifyJwtDTO),
-      this._authController.verify.bind(this._authController),
+      this._authController.verify.bind(this._authController)
     );
   }
 

@@ -47,6 +47,7 @@ export class IUserDTO implements IUser {
   status!: "activo" | "inactivo" | "suspendido";
 
   @IsString()
+  @Transform(({ value }) => value?.toUpperCase())
   @Expose()
   rol!: string;
 
