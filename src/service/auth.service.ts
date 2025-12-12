@@ -16,6 +16,7 @@ import dotenv from "dotenv";
 import { IWallet } from "../database/interfaces/wallet/wallet.interfaces";
 import { WalletsService } from "./wallets.service";
 import { UserService } from "./user.service";
+import { InternalServerError, UnauthorizedError } from "../common/utils/errors";
 dotenv.config();
 
 export class AuthService {
@@ -79,7 +80,6 @@ export class AuthService {
     password: string
   ): Promise<UserLike> {
     if (!email || !password) throw new Error("Credenciales inválidas");
-    let user: IBackoficeAuthResponse;
 
     const response = await fetch(
       `${process.env.BO_API_URL}/api/v1/auth/login`,
@@ -94,11 +94,24 @@ export class AuthService {
     );
 
     if (!response.ok) {
-      throw new Error("Usuario o contraseña inválidos");
-    }
-    user = await response.json();
+      const raw = await response.text().catch(() => "");
+      if (response.status >= 500) {
+        console.error("[validateCredentials] Error 500 desde Backoffice:", raw);
+        throw new InternalServerError(
+          "El servidor está experimentando problemas. Intentalo más tarde."
+        );
+      }
 
-    return this.mapToUserLike(user);
+      if (response.status === 400 || response.status === 401) {
+        console.error("[validateCredentials] Error 4xx desde Backoffice:", raw);
+        throw new UnauthorizedError("Usuario o contraseña inválidos");
+      }
+
+      throw new Error(`Error desconocido: ${response.status}`);
+    }
+
+    const user = await response.json();
+    return await this.mapToUserLike(user);
   }
 
   async issueTokenPair(user: UserLike) {

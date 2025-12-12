@@ -1,26 +1,64 @@
-export class NotFoundError extends Error {
-  constructor(message = "Resource not found") {
+class AppError extends Error {
+  statusCode: number;
+
+  constructor(message: string, statusCode: number) {
     super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+/* 400 – Bad Request */
+export class BadRequestError extends AppError {
+  constructor(message = "Bad request") {
+    super(message, 400);
+    this.name = "BadRequestError";
+  }
+}
+
+/* 401 – Unauthorized */
+export class UnauthorizedError extends AppError {
+  constructor(message = "Unauthorized") {
+    super(message, 401);
+    this.name = "UnauthorizedError";
+  }
+}
+
+/* 403 – Forbidden */
+export class ForbiddenError extends AppError {
+  constructor(message = "Forbidden") {
+    super(message, 403);
+    this.name = "ForbiddenError";
+  }
+}
+
+/* 404 – Not Found */
+export class NotFoundError extends AppError {
+  constructor(message = "Resource not found") {
+    super(message, 404);
     this.name = "NotFoundError";
   }
 }
 
-export class ConflictError extends Error {
+/* 409 – Conflict */
+export class ConflictError extends AppError {
   constructor(message = "Resource conflict") {
-    super(message);
+    super(message, 409);
     this.name = "ConflictError";
   }
 }
 
-export class BadRequestError extends Error {
-  constructor(message = "Bad request") {
-    super(message);
-    this.name = "BadRequestError";
+/* 422 – Unprocessable Entity*/
+export class InsufficientFundsError extends AppError {
+  constructor(message = "Insufficient funds") {
+    super(message, 422);
+    this.name = "InsufficientFundsError";
   }
 }
-export class InsufficientFundsError extends Error {
-  constructor(message = "Insufficient funds") {
-    super(message);
-    this.name = "InsufficientFundsError";
+
+/* 500 – Internal Server Error */
+export class InternalServerError extends AppError {
+  constructor(message = "Internal server error") {
+    super(message, 500);
+    this.name = "InternalServerError";
   }
 }

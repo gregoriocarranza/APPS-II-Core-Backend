@@ -1,20 +1,22 @@
 import { NextFunction, Response, Request } from "express";
+
 export const errorMiddleware = (
   err: any,
-  req: Request | any,
+  _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   console.error(err);
-  const statusError: number =
-    err.statusError ||
-    err.statusCode ||
-    err.status ||
-    req.statusCode ||
-    req.statusError ||
-    500;
-  res.status(statusError).json({
+
+  const statusCode =
+    typeof err.statusCode === "number"
+      ? err.statusCode
+      : typeof err.status === "number"
+        ? err.status
+        : 500;
+
+  res.status(statusCode).json({
     success: false,
-    message: err.message,
+    message: err.message || "Internal server error",
   });
 };
