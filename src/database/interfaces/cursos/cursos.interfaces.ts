@@ -10,6 +10,7 @@ export interface ICurso {
   sede: string;
   aula: string;
   periodo: string;
+  dia: string;
   turno: string;
   estado: string;
   cantidad_max: number;

@@ -11,7 +11,7 @@ put {
 }
 
 params:path {
-  uuid: <uuid>
+  uuid: 063b533e-7bda-4e95-9e6d-9fce37bb44de
 }
 
 auth:bearer {
@@ -19,9 +19,18 @@ auth:bearer {
 }
 
 body:json {
-  {}
+  {
+  //   "uuid": "063b533e-7bda-4e95-9e6d-9fce37bb44de",
+  //   "uuid_carrera": "063b533e-7bda-4e95-9e6d-9fce37bb44de",
+  //   "nombre": "Diseño de apps 122",
+  //   "uuid_carrera": "456abe0a-f7e0-46f3-921b-20d460134068",
+  //   "description": "Introducción al modelado de datos, SQL y normalización.",
+  //   "approval_method": "final",
+    "is_elective": false
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

@@ -5,16 +5,16 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/cursos?uuid_carrera=6df88b58-3ff5-4617-a2e3-ab7385806bab&uuid_materia=c5cdf66e-53ab-467f-b879-3a069e7abca4&sede_curso=Campus Central&turno_curso=Mañana
+  url: {{core-BackendBackendHost}}/api/cursos
   body: none
   auth: bearer
 }
 
 params:query {
-  uuid_carrera: 6df88b58-3ff5-4617-a2e3-ab7385806bab
-  uuid_materia: c5cdf66e-53ab-467f-b879-3a069e7abca4
-  sede_curso: Campus Central
-  turno_curso: Mañana
+  ~uuid_carrera: 6df88b58-3ff5-4617-a2e3-ab7385806bab
+  ~uuid_materia: c5cdf66e-53ab-467f-b879-3a069e7abca4
+  ~sede_curso: Campus Central
+  ~turno_curso: Mañana
 }
 
 auth:bearer {

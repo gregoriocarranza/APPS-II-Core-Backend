@@ -7,6 +7,7 @@ import { InscripcionesService } from "../../service/inscripciones.service";
 import { CursoCreateDTO } from "../../common/dto/curso/create.curso.dto";
 import { v4 as uuidv4 } from "uuid";
 import { ToIInscripcionesDTO } from "../../common/dto/inscripciones/inscriopciones.interface.dto";
+import { ICursoDTO } from "../../common/dto/curso/ICurso.dto";
 
 export class CursosController implements IBaseController {
   cursosService: CursosService;
@@ -70,8 +71,15 @@ export class CursosController implements IBaseController {
   ): Promise<void> {
     try {
       const { uuid } = req.params;
-      console.log(uuid);
-      res.send("Ok");
+      const toChange = req.body;
+      let curso = await this.cursosService.getByUuid(uuid);
+      const cursoDTO = await ICursoDTO.build({ ...curso, ...toChange });
+
+      const cursoChanged = await this.cursosService.update(
+        uuid,
+        cursoDTO
+      );
+      res.status(201).json({ success: true, data: cursoChanged });
     } catch (err: any) {
       next(err);
     }

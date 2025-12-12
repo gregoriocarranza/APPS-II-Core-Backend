@@ -3,6 +3,8 @@ import { IBaseController } from "../../types";
 import { CarrerasService } from "../../service/carreras.service";
 import { NotFoundError } from "../../common/utils/errors";
 
+import { ICarreraDTO } from "../../common/dto/carrera/ICarrera.dto";
+
 export class CarrerasController implements IBaseController {
   carrerasService: CarrerasService;
   constructor() {
@@ -54,8 +56,15 @@ export class CarrerasController implements IBaseController {
   ): Promise<void> {
     try {
       const { uuid } = req.params;
-      console.log(uuid);
-      res.send("Ok");
+      const toChange = req.body;
+      let carrera = await this.carrerasService.getByUuid(uuid);
+      const carreraDTO = await ICarreraDTO.build({ ...carrera, ...toChange });
+
+      const carreraChanged = await this.carrerasService.update(
+        uuid,
+        carreraDTO
+      );
+      res.status(201).json({ success: true, data: carreraChanged });
     } catch (err: any) {
       next(err);
     }

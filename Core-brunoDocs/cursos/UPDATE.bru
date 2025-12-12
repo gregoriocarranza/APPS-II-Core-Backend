@@ -11,7 +11,7 @@ put {
 }
 
 params:path {
-  uuid: <uuid>
+  uuid: 247667ad-9317-400d-a8c6-5b6d6a75201f
 }
 
 auth:bearer {
@@ -19,9 +19,25 @@ auth:bearer {
 }
 
 body:json {
-  {}
+  {
+  //   "uuid_materia": "077e3a79-700c-4ebf-8a6d-50044d37265b",
+  //   "examen": "Final integrador",
+    "comision": "ss",
+  //   "modalidad": "PRESENCIAL",
+  //   "sede": "CAMPUS CENTRAL",
+  //   "aula": "Aula 204",
+  //   "periodo": "1er Cuatrimestre 2025",
+    "turno": "noche",
+  //   "estado": "activo",
+  //   "cantidad_max": 35,
+  //   "cantidad_min": 10,
+  //   "desde": "2025-03-10T08:00:00.000Z",
+  //   "hasta": "2025-07-20T12:00:00.000Z",
+    "dia": "MIercoles"
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

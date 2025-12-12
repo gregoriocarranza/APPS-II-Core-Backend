@@ -3,6 +3,7 @@ import { IBaseController } from "../../types";
 import { MateriasService } from "../../service/materias.service";
 import { CorrelativasService } from "../../service/correlativas.service";
 import { NotFoundError } from "../../common/utils/errors";
+import { IMateriaDTO } from "../../common/dto/materia/IMateria.dto";
 
 export class MateriasController implements IBaseController {
   materiasService: MateriasService;
@@ -58,8 +59,15 @@ export class MateriasController implements IBaseController {
   ): Promise<void> {
     try {
       const { uuid } = req.params;
-      console.log(uuid);
-      res.send("Ok");
+      const toChange = req.body;
+      let materia = await this.materiasService.getByUuid(uuid);
+      const materiaDTO = await IMateriaDTO.build({ ...materia, ...toChange });
+
+      const materiaChanged = await this.materiasService.update(
+        uuid,
+        materiaDTO
+      );
+      res.status(201).json({ success: true, data: materiaChanged });
     } catch (err: any) {
       next(err);
     }
