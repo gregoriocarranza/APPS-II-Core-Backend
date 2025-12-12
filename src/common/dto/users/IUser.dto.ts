@@ -12,7 +12,7 @@ import { IUser } from "../../../database/interfaces/user/user.interfaces";
 
 export class IUserDTO implements IUser {
   @IsUUID()
-  @Expose({ name: "user_id" }) // Mapear correo_personal a email
+  @Expose({ name: "user_id" })
   uuid!: string;
 
   @IsString()
@@ -32,13 +32,13 @@ export class IUserDTO implements IUser {
   @Expose()
   dni!: number;
 
-  @Expose({ name: "email_institucional" }) // Mapear correo_personal a email
+  @Expose({ name: "email_personal" })
   @IsString()
   email!: string;
 
+  @Expose({ name: "telefono_personal" })
   @IsString()
-  // telefono_personal!: string; //recuperar
-  telefono_personal: string = "123456789";
+  telefono_personal!: string;
 
   @Transform(({ value }) => {
     return value ? "activo" : "inactivo";
@@ -57,9 +57,9 @@ export class IUserDTO implements IUser {
   carrera_uuid!: string | null;
 
   @IsDateString()
+  @Expose({ name: "fecha_alta" })
   @Transform(({ value }) => new Date(value).toISOString())
-  // fecha_alta!: string; //recuperar
-  fecha_alta: string = new Date().toISOString();
+  fecha_alta!: string;
 
   @IsOptional()
   @Expose()

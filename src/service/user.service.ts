@@ -71,8 +71,8 @@ export class UserService {
 
       const userData = IUserDTO.build({
         ...event.payload,
-        rol: match.categoria,
-        subrol: match.subcategoria ?? null,
+        rol: event.payload.rol.categoria,
+        subrol: event.payload.rol.subcategoria ?? null,
       });
 
       const existingUser = await this.dao.getByUuid(userData.uuid);
