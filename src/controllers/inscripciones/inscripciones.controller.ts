@@ -63,12 +63,12 @@ export class InscripcionesController implements IBaseController {
 
       if (
         this.rolesSensibles.includes(dto.rol) &&
-        !this.rolesPermitidos.includes(ExtReq.user.role)
+        !this.rolesPermitidos.includes(ExtReq.user.rol)
       ) {
         console.warn(
           `⚠️  Intento de modificación NO autorizado:
     • Rol del curso: ${dto.rol}
-    • Usuario que intenta modificar: ${ExtReq.user.role}
+    • Usuario que intenta modificar: ${ExtReq.user.rol}
     • Usuario UUID: ${ExtReq.user.uuid ?? "N/A"}
     • Acción: modificación de curso sensible`
         );

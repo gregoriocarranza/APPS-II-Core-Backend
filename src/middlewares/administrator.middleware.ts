@@ -14,7 +14,7 @@ export function administratorMiddleware(
       .json({ success: false, message: "Usuario no autenticado" });
   }
 
-  if (extendedReq.user.role !== "administrador") {
+  if (extendedReq.user.rol !== "administrador") {
     return res.status(403).json({
       success: false,
       message: "Acceso denegado: requiere rol administrador",

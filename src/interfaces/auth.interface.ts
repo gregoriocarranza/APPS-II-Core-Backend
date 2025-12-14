@@ -40,6 +40,6 @@ export interface ExtendedRequest extends Request {
   user: {
     uuid: string;
     email: string;
-    role: string;
+    rol: string;
   };
 }
