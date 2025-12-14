@@ -1,9 +1,6 @@
-name: Deploy to AWS
+name: Restart Aws
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 jobs:
@@ -26,12 +23,6 @@ jobs:
           chmod 600 private_key
           eval "$(ssh-agent -s)"
           ssh-add private_key
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
 
       - name: Pull/Clone repository on EC2
         env:
@@ -58,22 +49,6 @@ jobs:
             echo 'pull completed successfully!'
           "
 
-      - name: Copy dist to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "mkdir -p ~/APPS-II-Core-Backend/dist && rm -rf ~/APPS-II-Core-Backend/dist/*"
-          scp -o StrictHostKeyChecking=no -i private_key -r dist/* ${{ secrets.DO_CONNECTION_URI }}:/home/ubuntu/APPS-II-Core-Backend/dist/
-
-      - name: Copy node_modules to EC2 (fast & low-space)
-        run: |
-          echo "📦 Streaming node_modules to EC2..."
-
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} "rm -rf ~/APPS-II-Core-Backend/node_modules && mkdir -p ~/APPS-II-Core-Backend/node_modules"
-
-          tar -C node_modules -czf - . \
-            | ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.DO_CONNECTION_URI }} \
-              "tar -C ~/APPS-II-Core-Backend/node_modules -xzf -"
-          echo "✅ node_modules copied successfully!"
-
       - name: Deploy to AWS server via SSH
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
@@ -96,13 +71,32 @@ jobs:
             fi
             echo 'Archivo .env encontrado. Continuando con docker-compose...'
 
-            echo '🐳 Building (with cache) & starting containers...'
-            sudo docker compose build
+            echo '🧹 Cleaning RabbitMQ...'
+            sudo docker compose rm -sfv rabbitmq || true
+
+            sudo docker compose build --no-cache
             sudo docker compose up -d --remove-orphans
+
+            echo '🔎 Waiting for RabbitMQ to respond...'
+            rabbit_ok=false
+            for i in {1..60}; do
+              if sudo docker exec rabbitmq rabbitmq-diagnostics -q ping; then
+                echo '✅ RabbitMQ is responding'
+                rabbit_ok=true
+                break
+              fi
+              echo "…Rabbit not ready yet ($i/60)"
+              sleep 2
+            done
+
+            if [ "$rabbit_ok" != "true" ]; then
+              echo '❌ RabbitMQ did not start in time'
+              sudo docker compose logs --tail=200 rabbitmq || true
+              exit 1
+            fi
 
             echo '--- Restarting PM2 process ---'
             pm2 reload core-backend --update-env || pm2 start ecosystem.config.js --only core-backend --update-env
-
             pm2 save
             pm2 ls
 
@@ -112,7 +106,7 @@ jobs:
       - name: Clean up Docker resources
         run: |
           echo 'Cleaning up unused Docker resources...'
-          sudo docker system prune -af --volumes
+          sudo docker system prune -af
           echo 'Cleanup completed!'
 
       - name: Clean up SSH key
