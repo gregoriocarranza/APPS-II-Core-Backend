@@ -309,6 +309,13 @@
       "routing_key": "#"
     },
     {
+      "source": "act.event",
+      "vhost": "/",
+      "destination": "core.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
       "source": "curso.event",
       "vhost": "/",
       "destination": "backoffice.queue",
@@ -478,13 +485,6 @@
     },
     {
       "source": "transaction.event",
-      "vhost": "/",
-      "destination": "analitica.queue",
-      "destination_type": "queue",
-      "routing_key": "#"
-    },
-    {
-      "source": "notification.event",
       "vhost": "/",
       "destination": "analitica.queue",
       "destination_type": "queue",
