@@ -1,5 +1,7 @@
+import { enumTemplateKey } from "../common/templates";
 import { consumeFromQueue } from "../rabbitMq/Consumer";
 import { DomainEvent } from "../rabbitMq/Publisher";
+import notificationsService from "../service/notifications.service";
 import userService from "../service/user.service";
 
 export async function startEventConsumers(): Promise<void> {
@@ -31,7 +33,17 @@ export async function startEventConsumers(): Promise<void> {
         break;
 
       case "academic-event.user.suscribed":
-        await userService.handleUserCreated(event);
+        await notificationsService.handleNotificationCreated(
+          event,
+          enumTemplateKey.EVENTOS_ACADEMICOS_ALTA
+        );
+        break;
+
+      case "academic-event.user.unsuscribed":
+        await notificationsService.handleNotificationCreated(
+          event,
+          enumTemplateKey.EVENTOS_ACADEMICOS_BAJA
+        );
         break;
 
       default:

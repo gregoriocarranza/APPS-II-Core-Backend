@@ -28,12 +28,12 @@ export async function testHandlerEventCreated() {
   };
 
   const event: DomainEvent<typeof payload> = buildDomainEvent(
-    "keyBinding",
+    "academic-event.user.unsuscribed",
     payload
   );
 
   await NotificationsService.handleNotificationCreated(
     event,
-    enumTemplateKey.EVENTOS_ACADEMICOS
+    enumTemplateKey.EVENTOS_ACADEMICOS_BAJA
   );
 }
