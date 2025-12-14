@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { TransfersController } from "../../controllers/transfers/transfers.controller";
-// import { authMiddleware } from "../../middlewares/auth.middleware";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 /**
  * @openapi
@@ -47,7 +47,7 @@ export class TransfersRouter {
     this.initRoutes();
   }
   private initRoutes(): void {
-    // this._router.use(authMiddleware);
+    this._router.use(authMiddleware);
     /**
      * @openapi
      * /api/transfers:
