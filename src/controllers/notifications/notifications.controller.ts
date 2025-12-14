@@ -27,7 +27,7 @@ export class NotificationsController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { page, limit, user_uuid } = req.query as {
@@ -60,7 +60,7 @@ export class NotificationsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -78,26 +78,23 @@ export class NotificationsController implements IBaseController {
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<any> {
     try {
       const notificationDto: NotificationCreatedByTypeDTO = req.body;
 
       const user: IUser | undefined = await this.userService.getByUuid(
-        notificationDto.user_uuid,
+        notificationDto.user_uuid
       );
       if (!user)
         throw new NotFoundError(
-          `User ${notificationDto.user_uuid} no encontrado`,
+          `User ${notificationDto.user_uuid} no encontrado`
         );
 
       const templateFunction = await this.notificationService.getTemplateById(
-        notificationDto.EmailType,
+        notificationDto.EmailType
       );
-      if (!templateFunction)
-        throw new NotFoundError(
-          `template no encontrado con key  ${notificationDto.EmailType} `,
-        );
+
       const { body, title } = await templateFunction(req.body);
 
       const payload: INotificacionDTO = INotificacionDTO.build({
@@ -128,7 +125,7 @@ export class NotificationsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -147,7 +144,7 @@ export class NotificationsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;

@@ -57,8 +57,10 @@ export class NotificationsService {
     return created;
   }
 
-  getTemplateById(key: TemplateKey): TemplateFunction | null {
+  getTemplateById(key: TemplateKey): TemplateFunction {
     const template: TemplateFunction = templates[key] ?? null;
+    if (!template)
+      throw new NotFoundError(`template no encontrado con key  ${key} `);
     return template;
   }
 
@@ -85,9 +87,6 @@ export class NotificationsService {
       throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
 
     const templateFunction = await this.getTemplateById(EmailType);
-
-    if (!templateFunction)
-      throw new NotFoundError(`template no encontrado con key  ${EmailType} `);
 
     const { body, title } = await templateFunction({ event, user });
 

@@ -11,14 +11,24 @@ import { ITransferDTO } from "../../common/dto/transfer/ITransfer.dto";
 import { ITransfer } from "../../database/interfaces/transfer/transfer.interface";
 import { IWallet } from "../../database/interfaces/wallet/wallet.interfaces";
 import { UserService } from "../../service/user.service";
+import { NotificationsService } from "../../service/notifications.service";
+import { enumTemplateKey } from "../../common/templates";
+import { INotificacionDTO } from "../../common/dto/notificaciones/Inotificaciones.dto";
+import { v4 as uuidv4 } from "uuid";
+import { EmailerService } from "../../service/mailer.service";
+import { bodyTypes } from "../../common/dto/notificaciones/notificaciones.dto";
 export class TransfersController implements IBaseController {
   transfersService: TransfersService;
   walletService: WalletsService;
   userService: UserService;
+  notificationService: NotificationsService;
+  emailerService: EmailerService;
   constructor() {
     this.transfersService = new TransfersService();
     this.userService = new UserService();
     this.walletService = new WalletsService();
+    this.notificationService = new NotificationsService();
+    this.emailerService = EmailerService.instance;
   }
 
   public async getAll(
@@ -152,17 +162,23 @@ export class TransfersController implements IBaseController {
           `La wallet destino utiliza una moneda diferente: ${toWallet.currency}`
         );
 
-      if (Number(fromWallet.balance) < Number(transferDto.amount))
+      if (
+        fromWallet.user_uuid !== userSystem.uuid &&
+        Number(fromWallet.balance) < Number(transferDto.amount)
+      )
         throw new InsufficientFundsError(
           `Fondos insuficientes en la wallet ${fromWallet.uuid}`
         );
 
-      const updatedFromWallet = await this.walletService.update(
-        fromWallet.uuid,
-        {
-          balance: Number(fromWallet.balance) - Number(transferDto.amount),
-        }
+      let updatedFromWallet = await this.walletService.getByUuid(
+        fromWallet.uuid
       );
+
+      if (fromWallet.user_uuid !== userSystem.uuid) {
+        updatedFromWallet = await this.walletService.update(fromWallet.uuid, {
+          balance: Number(fromWallet.balance) - Number(transferDto.amount),
+        });
+      }
 
       const updatedToWallet = await this.walletService.update(toWallet.uuid, {
         balance: Number(toWallet.balance) + Number(transferDto.amount),
@@ -173,8 +189,56 @@ export class TransfersController implements IBaseController {
         from: fromWallet.uuid,
         to: toWallet.uuid,
       });
+      const templateFunction = await this.notificationService.getTemplateById(
+        enumTemplateKey.TRANSFER_NOTIFICATION
+      );
 
       const transfers = await this.transfersService.create(iTransferDTO);
+
+      const notificationsToSend: Array<{
+        userUuid: string;
+        direction: "incoming" | "outgoing";
+      }> = [];
+
+      if (transferDto.from !== "SYSTEM") {
+        notificationsToSend.push({
+          userUuid: fromWallet.user_uuid,
+          direction: "outgoing",
+        });
+      }
+      if (transferDto.to !== "SYSTEM") {
+        notificationsToSend.push({
+          userUuid: toWallet.user_uuid,
+          direction: "incoming",
+        });
+      }
+      const mailInfo = await Promise.all(
+        notificationsToSend.map(async ({ userUuid, direction }) => {
+          const user = await this.userService.getByUuid(userUuid);
+          const { body, title } = templateFunction({
+            transfer: iTransferDTO,
+            direction,
+          });
+
+          const payload = INotificacionDTO.build({
+            uuid: uuidv4(),
+            user_uuid: userUuid,
+            body,
+            title,
+          });
+
+          const created = await this.notificationService.create(payload);
+
+          const info = await this.emailerService.sendMail({
+            to: user.email,
+            subject: created.title,
+            bodyType: bodyTypes.html,
+            body: created.body,
+          });
+
+          return info;
+        })
+      );
 
       res.status(201).json({
         success: true,
@@ -182,6 +246,7 @@ export class TransfersController implements IBaseController {
           fromWallet: updatedFromWallet,
           toWallet: updatedToWallet,
           transfers,
+          mailInfo,
         },
       });
     } catch (err: any) {
