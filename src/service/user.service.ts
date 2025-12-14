@@ -1,7 +1,6 @@
 import { IUserDTO } from "../common/dto/users/IUser.dto";
 import { IWalletDTO } from "../common/dto/wallet/IWallet.dto";
 import { BadRequestError, NotFoundError } from "../common/utils/errors";
-import { roles } from "../common/utils/roles";
 import { UserDAO } from "../database/dao/User/UserDAO";
 import { IDataPaginator } from "../database/interfaces/db.types";
 import { IUser } from "../database/interfaces/user/user.interfaces";
@@ -61,14 +60,6 @@ export class UserService {
 
   async handleUserCreated(event: DomainEvent<any>): Promise<void> {
     try {
-      const match = roles.find((r) => r.id_rol === event.payload.id_rol);
-
-      if (!match) {
-        throw new BadRequestError(
-          `[UserService - handleUserCreated] No existe un rol con id_rol = ${event.payload.id_rol}`
-        );
-      }
-
       const userData = IUserDTO.build({
         ...event.payload,
         rol: event.payload.rol.categoria,
