@@ -15,11 +15,19 @@ export async function startEventConsumers(): Promise<void> {
         break;
 
       case "user.deleted":
-        if (event.payload.user_id)
+        if (!event.payload.user_id) {
           console.warn(
             `[RabbitMQ] "${routingKey}" no trae el campo user_id para eliminar.`
           );
-        await userService.delete(event.payload.user_id);
+          throw new Error("payload inválido");
+        }
+        const userId = event.payload.user_id;
+        const resp = await userService.delete(userId);
+        console.info(`[RabbitMQ] "${routingKey}" procesado correctamente`, {
+          user_id: userId,
+          result: resp,
+        });
+
         break;
 
       case "academic-event.user.suscribed":
