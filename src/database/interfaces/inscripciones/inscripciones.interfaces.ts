@@ -17,7 +17,7 @@ export interface IInscripcion {
   uuid: string;
   uuid_curso: string;
   user_uuid: string;
-  estado: string;
+  estado: InscripcionEstadoEnum;
   rol: string;
   razon: string;
   fecha_baja: string | null;
@@ -39,7 +39,7 @@ export interface IInscripcionDTO {
   user_uuid: string;
   curso: ICursoDTO;
   user: IUser;
-  estado: "pendiente" | "confirmada" | "baja";
+  estado: "PENDIENTE" | "CONFIRMADA" | "BAJA";
   rol: "ALUMNO" | "TITULAR" | "AUXILIAR";
   razon: string;
   fecha_baja?: string | null;

@@ -4,9 +4,10 @@ import {
   IsOptional,
   IsDateString,
   validateSync,
+  IsEnum,
 } from "class-validator";
 import { plainToInstance, Transform } from "class-transformer";
-import { IInscripcionCreated } from "../../../database/interfaces/inscripciones/inscripciones.interfaces";
+import { IInscripcionCreated, InscripcionEstadoEnum } from "../../../database/interfaces/inscripciones/inscripciones.interfaces";
 
 export class ToIInscripcionesDTO {
   @IsUUID()
@@ -15,8 +16,8 @@ export class ToIInscripcionesDTO {
   @IsUUID()
   user_uuid!: string;
 
-  @IsString()
-  estado!: string;
+  @IsEnum(InscripcionEstadoEnum)
+  estado!: InscripcionEstadoEnum;
 
   @IsString()
   @Transform(({ value }) => value?.toUpperCase())

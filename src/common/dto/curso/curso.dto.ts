@@ -13,7 +13,12 @@ import { CarreraDTO } from "../carrera/carrera.dto";
 import { IMateriaDTO } from "../../../database/interfaces/materia/materia.interfaces";
 import { ICarrera } from "../../../database/interfaces/carrera/carreras.interfaces";
 import { plainToInstance, Transform } from "class-transformer";
-import { CursoDiaEnum, CursoEstadoEnum, CursoModalidadEnum, CursoTurnoEnum } from "./create.curso.dto";
+import {
+  CursoDiaEnum,
+  CursoEstadoEnum,
+  CursoModalidadEnum,
+  CursoTurnoEnum,
+} from "./create.curso.dto";
 
 export class CursoDTO {
   @IsUUID()
@@ -63,6 +68,10 @@ export class CursoDTO {
 
   @IsInt()
   cantidad_min!: number;
+
+  @IsOptional()
+  @IsInt()
+  inscripciones_totales!: number;
 
   @Transform(({ value }) => new Date(value).toISOString())
   @IsDateString()
