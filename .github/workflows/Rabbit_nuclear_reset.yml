@@ -1,4 +1,4 @@
-name: Restart Aws
+name: Rabbit Nuclear Reset
 
 on:
   workflow_dispatch:

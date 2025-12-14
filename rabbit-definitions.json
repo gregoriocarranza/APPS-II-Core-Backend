@@ -170,6 +170,13 @@
       "type": "topic",
       "durable": true,
       "auto_delete": false
+    },
+    {
+      "name": "sanctions.event",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false
     }
   ],
   "queues": [
@@ -289,6 +296,13 @@
     },
     {
       "source": "grade.event",
+      "vhost": "/",
+      "destination": "core.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "sanctions.event",
       "vhost": "/",
       "destination": "core.queue",
       "destination_type": "queue",
@@ -548,6 +562,13 @@
     },
     {
       "source": "reservation.event",
+      "vhost": "/",
+      "destination": "analitica.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
+      "source": "sanctions.event",
       "vhost": "/",
       "destination": "analitica.queue",
       "destination_type": "queue",
