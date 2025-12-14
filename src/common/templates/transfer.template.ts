@@ -16,22 +16,33 @@ export function transferBodyText(data: TransferTemplateInput): TemplateReturn {
 
   const isOutgoing = data.direction === "outgoing";
 
-  const title = isOutgoing
-    ? "💸 Transferencia enviada"
-    : "💰 Transferencia recibida";
+  let amountSign: string;
+  let mainMessage: string;
+  let title: string;
 
-  const amountSign = isOutgoing ? "-" : "+";
-  const mainMessage = isOutgoing
-    ? "Realizaste una transferencia correctamente."
-    : "Recibiste una transferencia en tu billetera.";
+  if (data.transfer.status === "rejected") {
+    mainMessage = isOutgoing
+      ? "La transferencia fue rechazada por fondos insuficientes."
+      : "Se intentó una transferencia hacia tu billetera, pero fue rechazada por fondos insuficientes.";
+    title = isOutgoing
+      ? "❌ Transferencia rechazada por falta de fondos."
+      : "❌ Transferencia rechazada (no acreditada)";
+    amountSign = "";
+  } else {
+    mainMessage = isOutgoing
+      ? "Realizaste una transferencia correctamente."
+      : "Recibiste una transferencia en tu billetera.";
+    title = isOutgoing
+      ? "💸 Transferencia enviada"
+      : "💰 Transferencia recibida";
+    amountSign = isOutgoing ? "-" : "+";
+  }
 
   return {
     title: `${title}`,
     body: `
 <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#f6f7f9; padding:24px;">
   <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-
-    <h2 style="margin:0 0 8px 0;color:#111827;">${title}</h2>
 
     <p style="margin:0 0 16px 0;color:#374151;font-size:15px;">
       ${mainMessage}

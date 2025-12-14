@@ -92,7 +92,7 @@ export function eventosAcademicosUnsubscribedBodyText(
 
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
       <div>
-        <h2 style="margin:0;color:#111827;">🧾 Baja de inscripción</h2>
+        <h2 style="margin:0;color:#111827;">Baja de inscripción</h2>
         <p style="margin:6px 0 0 0;color:#6b7280;font-size:14px;">
           Hola <strong>${fullName}</strong>, registramos tu desuscripción del evento.
         </p>

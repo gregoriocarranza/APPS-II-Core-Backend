@@ -54,13 +54,13 @@ export class ITransferDTO implements ITransfer {
   @IsDateString()
   processed_at!: string;
 
-  static build(data: TransferCreateDTO): ITransferDTO {
+  static build(data: TransferCreateDTO | any): ITransferDTO {
     const dto = plainToInstance(
       ITransferDTO,
       {
         uuid: uuidv4(),
         ...data,
-        status: "completed",
+        status: data.status ?? "completed",
         processed_at: new Date().toISOString(),
       },
       { enableImplicitConversion: true }

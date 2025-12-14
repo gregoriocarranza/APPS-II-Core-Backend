@@ -126,6 +126,10 @@ export class TransfersController implements IBaseController {
     try {
       const transferDto = TransferCreateDTO.build(req.body);
 
+      const templateFunction = await this.notificationService.getTemplateById(
+        enumTemplateKey.TRANSFER_NOTIFICATION
+      );
+
       if (transferDto.from === transferDto.to)
         throw new Error("No se puede transferir a la misma wallet");
 
@@ -165,10 +169,52 @@ export class TransfersController implements IBaseController {
       if (
         fromWallet.user_uuid !== userSystem.uuid &&
         Number(fromWallet.balance) < Number(transferDto.amount)
-      )
+      ) {
+        const user = await this.userService.getByUuid(fromWallet.user_uuid);
+        const rejectedTransferDTO = ITransferDTO.build({
+          ...transferDto,
+          status: "rejected",
+          description: [
+            transferDto.description,
+            "Motivo del rechazo: fondos insuficientes",
+          ]
+            .filter(Boolean)
+            .join(" · "),
+          from: fromWallet.uuid,
+          to: toWallet.uuid,
+          metadata: {
+            reason: "INSUFFICIENT_FUNDS",
+            message: "Fondos insuficientes en la billetera de origen",
+          },
+        });
+
+        await this.transfersService.create(rejectedTransferDTO);
+
+        const { body, title } = templateFunction({
+          transfer: rejectedTransferDTO,
+          direction: "outgoing",
+        });
+
+        const payload = INotificacionDTO.build({
+          uuid: uuidv4(),
+          user_uuid: fromWallet.user_uuid,
+          body,
+          title,
+        });
+
+        const created = await this.notificationService.create(payload);
+
+        await this.emailerService.sendMail({
+          to: user.email,
+          subject: created.title,
+          bodyType: bodyTypes.html,
+          body: created.body,
+        });
+
         throw new InsufficientFundsError(
           `Fondos insuficientes en la wallet ${fromWallet.uuid}`
         );
+      }
 
       let updatedFromWallet = await this.walletService.getByUuid(
         fromWallet.uuid
@@ -189,9 +235,6 @@ export class TransfersController implements IBaseController {
         from: fromWallet.uuid,
         to: toWallet.uuid,
       });
-      const templateFunction = await this.notificationService.getTemplateById(
-        enumTemplateKey.TRANSFER_NOTIFICATION
-      );
 
       const transfers = await this.transfersService.create(iTransferDTO);
 

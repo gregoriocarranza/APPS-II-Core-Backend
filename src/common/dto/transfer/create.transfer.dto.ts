@@ -48,6 +48,10 @@ export class TransferCreateDTO {
 
   @IsOptional()
   @IsString()
+  status?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
 
   static build(data: any): TransferCreateDTO {
