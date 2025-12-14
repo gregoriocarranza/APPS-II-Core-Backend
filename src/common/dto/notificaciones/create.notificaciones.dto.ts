@@ -23,7 +23,7 @@ export class attachmentClass {
 
 export class NotificationCreatedByTypeDTO {
   @IsUUID()
-  userUuid!: string;
+  user_uuid!: string;
 
   @IsEnum(EmailType)
   EmailType!: EmailType;

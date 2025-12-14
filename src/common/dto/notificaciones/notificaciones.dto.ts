@@ -15,9 +15,9 @@ export enum bodyTypes {
   text = "text",
 }
 export class NotificationCreatedDTO {
-  @Expose({ name: "user_uuid" })
+  @Expose()
   @IsUUID()
-  userUuid!: string;
+  user_uuid!: string;
 
   @IsString()
   title!: string;

@@ -53,6 +53,7 @@ export class UserService {
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {
+    await this.dao.getByUuid(uuid);
     const ok = await this.dao.delete(uuid);
     if (!ok) throw new NotFoundError(`User ${uuid} no encontrada`);
     return { ok };

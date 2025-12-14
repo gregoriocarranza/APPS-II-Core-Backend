@@ -7,7 +7,6 @@ import {
 } from "class-validator";
 import { Expose, plainToInstance, Transform } from "class-transformer";
 import { INotificacion } from "../../../database/interfaces/notification/notification.interfaces";
-import { NotificationCreatedDTO } from "./notificaciones.dto";
 
 export enum MateriaApprovalMethodEnum {
   FINAL = "final",
@@ -19,7 +18,7 @@ export class INotificacionDTO implements INotificacion {
   @IsUUID()
   uuid!: string;
 
-  @Expose({ name: "userUuid" })
+  @Expose()
   @IsUUID()
   user_uuid!: string;
 
@@ -34,7 +33,7 @@ export class INotificacionDTO implements INotificacion {
   @IsOptional()
   created_at!: string;
 
-  static build(data: NotificationCreatedDTO): INotificacionDTO {
+  static build(data: any): INotificacionDTO {
     const dto = plainToInstance(INotificacionDTO, data, {
       enableImplicitConversion: true,
     });

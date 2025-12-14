@@ -3,7 +3,6 @@ import "reflect-metadata";
 import KnexManager from "./database/KnexConnection";
 import { initRabbit } from "./rabbitMq/RabbitMq.utils";
 
-
 dotenv.config();
 
 const envPort: string = process.env.PORT || "3005";
@@ -34,6 +33,9 @@ const PORT: number = parseInt(envPort);
   }
   const { startEventConsumers } = await import("./events");
   await startEventConsumers();
+
+  // const { testHandlerEventCreated } = await import("./test"); // Solo para probar los eventos
+  // await testHandlerEventCreated();
 
   const { default: app } = await import("./app");
   app.listen(PORT, () => console.info(`Server up and running on port ${PORT}`));

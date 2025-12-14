@@ -84,11 +84,11 @@ export class NotificationsController implements IBaseController {
       const notificationDto: NotificationCreatedByTypeDTO = req.body;
 
       const user: IUser | undefined = await this.userService.getByUuid(
-        notificationDto.userUuid,
+        notificationDto.user_uuid,
       );
       if (!user)
         throw new NotFoundError(
-          `User ${notificationDto.userUuid} no encontrado`,
+          `User ${notificationDto.user_uuid} no encontrado`,
         );
 
       const templateFunction = await this.notificationService.getTemplateById(
