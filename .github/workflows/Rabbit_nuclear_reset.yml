@@ -85,7 +85,7 @@ jobs:
                 rabbit_ok=true
                 break
               fi
-              echo "…Rabbit not ready yet ($i/60)"
+              echo '…Rabbit not ready yet ('"$i"'/60)'
               sleep 2
             done
 
