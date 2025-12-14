@@ -96,6 +96,7 @@ jobs:
             fi
 
             echo '--- Restarting PM2 process ---'
+            sleep 30
             pm2 reload core-backend --update-env || pm2 start ecosystem.config.js --only core-backend --update-env
             pm2 save
             pm2 ls
