@@ -7,7 +7,10 @@ import {
 } from "../../common/utils/errors";
 import { TransferCreateDTO } from "../../common/dto/transfer/create.transfer.dto";
 import { WalletsService } from "../../service/wallets.service";
-import { ITransferDTO } from "../../common/dto/transfer/ITransfer.dto";
+import {
+  ITransferDTO,
+  transferTypeEnum,
+} from "../../common/dto/transfer/ITransfer.dto";
 import { ITransfer } from "../../database/interfaces/transfer/transfer.interface";
 import { IWallet } from "../../database/interfaces/wallet/wallet.interfaces";
 import { UserService } from "../../service/user.service";
@@ -220,7 +223,7 @@ export class TransfersController implements IBaseController {
         fromWallet.uuid
       );
 
-      if (fromWallet.user_uuid !== userSystem.uuid) {
+      if (transferDto.type != transferTypeEnum.CARGA_DE_SALDO) {
         updatedFromWallet = await this.walletService.update(fromWallet.uuid, {
           balance: Number(fromWallet.balance) - Number(transferDto.amount),
         });
