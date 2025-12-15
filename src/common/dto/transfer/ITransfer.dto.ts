@@ -6,12 +6,20 @@ import {
   IsOptional,
   IsDateString,
   validateSync,
+  IsEnum,
 } from "class-validator";
 import { Expose, plainToInstance, Transform, Type } from "class-transformer";
 import { v4 as uuidv4 } from "uuid";
 import { ITransfer } from "../../../database/interfaces/transfer/transfer.interface";
 import { TransferCreateDTO } from "./create.transfer.dto";
 
+export enum transferTypeEnum {
+  COMPRA = "COMPRA",
+  CARGA_DE_SALDO = "CARGA_DE_SALDO",
+  SANCION = "SANCION",
+  RESERVA = "RESERVA",
+  INSCRIPCION_EVENTO = "INSCRIPCION_EVENTO",
+}
 export class ITransferDTO implements ITransfer {
   @IsUUID()
   uuid!: string;
@@ -32,7 +40,8 @@ export class ITransferDTO implements ITransfer {
   currency!: string;
 
   @IsString()
-  type!: string;
+  @IsEnum(transferTypeEnum)
+  type!: transferTypeEnum;
 
   @IsString()
   status!: string;
