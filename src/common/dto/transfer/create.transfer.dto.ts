@@ -7,8 +7,10 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
   validateSync,
+  IsEnum,
 } from "class-validator";
 import { plainToInstance, Type } from "class-transformer";
+import { transferTypeEnum } from "./ITransfer.dto";
 
 @ValidatorConstraint({ name: "isUUIDOrSystem", async: false })
 class IsUUIDOrSystemConstraint implements ValidatorConstraintInterface {
@@ -42,9 +44,8 @@ export class TransferCreateDTO {
   @IsNumber({ maxDecimalPlaces: 2 })
   amount!: number;
 
-  @IsOptional()
-  @IsString()
-  type?: string;
+  @IsEnum(transferTypeEnum)
+  type?: transferTypeEnum;
 
   @IsOptional()
   @IsString()
