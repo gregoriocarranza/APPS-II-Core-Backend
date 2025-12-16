@@ -143,7 +143,7 @@ export class WalletsRouter {
     this._router.get(
       "/:uuid/user",
       administratorMiddleware,
-      this._walletsController.getByUuid.bind(this._walletsController)
+      this._walletsController.getByUserUuid.bind(this._walletsController)
     );
     /**
      * @openapi
