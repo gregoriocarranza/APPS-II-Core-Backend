@@ -5,10 +5,12 @@ import {
   validateSync,
   ValidateNested,
   IsArray,
+  IsEnum,
 } from "class-validator";
-import { Expose, plainToInstance, Type } from "class-transformer";
+import { Expose, plainToInstance, Transform, Type } from "class-transformer";
 import { INotificacion } from "../../../database/interfaces/notification/notification.interfaces";
 import { attachmentClass } from "./create.notificaciones.dto";
+import { notificationStatusEnum } from "./Inotificaciones.dto";
 
 export enum bodyTypes {
   html = "html",
@@ -24,6 +26,10 @@ export class NotificationCreatedDTO {
 
   @IsString()
   body!: string;
+
+  @IsEnum(notificationStatusEnum)
+  @Transform(({ value }) => value?.toUpperCase())
+  status!: notificationStatusEnum;
 
   @IsOptional()
   @IsArray()

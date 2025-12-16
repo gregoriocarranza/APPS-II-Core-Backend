@@ -4,6 +4,7 @@ import {
   validateSync,
   IsDateString,
   IsOptional,
+  IsEnum,
 } from "class-validator";
 import { Expose, plainToInstance, Transform } from "class-transformer";
 import { INotificacion } from "../../../database/interfaces/notification/notification.interfaces";
@@ -12,6 +13,13 @@ export enum MateriaApprovalMethodEnum {
   FINAL = "final",
   PROMOCION = "promocion",
   TRABAJO_PRACTICO = "trabajo_practico",
+}
+
+export enum notificationStatusEnum {
+  NEW = "NEW",
+  OPENED = "OPENED",
+  HIDDEN = "HIDDEN",
+  DELETED = "DELETED",
 }
 
 export class INotificacionDTO implements INotificacion {
@@ -27,6 +35,10 @@ export class INotificacionDTO implements INotificacion {
 
   @IsString()
   body!: string;
+
+  @Transform(({ value }) => value?.toUpperCase())
+  @IsEnum(notificationStatusEnum)
+  status!: notificationStatusEnum;
 
   @Transform(({ value }) => new Date(value || Date.now()).toISOString())
   @IsDateString()

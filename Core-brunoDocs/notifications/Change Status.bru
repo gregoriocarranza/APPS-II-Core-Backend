@@ -1,0 +1,30 @@
+meta {
+  name: Change Status
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{core-BackendBackendHost}}/api/notifications/:uuid/status
+  body: json
+  auth: bearer
+}
+
+params:path {
+  uuid: 00e06a49-1869-462b-802c-bd716c463f92
+}
+
+auth:bearer {
+  token: {{MtMBearerToken}}
+}
+
+body:json {
+  {
+    "status": "HIDDEN" // NEW, OPENED, HIDDEN, DELETED
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

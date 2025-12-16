@@ -29,12 +29,15 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
     return result || null;
   }
 
-  /**
-   *  * @deprecated Not supported. This DAO does not support updates.
-   */
-  async update(uuid: string, item: Partial<INotificacion>): Promise<any> {
-    console.info("Function not suported");
-    return "Function not suported";
+  async update(
+    uuid: string,
+    item: Partial<INotificacion>
+  ): Promise<INotificacion | null> {
+    const [updated] = await this._knex("notificaciones")
+      .where({ uuid })
+      .update(item)
+      .returning("*");
+    return updated || null;
   }
 
   async delete(uuid: string): Promise<boolean> {
@@ -44,7 +47,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
 
   async getAll(
     page: number,
-    limit: number,
+    limit: number
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 
@@ -72,7 +75,7 @@ export class notificacionesDAO implements IBaseDAO<INotificacion> {
   async getByUserUuid(
     user_uuid: string,
     page: number,
-    limit: number,
+    limit: number
   ): Promise<IDataPaginator<INotificacion>> {
     const offset = (page - 1) * limit;
 

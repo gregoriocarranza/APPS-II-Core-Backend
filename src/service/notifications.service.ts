@@ -50,9 +50,13 @@ export class NotificationsService {
     return template;
   }
 
-  async update(uuid: string, partial: Partial<INotificacion>): Promise<any> {
-    console.info("Function not suported");
-    return "Function not suported";
+  async update(
+    uuid: string,
+    partial: Partial<INotificacion>
+  ): Promise<INotificacion> {
+    const updated = await this.dao.update(uuid, partial);
+    if (!updated) throw new NotFoundError(`Notificacion ${uuid} no encontrada`);
+    return updated;
   }
 
   async delete(uuid: string): Promise<{ ok: boolean }> {

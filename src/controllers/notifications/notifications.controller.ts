@@ -1,13 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import { IBaseController } from "../../types";
 import { NotificationsService } from "../../service/notifications.service";
-import { NotFoundError } from "../../common/utils/errors";
+import { BadRequestError, NotFoundError } from "../../common/utils/errors";
 import { v4 as uuidv4 } from "uuid";
 import { INotificacion } from "../../database/interfaces/notification/notification.interfaces";
 import { EmailerService } from "../../service/mailer.service";
 import { UserService } from "../../service/user.service";
 import { IUser } from "../../database/interfaces/user/user.interfaces";
-import { INotificacionDTO } from "../../common/dto/notificaciones/Inotificaciones.dto";
+import {
+  INotificacionDTO,
+  notificationStatusEnum,
+} from "../../common/dto/notificaciones/Inotificaciones.dto";
 import { NotificationCreatedByTypeDTO } from "../../common/dto/notificaciones/create.notificaciones.dto";
 import {
   bodyTypes,
@@ -122,6 +125,54 @@ export class NotificationsController implements IBaseController {
     }
   }
 
+  public async changeStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { uuid } = req.params;
+      if (!uuid) {
+        throw new BadRequestError("Es nesesario un Uuid en el parametro");
+      }
+
+      const { status } = req.body;
+      if (
+        !Object.values(notificationStatusEnum).includes(status.toUpperCase())
+      ) {
+        throw new BadRequestError(
+          `Estado de notificación inválido. Valores permitidos: ${Object.values(
+            notificationStatusEnum
+          ).join(", ")}`
+        );
+      }
+
+      const notifications: INotificacion =
+        await this.notificationService.getByUuid(uuid);
+
+      const notificationDTO: INotificacionDTO = await INotificacionDTO.build({
+        ...notifications,
+        status,
+      });
+
+      const updated: INotificacion = await this.notificationService.update(
+        uuid,
+        notificationDTO
+      );
+
+      const notificationResponse: NotificationCreatedDTO =
+        await NotificationCreatedDTO.build(updated);
+
+      res.status(200).json({ success: true, data: notificationResponse });
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
   public async update(
     req: Request,
     res: Response,
@@ -129,14 +180,9 @@ export class NotificationsController implements IBaseController {
   ): Promise<void> {
     try {
       const { uuid } = req.params;
-      const partial = req.body as Partial<INotificacion>;
-      const updated = await this.notificationService.update(uuid, partial);
-      res.status(200).json({ success: true, data: updated });
+      console.log(uuid);
+      res.send("Function not implemented");
     } catch (err: any) {
-      if (err instanceof NotFoundError) {
-        res.status(404).json({ success: false, message: err.message });
-        return;
-      }
       next(err);
     }
   }

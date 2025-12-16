@@ -158,6 +158,10 @@ export class NotificationsRouter {
       bodyValidationMiddleware(NotificationCreatedByTypeDTO),
       this._notificationsController.create.bind(this._notificationsController)
     );
+    this._router.put(
+      "/:uuid/status",
+      this._notificationsController.changeStatus.bind(this._notificationsController)
+    );
     /**
      * @openapi
      * /api/notifications/{uuid}:
