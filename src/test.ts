@@ -1,6 +1,7 @@
 import { enumTemplateKey } from "./common/templates";
 import { buildDomainEvent, DomainEvent } from "./rabbitMq/Publisher";
-import NotificationsService from "./service/notifications.service";
+import RabbitMQService from "./service/rabbitMq.service";
+
 // import userService from "./service/user.service";
 
 export async function testHandlerEventCreated() {
@@ -32,7 +33,7 @@ export async function testHandlerEventCreated() {
     payload
   );
 
-  await NotificationsService.handleNotificationCreated(
+  await RabbitMQService.handleAcademicEventsNotificationCreated(
     event,
     enumTemplateKey.EVENTOS_ACADEMICOS_BAJA
   );
