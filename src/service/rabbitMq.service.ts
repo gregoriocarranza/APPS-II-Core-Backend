@@ -2,6 +2,7 @@ import { INotificacionDTO } from "../common/dto/notificaciones/Inotificaciones.d
 import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 import { TemplateKey } from "../common/templates";
 import { GradeCreatedPayload } from "../common/templates/grade_notification";
+import { SanctionBasePayload } from "../common/templates/sancion_biblioteca.template";
 import { NotFoundError } from "../common/utils/errors";
 import { DomainEvent } from "../rabbitMq/Publisher";
 import { EmailerService } from "./mailer.service";
@@ -63,7 +64,8 @@ export class RabbitMQService {
     event: DomainEvent<GradeCreatedPayload>,
     EmailType: TemplateKey
   ): Promise<any> {
-    if (!event.payload.studentId) throw new NotFoundError(`studentId no encontrado`);
+    if (!event.payload.studentId)
+      throw new NotFoundError(`studentId no encontrado`);
 
     const user = await this.userService.getByUuid(event.payload.studentId);
 
@@ -74,6 +76,44 @@ export class RabbitMQService {
       await this.notificationrService.getTemplateById(EmailType);
 
     const { body, title } = await templateFunction({ event, user });
+
+    const payload = INotificacionDTO.build({
+      uuid: uuidv4(),
+      user_uuid: user.uuid,
+      body,
+      title,
+    });
+    const created = await this.notificationrService.create(payload);
+
+    const info = await this.emailerService.sendMail({
+      to: user.email,
+      subject: created.title,
+      bodyType: bodyTypes.html,
+      body: created.body,
+    });
+
+    return info;
+  }
+
+  async handleSanctionNotificationCreated(
+    event: DomainEvent<SanctionBasePayload>,
+    EmailType: TemplateKey
+  ): Promise<any> {
+    if (!event.payload.userId)
+      throw new NotFoundError(`studentId no encontrado`);
+
+    const user = await this.userService.getByUuid(event.payload.userId);
+
+    if (!user)
+      throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
+
+    const templateFunction =
+      await this.notificationrService.getTemplateById(EmailType);
+
+    const { body, title } = await templateFunction({
+      payload: event.payload,
+      user,
+    });
 
     const payload = INotificacionDTO.build({
       uuid: uuidv4(),

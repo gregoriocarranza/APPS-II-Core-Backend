@@ -47,6 +47,14 @@ export async function startEventConsumers(): Promise<void> {
         );
         break;
 
+      case "sanctions.created":
+      case "sanctions.updated":
+        await RabbitMQService.handleSanctionNotificationCreated(
+          event,
+          enumTemplateKey.SANCION_BIBLIOTECA
+        );
+        break;
+
       case "academic-event.user.suscribed":
         await RabbitMQService.handleAcademicEventsNotificationCreated(
           event,
