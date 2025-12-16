@@ -1,15 +1,10 @@
 import { IsUUID, IsEnum, validateSync } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import { InscripcionEstadoEnum } from "../../../database/interfaces/inscripciones/inscripciones.interfaces";
 
 export enum RolInicialEnum {
   TITULAR = "TITULAR",
   AUXILIAR = "AUXILIAR",
-}
-
-export enum EstadoInicialEnum {
-  PENDIENTE = "pendiente",
-  CONFIRMADA = "confirmada",
-  BAJA = "baja",
 }
 
 export class CursoInscripcionInicialDTO {
@@ -19,8 +14,8 @@ export class CursoInscripcionInicialDTO {
   @IsEnum(RolInicialEnum)
   rol!: RolInicialEnum;
 
-  @IsEnum(EstadoInicialEnum)
-  estado: EstadoInicialEnum = EstadoInicialEnum.CONFIRMADA;
+  @IsEnum(InscripcionEstadoEnum)
+  estado: InscripcionEstadoEnum = InscripcionEstadoEnum.CONFIRMADA;
 
   static build(data: any[]): CursoInscripcionInicialDTO[] {
     const dtos = plainToInstance(CursoInscripcionInicialDTO, data, {
