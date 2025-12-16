@@ -5,14 +5,15 @@ meta {
 }
 
 get {
-  url: {{core-BackendBackendHost}}/api/inscripciones?uuid_curso=bbe74408-6191-4c29-a865-7a79e30d9cca
+  url: {{core-BackendBackendHost}}/api/inscripciones?user_uuid=fa22e1ce-5051-4c3d-bc65-8aa7b220787a
   body: none
   auth: bearer
 }
 
 params:query {
-  uuid_curso: bbe74408-6191-4c29-a865-7a79e30d9cca
-  ~user_uuid: a3b5f6d4-9c28-4b41-bb90-9d36a92f4b17
+  user_uuid: fa22e1ce-5051-4c3d-bc65-8aa7b220787a
+  ~estado: PENDIENTE
+  ~uuid_curso: bbe74408-6191-4c29-a865-7a79e30d9cca
 }
 
 headers {

@@ -6,16 +6,22 @@ meta {
 
 delete {
   url: {{core-BackendBackendHost}}/api/inscripciones/:uuid
-  body: none
+  body: json
   auth: bearer
 }
 
 params:path {
-  uuid: f9aef4bd-ff1f-426e-bf84-08bab446850a
+  uuid: 524a1c24-9b1b-4959-ac7b-aaf083500624
 }
 
 auth:bearer {
   token: {{JWT}}
+}
+
+body:json {
+  {
+    "razon": "Cambio de carrera"
+  }
 }
 
 settings {

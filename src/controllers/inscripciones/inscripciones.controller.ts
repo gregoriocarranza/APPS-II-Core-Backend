@@ -4,14 +4,29 @@ import { InscripcionesService } from "../../service/inscripciones.service";
 import { ToIInscripcionesDTO } from "../../common/dto/inscripciones/inscriopciones.interface.dto";
 import { v4 as uuidv4 } from "uuid";
 import { ExtendedRequest } from "../../interfaces/auth.interface";
-import { UnauthorizedError } from "../../common/utils/errors";
+import { BadRequestError, UnauthorizedError } from "../../common/utils/errors";
+import { EmailerService } from "../../service/mailer.service";
+import { CursosService } from "../../service/cursos.service";
+import { UserService } from "../../service/user.service";
+import { bodyTypes } from "../../common/dto/notificaciones/notificaciones.dto";
+import { NotificationsService } from "../../service/notifications.service";
+import { enumTemplateKey } from "../../common/templates";
+import { InscripcionEstadoEnum } from "../../database/interfaces/inscripciones/inscripciones.interfaces";
 export class InscripcionesController implements IBaseController {
   inscripcionesService: InscripcionesService;
+  emailerService: EmailerService;
+  cursosService: CursosService;
+  userService: UserService;
+  notificationsService: NotificationsService;
+
   rolesSensibles: string[];
   rolesPermitidos: string[];
-
   constructor() {
     this.inscripcionesService = new InscripcionesService();
+    this.cursosService = new CursosService();
+    this.userService = new UserService();
+    this.notificationsService = new NotificationsService();
+    this.emailerService = EmailerService.instance;
     this.rolesSensibles = ["TITULAR", "AUXILIAR"];
     this.rolesPermitidos = ["ADMINISTRADOR", "DOCENTE"];
   }
@@ -22,12 +37,13 @@ export class InscripcionesController implements IBaseController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { page, limit, uuid_curso, user_uuid } = req.query;
+      const { page, limit, uuid_curso, user_uuid, estado } = req.query;
       const result = await this.inscripcionesService.getAll({
         page: page ? Number(page) : undefined,
         limit: limit ? Number(limit) : undefined,
         uuid_curso: uuid_curso as string | undefined,
         user_uuid: user_uuid as string | undefined,
+        estado: estado as InscripcionEstadoEnum | undefined,
       });
       res.status(200).json(result);
     } catch (err: any) {
@@ -79,6 +95,25 @@ export class InscripcionesController implements IBaseController {
       }
 
       const result = await this.inscripcionesService.create(dto);
+      const curso = await this.cursosService.getByUuid(result.uuid_curso);
+      const user = await this.userService.getByUuid(result.user_uuid);
+
+      const templateFunction = await this.notificationsService.getTemplateById(
+        enumTemplateKey.INSCRIPCIONES
+      );
+
+      const { body, title } = templateFunction({
+        inscripcion: result,
+        curso,
+        user,
+      });
+
+      await this.emailerService.sendMail({
+        to: user.email,
+        subject: title,
+        bodyType: bodyTypes.html,
+        body: body,
+      });
       res.status(201).json(result);
     } catch (err: any) {
       next(err);
@@ -108,39 +143,51 @@ export class InscripcionesController implements IBaseController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const ExtReq = req as ExtendedRequest;
       const { uuid } = req.params;
-      const result = await this.inscripcionesService.delete(uuid);
-      res.status(200).json(result);
-    } catch (err: any) {
-      next(err);
-    }
-  }
 
-  // ---------- Helpers de estado ----------
+      if (!uuid) {
+        throw new BadRequestError("Falta el parámetro uuid de la inscripción.");
+      }
+      const inscripcion = await this.inscripcionesService.getByUuid(uuid);
+      if (
+        inscripcion.user.uuid != ExtReq.user.uuid &&
+        ExtReq.user.rol != "ADMINISTRADOR"
+      ) {
+        throw new UnauthorizedError(
+          "No tienes permiso para realizar esta operacion."
+        );
+      }
 
-  public async confirmar(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { uuid } = req.params;
-      const result = await this.inscripcionesService.confirmar(uuid);
-      res.status(200).json(result);
-    } catch (err: any) {
-      next(err);
-    }
-  }
-
-  public async darBaja(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { uuid } = req.params;
+      if (inscripcion.estado == InscripcionEstadoEnum.BAJA) {
+        throw new BadRequestError("La inscripcion se encuentra dada de baja");
+      }
       const { razon } = req.body;
+
+      if (!razon) {
+        throw new BadRequestError("Falta el motivo (razón) de la baja.");
+      }
       const result = await this.inscripcionesService.darBaja(uuid, razon);
+      const curso = await this.cursosService.getByUuid(result.uuid_curso);
+      const user = await this.userService.getByUuid(result.user_uuid);
+
+      const templateFunction = await this.notificationsService.getTemplateById(
+        enumTemplateKey.INSCRIPCIONES_BAJA
+      );
+
+      const { body, title } = templateFunction({
+        inscripcion: result,
+        curso,
+        user,
+      });
+
+      await this.emailerService.sendMail({
+        to: user.email,
+        subject: title,
+        bodyType: bodyTypes.html,
+        body: body,
+      });
+
       res.status(200).json(result);
     } catch (err: any) {
       next(err);

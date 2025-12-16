@@ -30,6 +30,7 @@ export class InscripcionesService {
     limit?: number;
     uuid_curso?: string;
     user_uuid?: string;
+    estado?: InscripcionEstadoEnum;
   }): Promise<IDataPaginator<ToInscripcionDTO>> {
     const page = Math.max(1, Number(params?.page ?? 1));
     const limit = Math.min(100, Math.max(1, Number(params?.limit ?? 20)));
@@ -41,6 +42,7 @@ export class InscripcionesService {
     return this.dao.getAll(page, limit, {
       uuid_curso: params?.uuid_curso,
       user_uuid: params?.user_uuid,
+      estado: params?.estado,
     });
   }
 
@@ -59,12 +61,18 @@ export class InscripcionesService {
     const already = await this.dao.getAll(this.defaultPage, this.defaultLimit, {
       uuid_curso: body?.uuid_curso,
       user_uuid: body?.user_uuid,
+      estado: InscripcionEstadoEnum.CONFIRMADA,
     });
+
     if (already.data.length > 0) {
+      const inscripciones = already.data.map((i) => i.uuid).join(", ");
+
       throw new ConflictError(
-        `El alumno ${body.user_uuid} ya está inscripto en el curso ${body.uuid_curso}`
+        `Inscripción duplicada. user_uuid=${body.user_uuid}, uuid_curso=${body.uuid_curso}. ` +
+          `Inscripción/es existente/s: ${inscripciones}`
       );
     }
+
     const created = await this.dao.create(body);
     await emitInscripcionCreated(created);
     return created;

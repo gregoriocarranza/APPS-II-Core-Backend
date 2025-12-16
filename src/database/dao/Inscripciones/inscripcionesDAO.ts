@@ -1,7 +1,10 @@
 import { Knex } from "knex";
 import { IBaseDAO, IDataPaginator } from "../../interfaces/db.types";
 import KnexManager from "../../KnexConnection";
-import { IInscripcion } from "../../interfaces/inscripciones/inscripciones.interfaces";
+import {
+  IInscripcion,
+  InscripcionEstadoEnum,
+} from "../../interfaces/inscripciones/inscripciones.interfaces";
 import { ToInscripcionDTO } from "../../../common/dto/inscripciones/inscriopciones.dto";
 import { NotFoundError } from "../../../common/utils/errors";
 import { ToIInscripcionesDTO } from "../../../common/dto/inscripciones/inscriopciones.interface.dto";
@@ -61,7 +64,11 @@ export class InscripcionesDAO implements IBaseDAO<IInscripcion> {
   async getAll(
     page: number,
     limit: number,
-    where?: { uuid_curso?: string; user_uuid?: string }
+    where?: {
+      uuid_curso?: string;
+      user_uuid?: string;
+      estado?: InscripcionEstadoEnum;
+    }
   ): Promise<IDataPaginator<ToInscripcionDTO>> {
     const offset = (page - 1) * limit;
 
@@ -81,6 +88,11 @@ export class InscripcionesDAO implements IBaseDAO<IInscripcion> {
     if (where?.user_uuid) {
       query.where("inscripciones.user_uuid", where.user_uuid);
     }
+
+    if (where?.estado) {
+      query.where("inscripciones.estado", where.estado);
+    }
+
     const [countResult] = await query.clone().clearSelect().count("* as count");
     const totalCount = +countResult.count;
     const rows = await query
