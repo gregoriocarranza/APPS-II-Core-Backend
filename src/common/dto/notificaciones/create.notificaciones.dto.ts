@@ -29,6 +29,9 @@ export class NotificationCreatedByTypeDTO {
   EmailType!: EmailType;
 
   @IsOptional()
+  metadata?: Record<string, any> | null;
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => attachmentClass)

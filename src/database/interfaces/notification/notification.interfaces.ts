@@ -6,5 +6,6 @@ export interface INotificacion {
   title: string;
   status: notificationStatusEnum;
   body: string;
+  metadata?: Record<string, any> | null;
   created_at?: string;
 }

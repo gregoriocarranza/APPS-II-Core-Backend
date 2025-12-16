@@ -11,13 +11,14 @@ post {
 }
 
 auth:bearer {
-  token: {{MtMBearerToken}}
+  token: {{JWT}}
 }
 
 body:json {
   {
-    "user_uuid": "7d66a908-04c1-4a97-bc65-aef34d4dff8d",
-    "EmailType": "HEALTH"
+    "user_uuid": "fa22e1ce-5051-4c3d-bc65-8aa7b220787a",
+    "EmailType": "HEALTH",
+    "metadata":"GAY"
   }
 }
 

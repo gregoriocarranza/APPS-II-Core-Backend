@@ -24,6 +24,7 @@ export enum notificationStatusEnum {
 
 export class INotificacionDTO implements INotificacion {
   @IsUUID()
+  @Expose()
   uuid!: string;
 
   @Expose()
@@ -31,18 +32,27 @@ export class INotificacionDTO implements INotificacion {
   user_uuid!: string;
 
   @IsString()
+  @Expose()
   title!: string;
 
   @IsString()
+  @Expose()
   body!: string;
 
   @Transform(({ value }) => value?.toUpperCase())
   @IsEnum(notificationStatusEnum)
+  @Expose()
   status!: notificationStatusEnum;
+
+  @IsOptional()
+  @Expose()
+  @Transform(({ value }) => value, { toClassOnly: true })
+  metadata?: Record<string, any> | null;
 
   @Transform(({ value }) => new Date(value || Date.now()).toISOString())
   @IsDateString()
   @IsOptional()
+  @Expose()
   created_at!: string;
 
   static build(data: any): INotificacionDTO {
@@ -54,8 +64,12 @@ export class INotificacionDTO implements INotificacion {
       },
       {
         enableImplicitConversion: true,
+        excludeExtraneousValues: true,
       }
     );
+
+    dto.metadata = data.metadata ?? null;
+
     const errors = validateSync(dto);
     if (errors.length > 0) throw new Error(JSON.stringify(errors));
     return dto;

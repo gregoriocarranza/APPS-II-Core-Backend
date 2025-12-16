@@ -46,6 +46,7 @@ export class RabbitMQService {
       uuid: uuidv4(),
       user_uuid: user.uuid,
       body,
+      metadata: event.payload,
       title,
     });
     const created = await this.notificationrService.create(payload);
@@ -81,6 +82,7 @@ export class RabbitMQService {
       uuid: uuidv4(),
       user_uuid: user.uuid,
       body,
+      metadata: event.payload,
       title,
     });
     const created = await this.notificationrService.create(payload);
@@ -119,6 +121,7 @@ export class RabbitMQService {
       uuid: uuidv4(),
       user_uuid: user.uuid,
       body,
+      metadata: event.payload,
       title,
     });
     const created = await this.notificationrService.create(payload);

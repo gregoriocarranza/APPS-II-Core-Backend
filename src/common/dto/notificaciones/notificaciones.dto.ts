@@ -32,6 +32,10 @@ export class NotificationCreatedDTO {
   status!: notificationStatusEnum;
 
   @IsOptional()
+  @Expose()
+  metadata?: Record<string, any> | null;
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => attachmentClass)
