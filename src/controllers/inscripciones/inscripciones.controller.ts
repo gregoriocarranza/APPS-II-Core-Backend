@@ -67,10 +67,10 @@ export class InscripcionesController implements IBaseController {
       ) {
         console.warn(
           `⚠️  Intento de modificación NO autorizado:
-    • Rol del curso: ${dto.rol}
-    • Usuario que intenta modificar: ${ExtReq.user.rol}
-    • Usuario UUID: ${ExtReq.user.uuid ?? "N/A"}
-    • Acción: modificación de curso sensible`
+          • Rol del curso: ${dto.rol}
+          • Usuario que intenta modificar: ${ExtReq.user.rol}
+          • Usuario UUID: ${ExtReq.user.uuid ?? "N/A"}
+          • Acción: modificación de curso sensible`
         );
 
         throw new UnauthorizedError(

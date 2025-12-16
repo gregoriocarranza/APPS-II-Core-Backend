@@ -4,7 +4,7 @@ import { ExtendedRequest } from "../interfaces/auth.interface";
 export function administratorMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   const extendedReq = req as ExtendedRequest;
 
@@ -14,10 +14,12 @@ export function administratorMiddleware(
       .json({ success: false, message: "Usuario no autenticado" });
   }
 
-  if (extendedReq.user.rol !== "administrador") {
+  if (extendedReq.user.rol !== "ADMINISTRADOR") {
     return res.status(403).json({
       success: false,
-      message: "Acceso denegado: requiere rol administrador",
+      message:
+        "Acceso denegado: requiere rol ADMINISTRADOR, Tiene " +
+        extendedReq.user.rol,
     });
   }
 

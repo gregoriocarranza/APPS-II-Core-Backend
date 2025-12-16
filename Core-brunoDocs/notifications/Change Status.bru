@@ -15,12 +15,12 @@ params:path {
 }
 
 auth:bearer {
-  token: {{MtMBearerToken}}
+  token: {{JWT}}
 }
 
 body:json {
   {
-    "status": "HIDDEN" // NEW, OPENED, HIDDEN, DELETED
+    "status": "DELETED" // NEW, OPENED, HIDDEN, DELETED
   }
 }
 
