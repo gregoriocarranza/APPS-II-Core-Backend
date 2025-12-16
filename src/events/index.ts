@@ -1,7 +1,7 @@
 import { enumTemplateKey } from "../common/templates";
 import { consumeFromQueue } from "../rabbitMq/Consumer";
 import { DomainEvent } from "../rabbitMq/Publisher";
-import notificationsService from "../service/notifications.service";
+import RabbitMQService from "../service/rabbitMq.service";
 import userService from "../service/user.service";
 
 export async function startEventConsumers(): Promise<void> {
@@ -32,15 +32,30 @@ export async function startEventConsumers(): Promise<void> {
 
         break;
 
+      case "act.closed":
+        await RabbitMQService.handleAcademicEventsNotificationCreated(
+          event,
+          enumTemplateKey.EVENTOS_ACADEMICOS_ALTA
+        );
+        break;
+
+      case "grade.created":
+      case "grade.update":
+        await RabbitMQService.handleGradeNotificationCreated(
+          event,
+          enumTemplateKey.CARGA_DE_NOTAS
+        );
+        break;
+
       case "academic-event.user.suscribed":
-        await notificationsService.handleNotificationCreated(
+        await RabbitMQService.handleAcademicEventsNotificationCreated(
           event,
           enumTemplateKey.EVENTOS_ACADEMICOS_ALTA
         );
         break;
 
       case "academic-event.user.unsuscribed":
-        await notificationsService.handleNotificationCreated(
+        await RabbitMQService.handleAcademicEventsNotificationCreated(
           event,
           enumTemplateKey.EVENTOS_ACADEMICOS_BAJA
         );
