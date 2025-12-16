@@ -46,9 +46,16 @@ export class INotificacionDTO implements INotificacion {
   created_at!: string;
 
   static build(data: any): INotificacionDTO {
-    const dto = plainToInstance(INotificacionDTO, data, {
-      enableImplicitConversion: true,
-    });
+    const dto = plainToInstance(
+      INotificacionDTO,
+      {
+        ...data,
+        status: data.status || notificationStatusEnum.NEW,
+      },
+      {
+        enableImplicitConversion: true,
+      }
+    );
     const errors = validateSync(dto);
     if (errors.length > 0) throw new Error(JSON.stringify(errors));
     return dto;
