@@ -14,7 +14,7 @@ export class WalletsController implements IBaseController {
   public async getAll(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { page, limit, user_uuid } = req.query as {
@@ -43,7 +43,7 @@ export class WalletsController implements IBaseController {
   public async getByJwt(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const user = (req as any).user;
@@ -65,7 +65,7 @@ export class WalletsController implements IBaseController {
   public async getByUuid(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -80,10 +80,28 @@ export class WalletsController implements IBaseController {
     }
   }
 
+  public async getByUserUuid(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { uuid } = req.params;
+      const wallet = await this.service.getByUserUuid(uuid);
+      res.status(200).json({ success: true, data: wallet });
+    } catch (err: any) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
+    }
+  }
+
   public async create(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const payload = {
@@ -102,7 +120,7 @@ export class WalletsController implements IBaseController {
   public async update(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;
@@ -121,7 +139,7 @@ export class WalletsController implements IBaseController {
   public async delete(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { uuid } = req.params;

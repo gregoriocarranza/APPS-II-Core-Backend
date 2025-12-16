@@ -140,6 +140,11 @@ export class WalletsRouter {
       administratorMiddleware,
       this._walletsController.getByUuid.bind(this._walletsController)
     );
+    this._router.get(
+      "/:uuid/user",
+      administratorMiddleware,
+      this._walletsController.getByUuid.bind(this._walletsController)
+    );
     /**
      * @openapi
      * /api/wallets/{uuid}:
