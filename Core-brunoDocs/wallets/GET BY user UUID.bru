@@ -1,17 +1,17 @@
 meta {
-  name: DELETE
+  name: GET BY user UUID
   type: http
-  seq: 7
+  seq: 4
 }
 
-delete {
-  url: {{core-BackendBackendHost}}/api/wallets/:uuid
+get {
+  url: {{core-BackendBackendHost}}/api/wallets/:uuid/user
   body: none
   auth: bearer
 }
 
 params:path {
-  uuid: 9b6a8cf3-feb0-4166-9a0c-967a95fd5dff
+  uuid: fa22e1ce-5051-4c3d-bc65-8aa7b220787a
 }
 
 auth:bearer {
