@@ -159,11 +159,12 @@ export class AuthService {
       options: authConfig.cookie.options,
     };
 
-    return { accessToken, refreshToken, refreshCookie };
+    return { accessToken, refreshToken, refreshCookie, jti };
   }
 
   async rotateRefreshToken(refreshToken: string) {
     const payload = this.verifyRefreshToken(refreshToken);
+    if (!payload.jti) throw new Error("Refresh token sin jti");
     const rec = this.refreshStore.get(payload.jti);
     if (!rec || rec.revoked) {
       throw new Error("Refresh token inválido o revocado");
@@ -183,12 +184,9 @@ export class AuthService {
     };
     const pair = await this.issueTokenPair(user);
 
-    const newPayload = jwt.decode(pair.refreshToken) as any;
-    const newJti = newPayload?.jti as string | undefined;
-    if (newJti) {
-      const newRec = this.refreshStore.get(newJti);
-      if (newRec) newRec.parentJti = rec.jti;
-    }
+    const newRec = this.refreshStore.get(pair.jti);
+    if (newRec) newRec.parentJti = rec.jti;
+
     return { ...pair, user };
   }
 

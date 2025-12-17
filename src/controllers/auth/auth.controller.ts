@@ -44,14 +44,14 @@ export class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const cookieToken = req.body.refresh_token || req.cookies?.refresh_token;
-      if (!cookieToken) {
+      const refreshToken = req.headers.refreshtoken as string;
+      if (!refreshToken) {
         res.status(401).json({ error: "Refresh token requerido" });
         return;
       }
 
       const { accessToken, refreshCookie } =
-        await this.authService.rotateRefreshToken(cookieToken);
+        await this.authService.rotateRefreshToken(refreshToken);
 
       res
         .cookie(

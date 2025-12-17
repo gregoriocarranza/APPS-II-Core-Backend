@@ -6,22 +6,17 @@ meta {
 
 post {
   url: {{core-BackendBackendHost}}/api/auth/refresh
-  body: json
+  body: none
   auth: bearer
 }
 
 headers {
   Content-Type: application/json
+  refreshtoken: 
 }
 
 auth:bearer {
   token: {{JWT}}
-}
-
-body:json {
-  {
-    "refreshToken": "a@b.com"
-  }
 }
 
 settings {
