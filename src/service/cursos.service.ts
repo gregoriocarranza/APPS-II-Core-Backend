@@ -60,9 +60,9 @@ export class CursosService {
   }
 
   async getByUuid(uuid: string): Promise<CursoDTO> {
-    const event = await this.dao.getByUuid(uuid);
-    if (!event) throw new NotFoundError(`Curso ${uuid} no encontrado`);
-    return event;
+    const curso = await this.dao.getByUuid(uuid);
+    if (!curso) throw new NotFoundError(`Curso ${uuid} no encontrado`);
+    return curso;
   }
 
   async create(body: CursoCreateDTO): Promise<ICurso> {

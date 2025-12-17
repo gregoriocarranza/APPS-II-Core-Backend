@@ -20,7 +20,7 @@ export class CursosDAO implements IBaseDAO<CursoCreateDTO> {
         this._knex.raw(`row_to_json(materias.*) as materia`),
         this._knex.raw(`row_to_json(carreras.*) as carrera`),
         this._knex.raw(
-          `(SELECT COUNT(*) FROM inscripciones i WHERE i.uuid_curso = cursos.uuid AND i.estado = 'CONFIRMADA' AND i.fecha_baja IS NULL ) as inscripciones_totales `
+          `(SELECT COUNT(*) FROM inscripciones i WHERE i.uuid_curso = cursos.uuid AND i.estado = 'CONFIRMADA' AND i.rol = 'ALUMNO' AND i.fecha_baja IS NULL ) as inscripciones_totales `
         ),
       ])
       .leftJoin("materias", "materias.uuid", "cursos.uuid_materia")

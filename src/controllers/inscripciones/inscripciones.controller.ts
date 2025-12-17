@@ -4,7 +4,11 @@ import { InscripcionesService } from "../../service/inscripciones.service";
 import { ToIInscripcionesDTO } from "../../common/dto/inscripciones/inscriopciones.interface.dto";
 import { v4 as uuidv4 } from "uuid";
 import { ExtendedRequest } from "../../interfaces/auth.interface";
-import { BadRequestError, UnauthorizedError } from "../../common/utils/errors";
+import {
+  BadRequestError,
+  ConflictError,
+  UnauthorizedError,
+} from "../../common/utils/errors";
 import { EmailerService } from "../../service/mailer.service";
 import { CursosService } from "../../service/cursos.service";
 import { UserService } from "../../service/user.service";
@@ -12,6 +16,7 @@ import { bodyTypes } from "../../common/dto/notificaciones/notificaciones.dto";
 import { NotificationsService } from "../../service/notifications.service";
 import { enumTemplateKey } from "../../common/templates";
 import { InscripcionEstadoEnum } from "../../database/interfaces/inscripciones/inscripciones.interfaces";
+import { RolInicialEnum } from "../../common/dto/curso/CursoInscripcionInicialDTO";
 export class InscripcionesController implements IBaseController {
   inscripcionesService: InscripcionesService;
   emailerService: EmailerService;
@@ -94,8 +99,20 @@ export class InscripcionesController implements IBaseController {
         );
       }
 
+      const curso = await this.cursosService.getByUuid(dto.uuid_curso);
+
+      if (
+        curso.inscripciones_totales + 1 > curso.cantidad_max &&
+        dto.rol !== RolInicialEnum.TITULAR &&
+        dto.rol !== RolInicialEnum.AUXILIAR
+      ) {
+        throw new ConflictError(
+          `El curso "${curso.materia.nombre}" ya alcanzó el cupo máximo (${curso.cantidad_max})`
+        );
+      }
+
       const result = await this.inscripcionesService.create(dto);
-      const curso = await this.cursosService.getByUuid(result.uuid_curso);
+
       const user = await this.userService.getByUuid(result.user_uuid);
 
       const templateFunction = await this.notificationsService.getTemplateById(
