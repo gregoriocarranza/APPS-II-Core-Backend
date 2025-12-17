@@ -24,13 +24,11 @@ type EventPayload = {
 };
 
 type TemplateInput = {
-  event: {
-    payload: {
-      userId: string;
-      event: EventPayload;
-      enrollmentDate?: string;
-      paymentStatus?: string;
-    };
+  payload: {
+    userId: string;
+    event: EventPayload;
+    enrollmentDate?: string;
+    paymentStatus?: string;
   };
   user: {
     uuid: string;
@@ -67,7 +65,7 @@ function unsubscribeBadge() {
 export function eventosAcademicosUnsubscribedBodyText(
   data: TemplateInput
 ): TemplateReturn {
-  const payload = data.event.payload;
+  const payload = data.payload;
   const ev = payload.event;
 
   const fullName = `${data.user.nombre} ${data.user.apellido}`;

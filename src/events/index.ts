@@ -63,6 +63,13 @@ export async function startEventConsumers(): Promise<void> {
         );
         break;
 
+      case "academic-event.upcoming":
+        await RabbitMQService.handleAcademicEventsNotificationCreated(
+          event,
+          enumTemplateKey.EVENTOS_ACADEMICOS_INICIA
+        );
+        break;
+
       case "academic-event.user.suscribed":
         await RabbitMQService.handleAcademicEventsNotificationCreated(
           event,

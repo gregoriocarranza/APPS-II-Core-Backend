@@ -24,7 +24,13 @@ type EventPayload = {
 };
 
 type TemplateInput = {
-  event: { payload: { userId: string; event: EventPayload; enrollmentDate?: string; paymentStatus?: string } };
+  payload: {
+    userId: string;
+    event: EventPayload;
+    enrollmentDate?: string;
+    paymentStatus?: string;
+  };
+
   user: {
     uuid: string;
     nombre: string;
@@ -58,7 +64,11 @@ function badge(paymentStatus?: string | null) {
     REJECTED: { bg: "#FEF2F2", fg: "#991B1B", text: "Pago rechazado" },
   };
 
-  const cfg = map[status] || { bg: "#EEF2FF", fg: "#3730A3", text: `Estado: ${status}` };
+  const cfg = map[status] || {
+    bg: "#EEF2FF",
+    fg: "#3730A3",
+    text: `Estado: ${status}`,
+  };
 
   return `
     <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:${cfg.bg};color:${cfg.fg};font-weight:700;font-size:12px;">
@@ -68,7 +78,7 @@ function badge(paymentStatus?: string | null) {
 }
 
 export function eventosAcademicosBodyText(data: TemplateInput): TemplateReturn {
-  const payload = data.event.payload;
+  const payload = data.payload;
   const ev = payload.event;
 
   const fullName = `${data.user.nombre} ${data.user.apellido}`;

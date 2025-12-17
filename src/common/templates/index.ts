@@ -1,5 +1,6 @@
 import { bajaInscripcionBodyText } from "./baja_inscripcion_curso.template";
 import { cierreActaBodyText } from "./cierre_de_acta_template";
+import { academicEventUpcomingBodyText } from "./eventos_academicos_inicia.template";
 import { eventosAcademicosBodyText } from "./eventos_academicos_suscribe.template";
 import { eventosAcademicosUnsubscribedBodyText } from "./eventos_academicos_unsuscribe.template";
 import { cargaDeNotaBodyText } from "./grade_notification";
@@ -20,6 +21,7 @@ export type TemplateKey =
   | "HEALTH"
   | "INSCRIPCIONES"
   | "INSCRIPCIONES_BAJA"
+  | "EVENTOS_ACADEMICOS_INICIA"
   | "EVENTOS_ACADEMICOS_ALTA"
   | "EVENTOS_ACADEMICOS_BAJA"
   | "TRANSFER_NOTIFICATION"
@@ -32,6 +34,7 @@ export enum enumTemplateKey {
   HEALTH = "HEALTH",
   INSCRIPCIONES = "INSCRIPCIONES",
   INSCRIPCIONES_BAJA = "INSCRIPCIONES_BAJA",
+  EVENTOS_ACADEMICOS_INICIA = "EVENTOS_ACADEMICOS_INICIA",
   EVENTOS_ACADEMICOS_ALTA = "EVENTOS_ACADEMICOS_ALTA",
   EVENTOS_ACADEMICOS_BAJA = "EVENTOS_ACADEMICOS_BAJA",
   TRANSFER_NOTIFICATION = "TRANSFER_NOTIFICATION",
@@ -45,6 +48,7 @@ export const templates: Record<string, TemplateFunction> = {
   HEALTH: healthBodyText,
   INSCRIPCIONES: inscripcionCursoBodyText,
   INSCRIPCIONES_BAJA: bajaInscripcionBodyText,
+  EVENTOS_ACADEMICOS_INICIA: academicEventUpcomingBodyText,
   EVENTOS_ACADEMICOS_ALTA: eventosAcademicosBodyText,
   EVENTOS_ACADEMICOS_BAJA: eventosAcademicosUnsubscribedBodyText,
   TRANSFER_NOTIFICATION: transferBodyText,

@@ -1,6 +1,7 @@
 import { INotificacionDTO } from "../common/dto/notificaciones/Inotificaciones.dto";
 import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 import { TemplateKey } from "../common/templates";
+import { EventPayload } from "../common/templates/eventos_academicos_inicia.template";
 import { GradeCreatedPayload } from "../common/templates/grade_notification";
 import { ReservationCreatedPayload } from "../common/templates/reserva.template";
 import { SanctionBasePayload } from "../common/templates/sancion_biblioteca.template";
@@ -27,6 +28,59 @@ export class RabbitMQService {
     this.emailerService = emailerService ?? EmailerService.instance;
   }
 
+  async handleAcademicEventsUpcomingNotificationCreated(
+    event: DomainEvent<EventPayload>,
+    EmailType: TemplateKey
+  ): Promise<any> {
+    if (!event.payload.registerdUserIds) {
+      throw new NotFoundError("registerdUserIds no encontrados");
+    }
+
+    if (!Array.isArray(event.payload.registerdUserIds)) {
+      throw new NotFoundError("registerdUserIds no es una lista válida");
+    }
+
+    if (event.payload.registerdUserIds.length === 0) {
+      throw new NotFoundError("registerdUserIds está vacío");
+    }
+
+    const templateFunction =
+      await this.notificationrService.getTemplateById(EmailType);
+
+    const ids = event.payload.registerdUserIds;
+
+    const results = await Promise.all(
+      ids.map(async (userUuid) => {
+        const user = await this.userService.getByUuid(userUuid);
+        if (!user) throw new NotFoundError(`User ${userUuid} no encontrado`);
+
+        const { body, title } = await templateFunction({
+          payload: event.payload,
+          user,
+        });
+
+        const notifPayload = INotificacionDTO.build({
+          uuid: uuidv4(),
+          user_uuid: user.uuid,
+          body,
+          metadata: event.payload,
+          title,
+        });
+
+        const created = await this.notificationrService.create(notifPayload);
+
+        return this.emailerService.sendMail({
+          to: user.email,
+          subject: created.title,
+          bodyType: bodyTypes.html,
+          body: created.body,
+        });
+      })
+    );
+
+    return results;
+  }
+
   async handleAcademicEventsNotificationCreated(
     event: DomainEvent<any>,
     EmailType: TemplateKey
@@ -41,7 +95,10 @@ export class RabbitMQService {
     const templateFunction =
       await this.notificationrService.getTemplateById(EmailType);
 
-    const { body, title } = await templateFunction({ event, user });
+    const { body, title } = await templateFunction({
+      payload: event.payload,
+      user,
+    });
 
     const payload = INotificacionDTO.build({
       uuid: uuidv4(),
