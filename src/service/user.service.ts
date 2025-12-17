@@ -63,7 +63,7 @@ export class UserService {
     try {
       const userData = IUserDTO.build({
         ...event.payload,
-        carrera_uuid: event.payload?.carrera.id_carrera ?? null,
+        carrera_uuid: event.payload?.carrera?.id_carrera ?? null,
         rol: event.payload.rol.categoria,
         subrol: event.payload.rol.subcategoria ?? null,
       });
