@@ -5,6 +5,7 @@ import { eventosAcademicosUnsubscribedBodyText } from "./eventos_academicos_unsu
 import { cargaDeNotaBodyText } from "./grade_notification";
 import { healthBodyText } from "./health.template";
 import { inscripcionCursoBodyText } from "./inscripcion_curso.template";
+import { reservationBodyText } from "./reserva.template";
 import { sancionBibliotecaBodyText } from "./sancion_biblioteca.template";
 import { transferBodyText } from "./transfer.template";
 
@@ -24,7 +25,8 @@ export type TemplateKey =
   | "TRANSFER_NOTIFICATION"
   | "CARGA_DE_NOTAS"
   | "CIERRE_DE_ACTA"
-  | "SANCION_BIBLIOTECA";
+  | "SANCION_BIBLIOTECA"
+  | "RESERVA";
 
 export enum enumTemplateKey {
   HEALTH = "HEALTH",
@@ -35,6 +37,7 @@ export enum enumTemplateKey {
   TRANSFER_NOTIFICATION = "TRANSFER_NOTIFICATION",
   CIERRE_DE_ACTA = "CIERRE_DE_ACTA",
   CARGA_DE_NOTAS = "CARGA_DE_NOTAS",
+  RESERVA = "RESERVA",
   SANCION_BIBLIOTECA = "SANCION_BIBLIOTECA",
 }
 
@@ -47,5 +50,6 @@ export const templates: Record<string, TemplateFunction> = {
   TRANSFER_NOTIFICATION: transferBodyText,
   CIERRE_DE_ACTA: cierreActaBodyText,
   CARGA_DE_NOTAS: cargaDeNotaBodyText,
+  RESERVA: reservationBodyText,
   SANCION_BIBLIOTECA: sancionBibliotecaBodyText,
 };

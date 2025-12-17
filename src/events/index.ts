@@ -39,6 +39,14 @@ export async function startEventConsumers(): Promise<void> {
         );
         break;
 
+      case "reservation.created":
+      case "reservation.updated":
+        await RabbitMQService.handleReservasNotificationCreated(
+          event,
+          enumTemplateKey.RESERVA
+        );
+        break;
+
       case "grade.created":
       case "grade.update":
         await RabbitMQService.handleGradeNotificationCreated(

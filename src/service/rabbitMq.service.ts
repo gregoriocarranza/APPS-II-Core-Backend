@@ -2,6 +2,7 @@ import { INotificacionDTO } from "../common/dto/notificaciones/Inotificaciones.d
 import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 import { TemplateKey } from "../common/templates";
 import { GradeCreatedPayload } from "../common/templates/grade_notification";
+import { ReservationCreatedPayload } from "../common/templates/reserva.template";
 import { SanctionBasePayload } from "../common/templates/sancion_biblioteca.template";
 import { NotFoundError } from "../common/utils/errors";
 import { DomainEvent } from "../rabbitMq/Publisher";
@@ -99,6 +100,45 @@ export class RabbitMQService {
 
   async handleSanctionNotificationCreated(
     event: DomainEvent<SanctionBasePayload>,
+    EmailType: TemplateKey
+  ): Promise<any> {
+    if (!event.payload.userId)
+      throw new NotFoundError(`studentId no encontrado`);
+
+    const user = await this.userService.getByUuid(event.payload.userId);
+
+    if (!user)
+      throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
+
+    const templateFunction =
+      await this.notificationrService.getTemplateById(EmailType);
+
+    const { body, title } = await templateFunction({
+      payload: event.payload,
+      user,
+    });
+
+    const payload = INotificacionDTO.build({
+      uuid: uuidv4(),
+      user_uuid: user.uuid,
+      body,
+      metadata: event.payload,
+      title,
+    });
+    const created = await this.notificationrService.create(payload);
+
+    const info = await this.emailerService.sendMail({
+      to: user.email,
+      subject: created.title,
+      bodyType: bodyTypes.html,
+      body: created.body,
+    });
+
+    return info;
+  }
+
+  async handleReservasNotificationCreated(
+    event: DomainEvent<ReservationCreatedPayload>,
     EmailType: TemplateKey
   ): Promise<any> {
     if (!event.payload.userId)
