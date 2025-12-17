@@ -6,6 +6,7 @@ import { eventosAcademicosUnsubscribedBodyText } from "./eventos_academicos_unsu
 import { cargaDeNotaBodyText } from "./grade_notification";
 import { healthBodyText } from "./health.template";
 import { inscripcionCursoBodyText } from "./inscripcion_curso.template";
+import { proposalUnifiedBodyText } from "./proposal.template";
 import { reservationBodyText } from "./reserva.template";
 import { sancionBibliotecaBodyText } from "./sancion_biblioteca.template";
 import { transferBodyText } from "./transfer.template";
@@ -19,6 +20,7 @@ export type TemplateFunction<T = any> = (data: T) => TemplateReturn;
 
 export type TemplateKey =
   | "HEALTH"
+  | "PROPOSAL"
   | "INSCRIPCIONES"
   | "INSCRIPCIONES_BAJA"
   | "EVENTOS_ACADEMICOS_INICIA"
@@ -34,6 +36,7 @@ export enum enumTemplateKey {
   HEALTH = "HEALTH",
   INSCRIPCIONES = "INSCRIPCIONES",
   INSCRIPCIONES_BAJA = "INSCRIPCIONES_BAJA",
+  PROPOSAL = "PROPOSAL",
   EVENTOS_ACADEMICOS_INICIA = "EVENTOS_ACADEMICOS_INICIA",
   EVENTOS_ACADEMICOS_ALTA = "EVENTOS_ACADEMICOS_ALTA",
   EVENTOS_ACADEMICOS_BAJA = "EVENTOS_ACADEMICOS_BAJA",
@@ -47,6 +50,7 @@ export enum enumTemplateKey {
 export const templates: Record<string, TemplateFunction> = {
   HEALTH: healthBodyText,
   INSCRIPCIONES: inscripcionCursoBodyText,
+  PROPOSAL: proposalUnifiedBodyText,
   INSCRIPCIONES_BAJA: bajaInscripcionBodyText,
   EVENTOS_ACADEMICOS_INICIA: academicEventUpcomingBodyText,
   EVENTOS_ACADEMICOS_ALTA: eventosAcademicosBodyText,

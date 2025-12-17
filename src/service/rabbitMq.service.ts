@@ -3,11 +3,13 @@ import { bodyTypes } from "../common/dto/notificaciones/notificaciones.dto";
 import { TemplateKey } from "../common/templates";
 import { EventPayload } from "../common/templates/eventos_academicos_inicia.template";
 import { GradeCreatedPayload } from "../common/templates/grade_notification";
+import { ProposalPayload } from "../common/templates/proposal.template";
 import { ReservationCreatedPayload } from "../common/templates/reserva.template";
 import { SanctionBasePayload } from "../common/templates/sancion_biblioteca.template";
 import { NotFoundError } from "../common/utils/errors";
 import { DomainEvent } from "../rabbitMq/Publisher";
 import { EmailerService } from "./mailer.service";
+import { MateriasService } from "./materias.service";
 import { NotificationsService } from "./notifications.service";
 import { UserService } from "./user.service";
 import { v4 as uuidv4 } from "uuid";
@@ -15,15 +17,18 @@ import { v4 as uuidv4 } from "uuid";
 export class RabbitMQService {
   private userService: UserService;
   private emailerService: EmailerService;
-  private notificationrService: NotificationsService;
+  private notificationService: NotificationsService;
+  private materiaService: MateriasService;
 
   constructor(
     userService?: UserService,
     emailerService?: EmailerService,
-    notificationrService?: NotificationsService
+    notificationService?: NotificationsService,
+    materiaService?: MateriasService
   ) {
-    this.notificationrService =
-      notificationrService ?? new NotificationsService();
+    this.notificationService =
+      notificationService ?? new NotificationsService();
+    this.materiaService = materiaService ?? new MateriasService();
     this.userService = userService ?? new UserService();
     this.emailerService = emailerService ?? EmailerService.instance;
   }
@@ -45,7 +50,7 @@ export class RabbitMQService {
     }
 
     const templateFunction =
-      await this.notificationrService.getTemplateById(EmailType);
+      await this.notificationService.getTemplateById(EmailType);
 
     const ids = event.payload.registerdUserIds;
 
@@ -67,7 +72,7 @@ export class RabbitMQService {
           title,
         });
 
-        const created = await this.notificationrService.create(notifPayload);
+        const created = await this.notificationService.create(notifPayload);
 
         return this.emailerService.sendMail({
           to: user.email,
@@ -93,7 +98,7 @@ export class RabbitMQService {
       throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
 
     const templateFunction =
-      await this.notificationrService.getTemplateById(EmailType);
+      await this.notificationService.getTemplateById(EmailType);
 
     const { body, title } = await templateFunction({
       payload: event.payload,
@@ -107,7 +112,56 @@ export class RabbitMQService {
       metadata: event.payload,
       title,
     });
-    const created = await this.notificationrService.create(payload);
+    const created = await this.notificationService.create(payload);
+
+    const info = await this.emailerService.sendMail({
+      to: user.email,
+      subject: created.title,
+      bodyType: bodyTypes.html,
+      body: created.body,
+    });
+
+    return info;
+  }
+
+  async handleProposalNotification(
+    event: DomainEvent<ProposalPayload>,
+    EmailType: TemplateKey
+  ): Promise<any> {
+    if (!event.payload.teacherId)
+      throw new NotFoundError(`studentId no encontrado`);
+
+    const user = await this.userService.getByUuid(event.payload.teacherId);
+
+    if (!user)
+      throw new NotFoundError(`User ${event.payload.teacherId} no encontrado`);
+
+    const materia = await this.materiaService.getByUuid(
+      event.payload.subjectId
+    );
+
+    if (!materia)
+      throw new NotFoundError(
+        `materia ${event.payload.subjectId} no encontrada`
+      );
+
+    const templateFunction =
+      await this.notificationService.getTemplateById(EmailType);
+
+    const { body, title } = await templateFunction({
+      payload: event.payload,
+      user,
+      subject: materia,
+    });
+
+    const payload = INotificacionDTO.build({
+      uuid: uuidv4(),
+      user_uuid: user.uuid,
+      body,
+      metadata: event.payload,
+      title,
+    });
+    const created = await this.notificationService.create(payload);
 
     const info = await this.emailerService.sendMail({
       to: user.email,
@@ -132,7 +186,7 @@ export class RabbitMQService {
       throw new NotFoundError(`User ${event.payload.studentId} no encontrado`);
 
     const templateFunction =
-      await this.notificationrService.getTemplateById(EmailType);
+      await this.notificationService.getTemplateById(EmailType);
 
     const { body, title } = await templateFunction({ event, user });
 
@@ -143,7 +197,7 @@ export class RabbitMQService {
       metadata: event.payload,
       title,
     });
-    const created = await this.notificationrService.create(payload);
+    const created = await this.notificationService.create(payload);
 
     const info = await this.emailerService.sendMail({
       to: user.email,
@@ -168,7 +222,7 @@ export class RabbitMQService {
       throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
 
     const templateFunction =
-      await this.notificationrService.getTemplateById(EmailType);
+      await this.notificationService.getTemplateById(EmailType);
 
     const { body, title } = await templateFunction({
       payload: event.payload,
@@ -182,7 +236,7 @@ export class RabbitMQService {
       metadata: event.payload,
       title,
     });
-    const created = await this.notificationrService.create(payload);
+    const created = await this.notificationService.create(payload);
 
     const info = await this.emailerService.sendMail({
       to: user.email,
@@ -207,7 +261,7 @@ export class RabbitMQService {
       throw new NotFoundError(`User ${event.payload.userId} no encontrado`);
 
     const templateFunction =
-      await this.notificationrService.getTemplateById(EmailType);
+      await this.notificationService.getTemplateById(EmailType);
 
     const { body, title } = await templateFunction({
       payload: event.payload,
@@ -221,7 +275,7 @@ export class RabbitMQService {
       metadata: event.payload,
       title,
     });
-    const created = await this.notificationrService.create(payload);
+    const created = await this.notificationService.create(payload);
 
     const info = await this.emailerService.sendMail({
       to: user.email,
