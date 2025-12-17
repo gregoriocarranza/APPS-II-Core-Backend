@@ -95,7 +95,7 @@ app.use(
   cors({
     origin: allowed === true ? true : allowed,
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "refreshtoken"],
   })
 );
 
