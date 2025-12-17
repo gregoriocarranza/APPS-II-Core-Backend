@@ -330,6 +330,13 @@
       "routing_key": "#"
     },
     {
+      "source": "proposal.event",
+      "vhost": "/",
+      "destination": "core.queue",
+      "destination_type": "queue",
+      "routing_key": "#"
+    },
+    {
       "source": "curso.event",
       "vhost": "/",
       "destination": "backoffice.queue",
