@@ -63,6 +63,7 @@ export class AuthController {
         .json({
           success: true,
           access_token: accessToken,
+          refresh_token: refreshCookie.value,
           token_type: "Bearer",
           expires_in: this.authService.accessTokenTtlSeconds,
         });
